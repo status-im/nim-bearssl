@@ -323,7 +323,7 @@ type
     init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.cdecl.}
     update* {.importc: "update".}: proc (ctx: ptr ptr HashClass; data: pointer; len: int) {.
         cdecl.}
-    `out`* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.cdecl.}
+    output* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.cdecl.}
     state* {.importc: "state".}: proc (ctx: ptr ptr HashClass; dst: pointer): uint64 {.
         cdecl.}
     setState* {.importc: "set_state".}: proc (ctx: ptr ptr HashClass; stb: pointer;
@@ -3588,136 +3588,25 @@ const
   BR_EC_KBUF_PRIV_MAX_SIZE* = 72
   BR_EC_KBUF_PUB_MAX_SIZE* = 145
 
+# Deprecated
+
 type
-  BrHashClass* {.importc: "br_hash_class",
-                 header: "bearssl_hash.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: int
-    desc* {.importc: "desc".}: uint32
-    init* {.importc: "init".}: proc (ctx: ptr ptr BrHashClass) {.cdecl.}
-    update* {.importc: "update".}: proc (ctx: ptr ptr BrHashClass,
-                                         data: pointer, len: int) {.cdecl.}
-    output* {.importc: "out".}: proc (ctx: ptr ptr BrHashClass,
-                                     dst: pointer) {.cdecl.}
-    state* {.importc: "state".}: proc (ctx: ptr ptr BrHashClass,
-                                       dst: pointer): uint64 {.cdecl.}
-    setState* {.importc: "set_state".}: proc (ctx: ptr ptr BrHashClass,
-                                              stb: pointer,
-                                              count: uint64) {.cdecl.}
-
-  BrMd5Context* {.importc: "br_md5_context",
-                  header: "bearssl_hash.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BrHashClass
-    buf* {.importc: "buf".}: array[64, cuchar]
-    count* {.importc: "count".}: uint64
-    val* {.importc: "val".}: array[4, uint32]
-
-  BrMd5sha1Context* {.importc: "br_md5sha1_context",
-                      header: "bearssl_hash.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BrHashClass
-    buf* {.importc: "buf".}: array[64, cuchar]
-    count* {.importc: "count".}: uint64
-    valMd5* {.importc: "val_md5".}: array[4, uint32]
-    valSha1* {.importc: "val_sha1".}: array[5, uint32]
-
-  BrSha512Context* = BrSha384Context
-  BrSha384Context* {.importc: "br_sha384_context",
-                     header: "bearssl_hash.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BrHashClass
-    buf* {.importc: "buf".}: array[128, cuchar]
-    count* {.importc: "count".}: uint64
-    val* {.importc: "val".}: array[8, uint64]
-
-  BrSha256Context* = BrSha224Context
-  BrSha224Context* {.importc: "br_sha224_context",
-                     header: "bearssl_hash.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BrHashClass
-    buf* {.importc: "buf".}: array[64, cuchar]
-    count* {.importc: "count".}: uint64
-    val* {.importc: "val".}: array[8, uint32]
-
-  BrHashCompatContext* {.importc: "br_hash_compat_context",
-                         header: "bearssl_hash.h", bycopy.} = object {.union.}
-    vtable* {.importc: "vtable".}: ptr BrHashClass
-    md5* {.importc: "md5".}: BrMd5Context
-    sha1* {.importc: "sha1".}: Sha1Context
-    sha224* {.importc: "sha224".}: BrSha224Context
-    sha256* {.importc: "sha256".}: BrSha256Context
-    sha384* {.importc: "sha384".}: BrSha384Context
-    sha512* {.importc: "sha512".}: BrSha512Context
-    md5sha1* {.importc: "md5sha1".}: BrMd5sha1Context
-
-  BrPrngClass* {.importc: "br_prng_class",
-                 header: "bearssl_rand.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: int
-    init* {.importc: "init".}: proc (ctx: ptr ptr BrPrngClass, params: pointer,
-                                     seed: pointer, seedLen: int) {.cdecl.}
-    generate* {.importc: "generate".}: proc (ctx: ptr ptr BrPrngClass,
-                                             output: pointer,
-                                             length: int) {.cdecl.}
-    update* {.importc: "update".}: proc (ctx: ptr ptr BrPrngClass,
-                                         seed: pointer, seedLen: int) {.cdecl.}
-
-  BrHmacDrbgContext* {.importc: "br_hmac_drbg_context",
-                       header: "bearssl_rand.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BrPrngClass
-    k* {.importc: "K".}: array[64, cuchar]
-    v* {.importc: "V".}: array[64, cuchar]
-    digestClass* {.importc: "digest_class".}: ptr BrHashClass
-
-  BrRsaPublicKey* {.importc: "br_rsa_public_key",
-                    header: "bearssl_rsa.h", bycopy.} = object
-    n* {.importc: "n".}: ptr cuchar
-    nlen* {.importc: "nlen".}: int
-    e* {.importc: "e".}: ptr cuchar
-    elen* {.importc: "elen".}: int
-
-  BrRsaPrivateKey* {.importc: "br_rsa_private_key",
-                     header: "bearssl_rsa.h", bycopy.} = object
-    nBitlen* {.importc: "n_bitlen".}: uint32
-    p* {.importc: "p".}: ptr cuchar
-    plen* {.importc: "plen".}: int
-    q* {.importc: "q".}: ptr cuchar
-    qlen* {.importc: "qlen".}: int
-    dp* {.importc: "dp".}: ptr cuchar
-    dplen* {.importc: "dplen".}: int
-    dq* {.importc: "dq".}: ptr cuchar
-    dqlen* {.importc: "dqlen".}: int
-    iq* {.importc: "iq".}: ptr cuchar
-    iqlen* {.importc: "iqlen".}: int
-
-  BrEcPublicKey* {.importc: "br_ec_public_key", header: "bearssl_ec.h",
-                   bycopy.} = object
-    curve* {.importc: "curve".}: cint
-    q* {.importc: "q".}: ptr cuchar
-    qlen* {.importc: "qlen".}: int
-
-  BrEcPrivateKey* {.importc: "br_ec_private_key", header: "bearssl_ec.h",
-                    bycopy.} = object
-    curve* {.importc: "curve".}: cint
-    x* {.importc: "x".}: ptr cuchar
-    xlen* {.importc: "xlen".}: int
-
-  BrEcImplementation* {.importc: "br_ec_impl", header: "bearssl_ec.h",
-                        bycopy.} = object
-    supportedCurves* {.importc: "supported_curves".}: uint32
-    generator* {.importc: "generator".}: proc (curve: cint,
-                                          length: ptr int): ptr cuchar {.cdecl, gcsafe.}
-    order* {.importc: "order".}: proc (curve: cint,
-                                       length: ptr int): ptr cuchar {.cdecl, gcsafe.}
-    xoff* {.importc: "xoff".}: proc (curve: cint,
-                                     length: ptr int): int {.cdecl, gcsafe.}
-    mul* {.importc: "mul".}: proc (g: ptr cuchar, glen: int,
-                                   x: ptr cuchar, xlen: int,
-                                   curve: cint): uint32 {.cdecl, gcsafe.}
-    mulgen* {.importc: "mulgen".}: proc (r: ptr cuchar,
-                                         x: ptr cuchar, xlen: int,
-                                         curve: cint): int {.cdecl, gcsafe.}
-    muladd* {.importc: "muladd".}: proc (a: ptr cuchar, b: ptr cuchar,
-                                         length: int, x: ptr cuchar, xlen: int,
-                                         y: ptr cuchar, ylen: int,
-                                         curve: cint): uint32 {.cdecl, gcsafe.}
-
-  BrPrngSeeder* = proc (ctx: ptr ptr BrPrngClass): cint {.cdecl.}
+  BrHashClass* = HashClass
+  BrMd5Context* = Md5Context
+  BrMd5sha1Context* = Md5sha1Context
+  BrSha512Context* = Sha384Context
+  BrSha384Context* = Sha384Context
+  BrSha256Context* = Sha224Context
+  BrSha224Context*  = Sha224Context
+  BrHashCompatContext* = HashCompatContext
+  BrPrngClass* = PrngClass
+  BrHmacDrbgContext* = HmacDrbgContext
+  BrRsaPublicKey* = RsaPublicKey
+  BrRsaPrivateKey* = RsaPrivateKey
+  BrEcPublicKey* = EcPublicKey
+  BrEcPrivateKey* = EcPrivateKey
+  BrEcImplementation* = EcImpl
+  BrPrngSeeder* = PrngSeeder
   BrRsaKeygen* = proc (ctx: ptr ptr BrPrngClass,
                        sk: ptr BrRsaPrivateKey, bufsec: ptr byte,
                        pk: ptr BrRsaPublicKey, bufpub: ptr byte,
@@ -3734,9 +3623,7 @@ type
                             hash_out: ptr cuchar): uint32 {.cdecl.}
   BrPemDecoderProc* = proc (destctx: pointer, src: pointer,
                             length: int) {.cdecl.}
-  BrRsaPkcs1Sign* = proc (hash_oid: ptr cuchar, hash: ptr cuchar, hash_len: int,
-                          pk: ptr BrRsaPrivateKey,
-                          x: ptr cuchar): uint32 {.cdecl.}
+  BrRsaPkcs1Sign* = RsaPkcs1Sign
 
 proc brPrngSeederSystem*(name: cstringArray): BrPrngSeeder {.cdecl,
      importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
