@@ -10,7 +10,7 @@
 ## This module provides error messages for BearSSL's error codes.
 
 type
-  BearSslError* {.pure.} = enum
+  SSLError* {.pure.} = enum
     NoError = 0,
     BadParam = 1,
     BadState = 2,
@@ -162,7 +162,7 @@ const
     (X509NotTrusted, "Chain could not be linked to a trust anchor")
   ]
 
-proc bearSslErrorMsg*(code: cint): string =
+proc sslErrorMsg*(code: cint): string =
   ## Converts BearSSL integer error code to string representation.
   if int(code) > int(SendFatalAlert):
     let err = int(code) - int(SendFatalAlert)
@@ -174,12 +174,12 @@ proc bearSslErrorMsg*(code: cint): string =
   else:
     for item in SSLErrors:
       if int(item[0]) == int(code):
-        result = "(" & $cast[BearSslError](code) & ") " & item[1]
+        result = "(" & $cast[SSLError](code) & ") " & item[1]
         break
     if len(result) == 0:
       result = "(" & $code & ") Unknown error"
 
-proc bearSslErrorMsg*(code: BearSslError): string =
+proc errorMsg*(code: SSLError): string =
   ## Converts enum error to string representation.
   for item in SSLErrors:
     if item[0] == code:
