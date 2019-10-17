@@ -9,9 +9,15 @@ git:
   # when multiple CI builds are queued, the tested commit needs to be in the last X commits cloned with "--depth X"
   depth: 10
 
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      arch: amd64
+      sudo: required
+    - os: linux
+      arch: arm64
+      sudo: required
+    - os: osx
 
 install:
   # build nim from our own branch - this to avoid the day-to-day churn and

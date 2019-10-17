@@ -49,7 +49,8 @@ else:
 
 when sizeof(int) == 8:
   {.passC: "-DBR_64=1".}
-  {.passC:" -DBR_amd64=1".}
+  when hostCPU == "amd64":
+    {.passC:" -DBR_amd64=1".}
   when defined(vcc):
     {.passC: "-DBR_UMUL128=1".}
   else:
