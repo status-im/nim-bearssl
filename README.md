@@ -10,10 +10,36 @@
 
 ## Installation
 
-You can install the developement version of the library through nimble with the following command
+You can install the development version of the library through nimble with the following command
 ```
 nimble install bearssl
 ```
+
+### Using a static BearSSL library
+
+By default, the bundled BearSSL source files will all be compiled and linked into your Nim project using `{.compile: ... .}` pragmas.
+To build and use a BearSSL static library instead (so only the used objects are linked), install it like this:
+
+```sh
+nimble buildBundledLib
+nimble install
+```
+
+Then add `-d:BearSSLBundledStaticLib` to your project's top-level "nim.cfg" or "config.nims".
+
+#### MSVC
+
+There's also experimental support for the MSVC compiler suite, if you can't use MingGW-w64.
+From a Visual Studio Development Command Prompt (the "Native Tools" one matching your architecture), run:
+
+```cmd
+cd bearssl\csources
+nmake lib
+cd ..\..
+nimble install
+```
+
+Don't forget to add `-d:BearSSLBundledStaticLib` to your project's top-level "nim.cfg" or "config.nims".
 
 ## License
 
@@ -25,4 +51,5 @@ or
 
 * Apache License, Version 2.0, ([LICENSE-APACHEv2](LICENSE-APACHEv2) or http://www.apache.org/licenses/LICENSE-2.0)
 
-at your option. This file may not be copied, modified, or distributed except according to those terms.
+at your option. These files may not be copied, modified, or distributed except according to those terms.
+

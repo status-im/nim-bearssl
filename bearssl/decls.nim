@@ -1,5 +1,5 @@
 ## Nim-BearSSL
-## Copyright (c) 2018 Status Research & Development GmbH
+## Copyright (c) 2018-2020 Status Research & Development GmbH
 ## Licensed under either of
 ##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
 ##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
@@ -7,369 +7,354 @@
 ## This file may not be copied, modified, or distributed except according to
 ## those terms.
 ## This module implements interface with BearSSL library sources.
-import strutils
-from os import DirSep, quoteShell
 
-const
-  bearPath = currentSourcePath.rsplit(DirSep, 1)[0] & DirSep &
-             "csources" & DirSep
+from os import quoteShell, parentDir, `/`
 
-  bearSrcPath = bearPath & "src"
-  bearIncPath = bearPath & "inc"
-  bearIntPath = bearSrcPath & DirSep & "int" & DirSep
-  bearCodecPath = bearSrcPath & DirSep & "codec" & DirSep
-  bearRandPath = bearSrcPath & DirSep & "rand" & DirSep
-  bearRsaPath = bearSrcPath & DirSep & "rsa" & DirSep
-  bearEcPath = bearSrcPath & DirSep & "ec" & DirSep
-  bearX509Path = bearSrcPath & DirSep & "x509" & DirSep
-  bearSslPath = bearSrcPath & DirSep & "ssl" & DirSep
-  bearMacPath = bearSrcPath & DirSep & "mac" & DirSep
-  bearKdfPath = bearSrcPath & DirSep & "kdf" & DirSep
-  bearHashPath = bearSrcPath & DirSep & "hash" & DirSep
-  bearSymcPath = bearSrcPath & DirSep & "symcipher" & DirSep
-  bearAeadPath = bearSrcPath & DirSep & "aead" & DirSep
-  bearToolsPath = bearPath & "tools" & DirSep
-  bearRootPath = bearSrcPath & DirSep
+const bearPath = currentSourcePath.parentDir() / "csources"
 
-{.passC: "-I" & quoteShell(bearSrcPath)}
-{.passC: "-I" & quoteShell(bearIncPath)}
-{.passC: "-I" & quoteShell(bearPath & "tools")}
+{.passC: "-I" & quoteShell(bearPath / "inc")}
 
-when defined(windows):
-  {.passC: "-DBR_USE_WIN32_TIME=1".}
-  {.passC: "-DBR_USE_WIN32_RAND=1".}
-else:
-  {.passC: "-DBR_USE_UNIX_TIME=1".}
-  {.passC: "-DBR_USE_URANDOM=1".}
-
-when system.cpuEndian == bigEndian:
-  {.passC: "-DBR_BE_UNALIGNED=1".}
-else:
-  {.passC: "-DBR_LE_UNALIGNED=1".}
-
-when sizeof(int) == 8:
-  {.passC: "-DBR_64=1".}
-  when hostCPU == "amd64":
-    {.passC:" -DBR_amd64=1".}
+when defined(BearSSLBundledStaticLib):
   when defined(vcc):
-    {.passC: "-DBR_UMUL128=1".}
+    {.passL: quoteShell(bearPath / "build" / "bearssls.lib").}
   else:
-    {.passC: "-DBR_INT128=1".}
+    {.passL: quoteShell(bearPath / "build" / "libbearssl.a").}
+else:
+  # let Nim build and link individual BearSSL objects
+  const
+    bearSrcPath = bearPath / "src"
+    bearIncPath = bearPath / "inc"
+    bearIntPath = bearSrcPath / "int"
+    bearCodecPath = bearSrcPath / "codec"
+    bearRandPath = bearSrcPath / "rand"
+    bearRsaPath = bearSrcPath / "rsa"
+    bearEcPath = bearSrcPath / "ec"
+    bearX509Path = bearSrcPath / "x509"
+    bearSslPath = bearSrcPath / "ssl"
+    bearMacPath = bearSrcPath / "mac"
+    bearKdfPath = bearSrcPath / "kdf"
+    bearHashPath = bearSrcPath / "hash"
+    bearSymcPath = bearSrcPath / "symcipher"
+    bearAeadPath = bearSrcPath / "aead"
+    bearRootPath = bearSrcPath
 
-{.compile: bearCodecPath & "ccopy.c".}
-{.compile: bearCodecPath & "dec16be.c".}
-{.compile: bearCodecPath & "dec16le.c".}
-{.compile: bearCodecPath & "dec32be.c".}
-{.compile: bearCodecPath & "dec32le.c".}
-{.compile: bearCodecPath & "dec64be.c".}
-{.compile: bearCodecPath & "dec64le.c".}
-{.compile: bearCodecPath & "enc16be.c".}
-{.compile: bearCodecPath & "enc16le.c".}
-{.compile: bearCodecPath & "enc32be.c".}
-{.compile: bearCodecPath & "enc32le.c".}
-{.compile: bearCodecPath & "enc64be.c".}
-{.compile: bearCodecPath & "enc64le.c".}
-{.compile: bearCodecPath & "pemdec.c".}
-{.compile: bearCodecPath & "pemenc.c".}
+  {.passC: "-I" & quoteShell(bearSrcPath)}
 
-{.compile: bearEcPath & "ecdsa_atr.c".}
-{.compile: bearEcPath & "ecdsa_default_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_default_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_default_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_default_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_i15_bits.c".}
-{.compile: bearEcPath & "ecdsa_i15_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i15_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_i15_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i15_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_i31_bits.c".}
-{.compile: bearEcPath & "ecdsa_i31_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i31_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_i31_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i31_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_rta.c".}
-{.compile: bearEcPath & "ec_all_m15.c".}
-{.compile: bearEcPath & "ec_all_m31.c".}
-{.compile: bearEcPath & "ec_c25519_i15.c".}
-{.compile: bearEcPath & "ec_c25519_i31.c".}
-{.compile: bearEcPath & "ec_c25519_m15.c".}
-{.compile: bearEcPath & "ec_c25519_m31.c".}
-{.compile: bearEcPath & "ec_c25519_m62.c".}
-{.compile: bearEcPath & "ec_c25519_m64.c".}
-{.compile: bearEcPath & "ec_curve25519.c".}
-{.compile: bearEcPath & "ec_default.c".}
-{.compile: bearEcPath & "ec_keygen.c".}
-{.compile: bearEcPath & "ec_p256_m15.c".}
-{.compile: bearEcPath & "ec_p256_m31.c".}
-{.compile: bearEcPath & "ec_p256_m62.c".}
-{.compile: bearEcPath & "ec_p256_m64.c".}
-{.compile: bearEcPath & "ec_prime_i15.c".}
-{.compile: bearEcPath & "ec_prime_i31.c".}
-{.compile: bearEcPath & "ec_pubkey.c".}
-{.compile: bearEcPath & "ec_secp256r1.c".}
-{.compile: bearEcPath & "ec_secp384r1.c".}
-{.compile: bearEcPath & "ec_secp521r1.c".}
+  {.compile: bearCodecPath / "ccopy.c".}
+  {.compile: bearCodecPath / "dec16be.c".}
+  {.compile: bearCodecPath / "dec16le.c".}
+  {.compile: bearCodecPath / "dec32be.c".}
+  {.compile: bearCodecPath / "dec32le.c".}
+  {.compile: bearCodecPath / "dec64be.c".}
+  {.compile: bearCodecPath / "dec64le.c".}
+  {.compile: bearCodecPath / "enc16be.c".}
+  {.compile: bearCodecPath / "enc16le.c".}
+  {.compile: bearCodecPath / "enc32be.c".}
+  {.compile: bearCodecPath / "enc32le.c".}
+  {.compile: bearCodecPath / "enc64be.c".}
+  {.compile: bearCodecPath / "enc64le.c".}
+  {.compile: bearCodecPath / "pemdec.c".}
+  {.compile: bearCodecPath / "pemenc.c".}
 
-{.compile: bearHashPath & "dig_oid.c".}
-{.compile: bearHashPath & "dig_size.c".}
-{.compile: bearHashPath & "ghash_ctmul.c".}
-{.compile: bearHashPath & "ghash_ctmul32.c".}
-{.compile: bearHashPath & "ghash_ctmul64.c".}
-{.compile: bearHashPath & "ghash_pclmul.c".}
-{.compile: bearHashPath & "ghash_pwr8.c".}
-{.compile: bearHashPath & "md5.c".}
-{.compile: bearHashPath & "md5sha1.c".}
-{.compile: bearHashPath & "mgf1.c".}
-{.compile: bearHashPath & "multihash.c".}
-{.compile: bearHashPath & "sha1.c".}
-{.compile: bearHashPath & "sha2big.c".}
-{.compile: bearHashPath & "sha2small.c".}
+  {.compile: bearEcPath / "ecdsa_atr.c".}
+  {.compile: bearEcPath / "ecdsa_default_sign_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_default_sign_raw.c".}
+  {.compile: bearEcPath / "ecdsa_default_vrfy_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_default_vrfy_raw.c".}
+  {.compile: bearEcPath / "ecdsa_i15_bits.c".}
+  {.compile: bearEcPath / "ecdsa_i15_sign_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_i15_sign_raw.c".}
+  {.compile: bearEcPath / "ecdsa_i15_vrfy_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_i15_vrfy_raw.c".}
+  {.compile: bearEcPath / "ecdsa_i31_bits.c".}
+  {.compile: bearEcPath / "ecdsa_i31_sign_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_i31_sign_raw.c".}
+  {.compile: bearEcPath / "ecdsa_i31_vrfy_asn1.c".}
+  {.compile: bearEcPath / "ecdsa_i31_vrfy_raw.c".}
+  {.compile: bearEcPath / "ecdsa_rta.c".}
+  {.compile: bearEcPath / "ec_all_m15.c".}
+  {.compile: bearEcPath / "ec_all_m31.c".}
+  {.compile: bearEcPath / "ec_c25519_i15.c".}
+  {.compile: bearEcPath / "ec_c25519_i31.c".}
+  {.compile: bearEcPath / "ec_c25519_m15.c".}
+  {.compile: bearEcPath / "ec_c25519_m31.c".}
+  {.compile: bearEcPath / "ec_c25519_m62.c".}
+  {.compile: bearEcPath / "ec_c25519_m64.c".}
+  {.compile: bearEcPath / "ec_curve25519.c".}
+  {.compile: bearEcPath / "ec_default.c".}
+  {.compile: bearEcPath / "ec_keygen.c".}
+  {.compile: bearEcPath / "ec_p256_m15.c".}
+  {.compile: bearEcPath / "ec_p256_m31.c".}
+  {.compile: bearEcPath / "ec_p256_m62.c".}
+  {.compile: bearEcPath / "ec_p256_m64.c".}
+  {.compile: bearEcPath / "ec_prime_i15.c".}
+  {.compile: bearEcPath / "ec_prime_i31.c".}
+  {.compile: bearEcPath / "ec_pubkey.c".}
+  {.compile: bearEcPath / "ec_secp256r1.c".}
+  {.compile: bearEcPath / "ec_secp384r1.c".}
+  {.compile: bearEcPath / "ec_secp521r1.c".}
 
-{.compile: bearIntPath & "i15_add.c".}
-{.compile: bearIntPath & "i15_bitlen.c".}
-{.compile: bearIntPath & "i15_decmod.c".}
-{.compile: bearIntPath & "i15_decode.c".}
-{.compile: bearIntPath & "i15_decred.c".}
-{.compile: bearIntPath & "i15_encode.c".}
-{.compile: bearIntPath & "i15_fmont.c".}
-{.compile: bearIntPath & "i15_iszero.c".}
-{.compile: bearIntPath & "i15_moddiv.c".}
-{.compile: bearIntPath & "i15_modpow.c".}
-{.compile: bearIntPath & "i15_modpow2.c".}
-{.compile: bearIntPath & "i15_montmul.c".}
-{.compile: bearIntPath & "i15_mulacc.c".}
-{.compile: bearIntPath & "i15_muladd.c".}
-{.compile: bearIntPath & "i15_ninv15.c".}
-{.compile: bearIntPath & "i15_reduce.c".}
-{.compile: bearIntPath & "i15_rshift.c".}
-{.compile: bearIntPath & "i15_sub.c".}
-{.compile: bearIntPath & "i15_tmont.c".}
-{.compile: bearIntPath & "i31_add.c".}
-{.compile: bearIntPath & "i31_bitlen.c".}
-{.compile: bearIntPath & "i31_decmod.c".}
-{.compile: bearIntPath & "i31_decode.c".}
-{.compile: bearIntPath & "i31_decred.c".}
-{.compile: bearIntPath & "i31_encode.c".}
-{.compile: bearIntPath & "i31_fmont.c".}
-{.compile: bearIntPath & "i31_iszero.c".}
-{.compile: bearIntPath & "i31_moddiv.c".}
-{.compile: bearIntPath & "i31_modpow.c".}
-{.compile: bearIntPath & "i31_modpow2.c".}
-{.compile: bearIntPath & "i31_montmul.c".}
-{.compile: bearIntPath & "i31_mulacc.c".}
-{.compile: bearIntPath & "i31_muladd.c".}
-{.compile: bearIntPath & "i31_ninv31.c".}
-{.compile: bearIntPath & "i31_reduce.c".}
-{.compile: bearIntPath & "i31_rshift.c".}
-{.compile: bearIntPath & "i31_sub.c".}
-{.compile: bearIntPath & "i31_tmont.c".}
-{.compile: bearIntPath & "i32_add.c".}
-{.compile: bearIntPath & "i32_bitlen.c".}
-{.compile: bearIntPath & "i32_decmod.c".}
-{.compile: bearIntPath & "i32_decode.c".}
-{.compile: bearIntPath & "i32_decred.c".}
-{.compile: bearIntPath & "i32_div32.c".}
-{.compile: bearIntPath & "i32_encode.c".}
-{.compile: bearIntPath & "i32_fmont.c".}
-{.compile: bearIntPath & "i32_iszero.c".}
-{.compile: bearIntPath & "i32_modpow.c".}
-{.compile: bearIntPath & "i32_montmul.c".}
-{.compile: bearIntPath & "i32_mulacc.c".}
-{.compile: bearIntPath & "i32_muladd.c".}
-{.compile: bearIntPath & "i32_ninv32.c".}
-{.compile: bearIntPath & "i32_reduce.c".}
-{.compile: bearIntPath & "i32_sub.c".}
-{.compile: bearIntPath & "i32_tmont.c".}
-{.compile: bearIntPath & "i62_modpow2.c".}
+  {.compile: bearHashPath / "dig_oid.c".}
+  {.compile: bearHashPath / "dig_size.c".}
+  {.compile: bearHashPath / "ghash_ctmul.c".}
+  {.compile: bearHashPath / "ghash_ctmul32.c".}
+  {.compile: bearHashPath / "ghash_ctmul64.c".}
+  {.compile: bearHashPath / "ghash_pclmul.c".}
+  {.compile: bearHashPath / "ghash_pwr8.c".}
+  {.compile: bearHashPath / "md5.c".}
+  {.compile: bearHashPath / "md5sha1.c".}
+  {.compile: bearHashPath / "mgf1.c".}
+  {.compile: bearHashPath / "multihash.c".}
+  {.compile: bearHashPath / "sha1.c".}
+  {.compile: bearHashPath / "sha2big.c".}
+  {.compile: bearHashPath / "sha2small.c".}
 
-{.compile: bearKdfPath & "hkdf.c".}
-{.compile: bearKdfPath & "shake.c".}
+  {.compile: bearIntPath / "i15_add.c".}
+  {.compile: bearIntPath / "i15_bitlen.c".}
+  {.compile: bearIntPath / "i15_decmod.c".}
+  {.compile: bearIntPath / "i15_decode.c".}
+  {.compile: bearIntPath / "i15_decred.c".}
+  {.compile: bearIntPath / "i15_encode.c".}
+  {.compile: bearIntPath / "i15_fmont.c".}
+  {.compile: bearIntPath / "i15_iszero.c".}
+  {.compile: bearIntPath / "i15_moddiv.c".}
+  {.compile: bearIntPath / "i15_modpow.c".}
+  {.compile: bearIntPath / "i15_modpow2.c".}
+  {.compile: bearIntPath / "i15_montmul.c".}
+  {.compile: bearIntPath / "i15_mulacc.c".}
+  {.compile: bearIntPath / "i15_muladd.c".}
+  {.compile: bearIntPath / "i15_ninv15.c".}
+  {.compile: bearIntPath / "i15_reduce.c".}
+  {.compile: bearIntPath / "i15_rshift.c".}
+  {.compile: bearIntPath / "i15_sub.c".}
+  {.compile: bearIntPath / "i15_tmont.c".}
+  {.compile: bearIntPath / "i31_add.c".}
+  {.compile: bearIntPath / "i31_bitlen.c".}
+  {.compile: bearIntPath / "i31_decmod.c".}
+  {.compile: bearIntPath / "i31_decode.c".}
+  {.compile: bearIntPath / "i31_decred.c".}
+  {.compile: bearIntPath / "i31_encode.c".}
+  {.compile: bearIntPath / "i31_fmont.c".}
+  {.compile: bearIntPath / "i31_iszero.c".}
+  {.compile: bearIntPath / "i31_moddiv.c".}
+  {.compile: bearIntPath / "i31_modpow.c".}
+  {.compile: bearIntPath / "i31_modpow2.c".}
+  {.compile: bearIntPath / "i31_montmul.c".}
+  {.compile: bearIntPath / "i31_mulacc.c".}
+  {.compile: bearIntPath / "i31_muladd.c".}
+  {.compile: bearIntPath / "i31_ninv31.c".}
+  {.compile: bearIntPath / "i31_reduce.c".}
+  {.compile: bearIntPath / "i31_rshift.c".}
+  {.compile: bearIntPath / "i31_sub.c".}
+  {.compile: bearIntPath / "i31_tmont.c".}
+  {.compile: bearIntPath / "i32_add.c".}
+  {.compile: bearIntPath / "i32_bitlen.c".}
+  {.compile: bearIntPath / "i32_decmod.c".}
+  {.compile: bearIntPath / "i32_decode.c".}
+  {.compile: bearIntPath / "i32_decred.c".}
+  {.compile: bearIntPath / "i32_div32.c".}
+  {.compile: bearIntPath / "i32_encode.c".}
+  {.compile: bearIntPath / "i32_fmont.c".}
+  {.compile: bearIntPath / "i32_iszero.c".}
+  {.compile: bearIntPath / "i32_modpow.c".}
+  {.compile: bearIntPath / "i32_montmul.c".}
+  {.compile: bearIntPath / "i32_mulacc.c".}
+  {.compile: bearIntPath / "i32_muladd.c".}
+  {.compile: bearIntPath / "i32_ninv32.c".}
+  {.compile: bearIntPath / "i32_reduce.c".}
+  {.compile: bearIntPath / "i32_sub.c".}
+  {.compile: bearIntPath / "i32_tmont.c".}
+  {.compile: bearIntPath / "i62_modpow2.c".}
 
-{.compile: bearMacPath & "hmac.c".}
-{.compile: bearMacPath & "hmac_ct.c".}
+  {.compile: bearKdfPath / "hkdf.c".}
+  {.compile: bearKdfPath / "shake.c".}
 
-{.compile: bearRandPath & "aesctr_drbg.c".}
-{.compile: bearRandPath & "hmac_drbg.c".}
-{.compile: bearRandPath & "sysrng.c".}
+  {.compile: bearMacPath / "hmac.c".}
+  {.compile: bearMacPath / "hmac_ct.c".}
 
-{.compile: bearRsaPath & "rsa_default_keygen.c".}
-{.compile: bearRsaPath & "rsa_default_modulus.c".}
-{.compile: bearRsaPath & "rsa_default_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_default_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_default_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_default_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_default_priv.c".}
-{.compile: bearRsaPath & "rsa_default_privexp.c".}
-{.compile: bearRsaPath & "rsa_default_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_default_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_default_pub.c".}
-{.compile: bearRsaPath & "rsa_default_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i15_keygen.c".}
-{.compile: bearRsaPath & "rsa_i15_modulus.c".}
-{.compile: bearRsaPath & "rsa_i15_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i15_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i15_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i15_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i15_priv.c".}
-{.compile: bearRsaPath & "rsa_i15_privexp.c".}
-{.compile: bearRsaPath & "rsa_i15_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i15_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i15_pub.c".}
-{.compile: bearRsaPath & "rsa_i15_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i31_keygen.c".}
-{.compile: bearRsaPath & "rsa_i31_keygen_inner.c".}
-{.compile: bearRsaPath & "rsa_i31_modulus.c".}
-{.compile: bearRsaPath & "rsa_i31_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i31_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i31_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i31_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i31_priv.c".}
-{.compile: bearRsaPath & "rsa_i31_privexp.c".}
-{.compile: bearRsaPath & "rsa_i31_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i31_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i31_pub.c".}
-{.compile: bearRsaPath & "rsa_i31_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i32_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i32_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i32_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i32_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i32_priv.c".}
-{.compile: bearRsaPath & "rsa_i32_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i32_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i32_pub.c".}
-{.compile: bearRsaPath & "rsa_i62_keygen.c".}
-{.compile: bearRsaPath & "rsa_i62_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i62_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i62_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i62_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i62_priv.c".}
-{.compile: bearRsaPath & "rsa_i62_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i62_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i62_pub.c".}
-{.compile: bearRsaPath & "rsa_oaep_pad.c".}
-{.compile: bearRsaPath & "rsa_oaep_unpad.c".}
-{.compile: bearRsaPath & "rsa_pkcs1_sig_pad.c".}
-{.compile: bearRsaPath & "rsa_pkcs1_sig_unpad.c".}
-{.compile: bearRsaPath & "rsa_pss_sig_pad.c".}
-{.compile: bearRsaPath & "rsa_pss_sig_unpad.c".}
-{.compile: bearRsaPath & "rsa_ssl_decrypt.c".}
+  {.compile: bearRandPath / "aesctr_drbg.c".}
+  {.compile: bearRandPath / "hmac_drbg.c".}
+  {.compile: bearRandPath / "sysrng.c".}
 
-{.compile: bearSslPath & "prf.c".}
-{.compile: bearSslPath & "prf_md5sha1.c".}
-{.compile: bearSslPath & "prf_sha256.c".}
-{.compile: bearSslPath & "prf_sha384.c".}
-{.compile: bearSslPath & "ssl_ccert_single_ec.c".}
-{.compile: bearSslPath & "ssl_ccert_single_rsa.c".}
-{.compile: bearSslPath & "ssl_client.c".}
-{.compile: bearSslPath & "ssl_client_default_rsapub.c".}
-{.compile: bearSslPath & "ssl_client_full.c".}
-{.compile: bearSslPath & "ssl_engine.c".}
-{.compile: bearSslPath & "ssl_engine_default_aescbc.c".}
-{.compile: bearSslPath & "ssl_engine_default_aesccm.c".}
-{.compile: bearSslPath & "ssl_engine_default_aesgcm.c".}
-{.compile: bearSslPath & "ssl_engine_default_chapol.c".}
-{.compile: bearSslPath & "ssl_engine_default_descbc.c".}
-{.compile: bearSslPath & "ssl_engine_default_ec.c".}
-{.compile: bearSslPath & "ssl_engine_default_ecdsa.c".}
-{.compile: bearSslPath & "ssl_engine_default_rsavrfy.c".}
-{.compile: bearSslPath & "ssl_hashes.c".}
-{.compile: bearSslPath & "ssl_hs_client.c".}
-{.compile: bearSslPath & "ssl_hs_server.c".}
-{.compile: bearSslPath & "ssl_io.c".}
-{.compile: bearSslPath & "ssl_keyexport.c".}
-{.compile: bearSslPath & "ssl_lru.c".}
-{.compile: bearSslPath & "ssl_rec_cbc.c".}
-{.compile: bearSslPath & "ssl_rec_ccm.c".}
-{.compile: bearSslPath & "ssl_rec_chapol.c".}
-{.compile: bearSslPath & "ssl_rec_gcm.c".}
-{.compile: bearSslPath & "ssl_scert_single_ec.c".}
-{.compile: bearSslPath & "ssl_scert_single_rsa.c".}
-{.compile: bearSslPath & "ssl_server.c".}
-{.compile: bearSslPath & "ssl_server_full_ec.c".}
-{.compile: bearSslPath & "ssl_server_full_rsa.c".}
-{.compile: bearSslPath & "ssl_server_mine2c.c".}
-{.compile: bearSslPath & "ssl_server_mine2g.c".}
-{.compile: bearSslPath & "ssl_server_minf2c.c".}
-{.compile: bearSslPath & "ssl_server_minf2g.c".}
-{.compile: bearSslPath & "ssl_server_minr2g.c".}
-{.compile: bearSslPath & "ssl_server_minu2g.c".}
-{.compile: bearSslPath & "ssl_server_minv2g.c".}
+  {.compile: bearRsaPath / "rsa_default_keygen.c".}
+  {.compile: bearRsaPath / "rsa_default_modulus.c".}
+  {.compile: bearRsaPath / "rsa_default_oaep_decrypt.c".}
+  {.compile: bearRsaPath / "rsa_default_oaep_encrypt.c".}
+  {.compile: bearRsaPath / "rsa_default_pkcs1_sign.c".}
+  {.compile: bearRsaPath / "rsa_default_pkcs1_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_default_priv.c".}
+  {.compile: bearRsaPath / "rsa_default_privexp.c".}
+  {.compile: bearRsaPath / "rsa_default_pss_sign.c".}
+  {.compile: bearRsaPath / "rsa_default_pss_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_default_pub.c".}
+  {.compile: bearRsaPath / "rsa_default_pubexp.c".}
+  {.compile: bearRsaPath / "rsa_i15_keygen.c".}
+  {.compile: bearRsaPath / "rsa_i15_modulus.c".}
+  {.compile: bearRsaPath / "rsa_i15_oaep_decrypt.c".}
+  {.compile: bearRsaPath / "rsa_i15_oaep_encrypt.c".}
+  {.compile: bearRsaPath / "rsa_i15_pkcs1_sign.c".}
+  {.compile: bearRsaPath / "rsa_i15_pkcs1_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i15_priv.c".}
+  {.compile: bearRsaPath / "rsa_i15_privexp.c".}
+  {.compile: bearRsaPath / "rsa_i15_pss_sign.c".}
+  {.compile: bearRsaPath / "rsa_i15_pss_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i15_pub.c".}
+  {.compile: bearRsaPath / "rsa_i15_pubexp.c".}
+  {.compile: bearRsaPath / "rsa_i31_keygen.c".}
+  {.compile: bearRsaPath / "rsa_i31_keygen_inner.c".}
+  {.compile: bearRsaPath / "rsa_i31_modulus.c".}
+  {.compile: bearRsaPath / "rsa_i31_oaep_decrypt.c".}
+  {.compile: bearRsaPath / "rsa_i31_oaep_encrypt.c".}
+  {.compile: bearRsaPath / "rsa_i31_pkcs1_sign.c".}
+  {.compile: bearRsaPath / "rsa_i31_pkcs1_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i31_priv.c".}
+  {.compile: bearRsaPath / "rsa_i31_privexp.c".}
+  {.compile: bearRsaPath / "rsa_i31_pss_sign.c".}
+  {.compile: bearRsaPath / "rsa_i31_pss_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i31_pub.c".}
+  {.compile: bearRsaPath / "rsa_i31_pubexp.c".}
+  {.compile: bearRsaPath / "rsa_i32_oaep_decrypt.c".}
+  {.compile: bearRsaPath / "rsa_i32_oaep_encrypt.c".}
+  {.compile: bearRsaPath / "rsa_i32_pkcs1_sign.c".}
+  {.compile: bearRsaPath / "rsa_i32_pkcs1_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i32_priv.c".}
+  {.compile: bearRsaPath / "rsa_i32_pss_sign.c".}
+  {.compile: bearRsaPath / "rsa_i32_pss_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i32_pub.c".}
+  {.compile: bearRsaPath / "rsa_i62_keygen.c".}
+  {.compile: bearRsaPath / "rsa_i62_oaep_decrypt.c".}
+  {.compile: bearRsaPath / "rsa_i62_oaep_encrypt.c".}
+  {.compile: bearRsaPath / "rsa_i62_pkcs1_sign.c".}
+  {.compile: bearRsaPath / "rsa_i62_pkcs1_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i62_priv.c".}
+  {.compile: bearRsaPath / "rsa_i62_pss_sign.c".}
+  {.compile: bearRsaPath / "rsa_i62_pss_vrfy.c".}
+  {.compile: bearRsaPath / "rsa_i62_pub.c".}
+  {.compile: bearRsaPath / "rsa_oaep_pad.c".}
+  {.compile: bearRsaPath / "rsa_oaep_unpad.c".}
+  {.compile: bearRsaPath / "rsa_pkcs1_sig_pad.c".}
+  {.compile: bearRsaPath / "rsa_pkcs1_sig_unpad.c".}
+  {.compile: bearRsaPath / "rsa_pss_sig_pad.c".}
+  {.compile: bearRsaPath / "rsa_pss_sig_unpad.c".}
+  {.compile: bearRsaPath / "rsa_ssl_decrypt.c".}
 
-{.compile: bearSymcPath & "aes_big_cbcdec.c".}
-{.compile: bearSymcPath & "aes_big_cbcenc.c".}
-{.compile: bearSymcPath & "aes_big_ctr.c".}
-{.compile: bearSymcPath & "aes_big_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_big_dec.c".}
-{.compile: bearSymcPath & "aes_big_enc.c".}
-{.compile: bearSymcPath & "aes_common.c".}
-{.compile: bearSymcPath & "aes_ct.c".}
-{.compile: bearSymcPath & "aes_ct64.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct64_ctr.c".}
-{.compile: bearSymcPath & "aes_ct64_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct64_dec.c".}
-{.compile: bearSymcPath & "aes_ct64_enc.c".}
-{.compile: bearSymcPath & "aes_ct_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct_ctr.c".}
-{.compile: bearSymcPath & "aes_ct_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct_dec.c".}
-{.compile: bearSymcPath & "aes_ct_enc.c".}
-{.compile: bearSymcPath & "aes_pwr8.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcdec.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcenc.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctr.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_cbcdec.c".}
-{.compile: bearSymcPath & "aes_small_cbcenc.c".}
-{.compile: bearSymcPath & "aes_small_ctr.c".}
-{.compile: bearSymcPath & "aes_small_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_dec.c".}
-{.compile: bearSymcPath & "aes_small_enc.c".}
-{.compile: bearSymcPath & "aes_x86ni.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcdec.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcenc.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctr.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctrcbc.c".}
-{.compile: bearSymcPath & "chacha20_ct.c".}
-{.compile: bearSymcPath & "chacha20_sse2.c".}
-{.compile: bearSymcPath & "des_ct.c".}
-{.compile: bearSymcPath & "des_ct_cbcdec.c".}
-{.compile: bearSymcPath & "des_ct_cbcenc.c".}
-{.compile: bearSymcPath & "des_support.c".}
-{.compile: bearSymcPath & "des_tab.c".}
-{.compile: bearSymcPath & "des_tab_cbcdec.c".}
-{.compile: bearSymcPath & "des_tab_cbcenc.c".}
-{.compile: bearSymcPath & "poly1305_ctmul.c".}
-{.compile: bearSymcPath & "poly1305_ctmul32.c".}
-{.compile: bearSymcPath & "poly1305_ctmulq.c".}
-{.compile: bearSymcPath & "poly1305_i15.c".}
+  {.compile: bearSslPath / "prf.c".}
+  {.compile: bearSslPath / "prf_md5sha1.c".}
+  {.compile: bearSslPath / "prf_sha256.c".}
+  {.compile: bearSslPath / "prf_sha384.c".}
+  {.compile: bearSslPath / "ssl_ccert_single_ec.c".}
+  {.compile: bearSslPath / "ssl_ccert_single_rsa.c".}
+  {.compile: bearSslPath / "ssl_client.c".}
+  {.compile: bearSslPath / "ssl_client_default_rsapub.c".}
+  {.compile: bearSslPath / "ssl_client_full.c".}
+  {.compile: bearSslPath / "ssl_engine.c".}
+  {.compile: bearSslPath / "ssl_engine_default_aescbc.c".}
+  {.compile: bearSslPath / "ssl_engine_default_aesccm.c".}
+  {.compile: bearSslPath / "ssl_engine_default_aesgcm.c".}
+  {.compile: bearSslPath / "ssl_engine_default_chapol.c".}
+  {.compile: bearSslPath / "ssl_engine_default_descbc.c".}
+  {.compile: bearSslPath / "ssl_engine_default_ec.c".}
+  {.compile: bearSslPath / "ssl_engine_default_ecdsa.c".}
+  {.compile: bearSslPath / "ssl_engine_default_rsavrfy.c".}
+  {.compile: bearSslPath / "ssl_hashes.c".}
+  {.compile: bearSslPath / "ssl_hs_client.c".}
+  {.compile: bearSslPath / "ssl_hs_server.c".}
+  {.compile: bearSslPath / "ssl_io.c".}
+  {.compile: bearSslPath / "ssl_keyexport.c".}
+  {.compile: bearSslPath / "ssl_lru.c".}
+  {.compile: bearSslPath / "ssl_rec_cbc.c".}
+  {.compile: bearSslPath / "ssl_rec_ccm.c".}
+  {.compile: bearSslPath / "ssl_rec_chapol.c".}
+  {.compile: bearSslPath / "ssl_rec_gcm.c".}
+  {.compile: bearSslPath / "ssl_scert_single_ec.c".}
+  {.compile: bearSslPath / "ssl_scert_single_rsa.c".}
+  {.compile: bearSslPath / "ssl_server.c".}
+  {.compile: bearSslPath / "ssl_server_full_ec.c".}
+  {.compile: bearSslPath / "ssl_server_full_rsa.c".}
+  {.compile: bearSslPath / "ssl_server_mine2c.c".}
+  {.compile: bearSslPath / "ssl_server_mine2g.c".}
+  {.compile: bearSslPath / "ssl_server_minf2c.c".}
+  {.compile: bearSslPath / "ssl_server_minf2g.c".}
+  {.compile: bearSslPath / "ssl_server_minr2g.c".}
+  {.compile: bearSslPath / "ssl_server_minu2g.c".}
+  {.compile: bearSslPath / "ssl_server_minv2g.c".}
 
-{.compile: bearAeadPath & "ccm.c".}
-{.compile: bearAeadPath & "eax.c".}
-{.compile: bearAeadPath & "gcm.c".}
+  {.compile: bearSymcPath / "aes_big_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_big_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_big_ctr.c".}
+  {.compile: bearSymcPath / "aes_big_ctrcbc.c".}
+  {.compile: bearSymcPath / "aes_big_dec.c".}
+  {.compile: bearSymcPath / "aes_big_enc.c".}
+  {.compile: bearSymcPath / "aes_common.c".}
+  {.compile: bearSymcPath / "aes_ct.c".}
+  {.compile: bearSymcPath / "aes_ct64.c".}
+  {.compile: bearSymcPath / "aes_ct64_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_ct64_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_ct64_ctr.c".}
+  {.compile: bearSymcPath / "aes_ct64_ctrcbc.c".}
+  {.compile: bearSymcPath / "aes_ct64_dec.c".}
+  {.compile: bearSymcPath / "aes_ct64_enc.c".}
+  {.compile: bearSymcPath / "aes_ct_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_ct_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_ct_ctr.c".}
+  {.compile: bearSymcPath / "aes_ct_ctrcbc.c".}
+  {.compile: bearSymcPath / "aes_ct_dec.c".}
+  {.compile: bearSymcPath / "aes_ct_enc.c".}
+  {.compile: bearSymcPath / "aes_pwr8.c".}
+  {.compile: bearSymcPath / "aes_pwr8_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_pwr8_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_pwr8_ctr.c".}
+  {.compile: bearSymcPath / "aes_pwr8_ctrcbc.c".}
+  {.compile: bearSymcPath / "aes_small_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_small_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_small_ctr.c".}
+  {.compile: bearSymcPath / "aes_small_ctrcbc.c".}
+  {.compile: bearSymcPath / "aes_small_dec.c".}
+  {.compile: bearSymcPath / "aes_small_enc.c".}
+  {.compile: bearSymcPath / "aes_x86ni.c".}
+  {.compile: bearSymcPath / "aes_x86ni_cbcdec.c".}
+  {.compile: bearSymcPath / "aes_x86ni_cbcenc.c".}
+  {.compile: bearSymcPath / "aes_x86ni_ctr.c".}
+  {.compile: bearSymcPath / "aes_x86ni_ctrcbc.c".}
+  {.compile: bearSymcPath / "chacha20_ct.c".}
+  {.compile: bearSymcPath / "chacha20_sse2.c".}
+  {.compile: bearSymcPath / "des_ct.c".}
+  {.compile: bearSymcPath / "des_ct_cbcdec.c".}
+  {.compile: bearSymcPath / "des_ct_cbcenc.c".}
+  {.compile: bearSymcPath / "des_support.c".}
+  {.compile: bearSymcPath / "des_tab.c".}
+  {.compile: bearSymcPath / "des_tab_cbcdec.c".}
+  {.compile: bearSymcPath / "des_tab_cbcenc.c".}
+  {.compile: bearSymcPath / "poly1305_ctmul.c".}
+  {.compile: bearSymcPath / "poly1305_ctmul32.c".}
+  {.compile: bearSymcPath / "poly1305_ctmulq.c".}
+  {.compile: bearSymcPath / "poly1305_i15.c".}
 
-{.compile: bearX509Path & "asn1enc.c".}
-{.compile: bearX509Path & "encode_ec_pk8der.c".}
-{.compile: bearX509Path & "encode_ec_rawder.c".}
-{.compile: bearX509Path & "encode_rsa_pk8der.c".}
-{.compile: bearX509Path & "encode_rsa_rawder.c".}
-{.compile: bearX509Path & "skey_decoder.c".}
-{.compile: bearX509Path & "x509_decoder.c".}
-{.compile: bearX509Path & "x509_knownkey.c".}
-{.compile: bearX509Path & "x509_minimal.c".}
-{.compile: bearX509Path & "x509_minimal_full.c".}
+  {.compile: bearAeadPath / "ccm.c".}
+  {.compile: bearAeadPath / "eax.c".}
+  {.compile: bearAeadPath / "gcm.c".}
 
-{.compile: bearRootPath & "settings.c".}
+  {.compile: bearX509Path / "asn1enc.c".}
+  {.compile: bearX509Path / "encode_ec_pk8der.c".}
+  {.compile: bearX509Path / "encode_ec_rawder.c".}
+  {.compile: bearX509Path / "encode_rsa_pk8der.c".}
+  {.compile: bearX509Path / "encode_rsa_rawder.c".}
+  {.compile: bearX509Path / "skey_decoder.c".}
+  {.compile: bearX509Path / "x509_decoder.c".}
+  {.compile: bearX509Path / "x509_knownkey.c".}
+  {.compile: bearX509Path / "x509_minimal.c".}
+  {.compile: bearX509Path / "x509_minimal_full.c".}
+
+  {.compile: bearRootPath / "settings.c".}
 
 # This modules must be reimplemented using Nim, because it can be changed
 # freely.
-{.compile: bearToolsPath & "xmem.c".}
-{.compile: bearToolsPath & "vector.c".}
-{.compile: bearToolsPath & "names.c".}
-{.compile: bearToolsPath & "certs.c".}
-{.compile: bearToolsPath & "files.c".}
+{.passC: "-I" & quoteShell(bearPath / "tools")}
+{.compile: bearPath / "tools" / "xmem.c".}
+{.compile: bearPath / "tools" / "vector.c".}
+{.compile: bearPath / "tools" / "names.c".}
+{.compile: bearPath / "tools" / "certs.c".}
+{.compile: bearPath / "tools" / "files.c".}
 
 {.pragma: bearSslFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 
