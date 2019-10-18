@@ -1945,16 +1945,16 @@ type
   EcImpl* {.importc: "br_ec_impl", header: "bearssl_ec.h", bycopy.} = object
     supportedCurves* {.importc: "supported_curves".}: uint32
     generator* {.importc: "generator".}: proc (curve: cint; len: ptr int): ptr cuchar {.
-        cdecl.}
-    order* {.importc: "order".}: proc (curve: cint; len: ptr int): ptr cuchar {.cdecl.}
-    xoff* {.importc: "xoff".}: proc (curve: cint; len: ptr int): int {.cdecl.}
+        cdecl, gcsafe.}
+    order* {.importc: "order".}: proc (curve: cint; len: ptr int): ptr cuchar {.cdecl, gcsafe.}
+    xoff* {.importc: "xoff".}: proc (curve: cint; len: ptr int): int {.cdecl, gcsafe.}
     mul* {.importc: "mul".}: proc (g: ptr cuchar; glen: int; x: ptr cuchar; xlen: int;
-                               curve: cint): uint32 {.cdecl.}
+                               curve: cint): uint32 {.cdecl, gcsafe.}
     mulgen* {.importc: "mulgen".}: proc (r: ptr cuchar; x: ptr cuchar; xlen: int;
-                                     curve: cint): int {.cdecl.}
+                                     curve: cint): int {.cdecl, gcsafe.}
     muladd* {.importc: "muladd".}: proc (a: ptr cuchar; b: ptr cuchar; len: int;
                                      x: ptr cuchar; xlen: int; y: ptr cuchar;
-                                     ylen: int; curve: cint): uint32 {.cdecl.}
+                                     ylen: int; curve: cint): uint32 {.cdecl, gcsafe.}
 
 
 var ecPrimeI31* {.importc: "br_ec_prime_i31", header: "bearssl_ec.h".}: EcImpl
@@ -3680,19 +3680,19 @@ type
   BrRsaKeygen* = proc (ctx: ptr ptr BrPrngClass,
                        sk: ptr BrRsaPrivateKey, bufsec: ptr byte,
                        pk: ptr BrRsaPublicKey, bufpub: ptr byte,
-                       size: cuint, pubexp: uint32): uint32 {.cdecl.}
+                       size: cuint, pubexp: uint32): uint32 {.cdecl, gcsafe.}
   BrRsaComputeModulus* = proc (n: pointer,
-                               sk: ptr BrRsaPrivateKey): int {.cdecl.}
-  BrRsaComputePubexp* = proc (sk: ptr BrRsaPrivateKey): uint32 {.cdecl.}
+                               sk: ptr BrRsaPrivateKey): int {.cdecl, gcsafe.}
+  BrRsaComputePubexp* = proc (sk: ptr BrRsaPrivateKey): uint32 {.cdecl, gcsafe.}
   BrRsaComputePrivexp* = proc (d: pointer,
                                sk: ptr BrRsaPrivateKey,
-                               pubexp: uint32): int {.cdecl.}
+                               pubexp: uint32): int {.cdecl, gcsafe.}
   BrRsaPkcs1Verify* = proc (x: ptr cuchar, xlen: int,
                             hash_oid: ptr cuchar, hash_len: int,
                             pk: ptr BrRsaPublicKey,
-                            hash_out: ptr cuchar): uint32 {.cdecl.}
+                            hash_out: ptr cuchar): uint32 {.cdecl, gcsafe.}
   BrPemDecoderProc* = proc (destctx: pointer, src: pointer,
-                            length: int) {.cdecl.}
+                            length: int) {.cdecl, gcsafe.}
   BrRsaPkcs1Sign* = RsaPkcs1Sign
 
 proc brPrngSeederSystem*(name: cstringArray): BrPrngSeeder {.cdecl,
