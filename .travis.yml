@@ -13,10 +13,9 @@ matrix:
   include:
     - os: linux
       arch: amd64
-      sudo: required
-    - os: linux
-      arch: arm64
-      sudo: required
+    # - os: linux
+    #   arch: arm64
+    #   sudo: required
     - os: osx
 
 install:
@@ -30,4 +29,3 @@ install:
 script:
   - nimble install -y
   - nimble test
-
