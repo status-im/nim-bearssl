@@ -2,9 +2,9 @@
 
 [![Build Status (Travis)](https://img.shields.io/travis/status-im/nim-bearssl/master.svg?label=Linux%20/%20macOS "Linux/macOS build status (Travis)")](https://travis-ci.org/status-im/nim-bearssl)
 [![Windows build status (Appveyor)](https://img.shields.io/appveyor/ci/nimbus/nim-bearssl/master.svg?label=Windows "Windows build status (Appveyor)")](https://ci.appveyor.com/project/nimbus/nim-bearssl)
+![Stability: experimental](https://img.shields.io/badge/stability-experimental-orange.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![Stability: experimental](https://img.shields.io/badge/stability-experimental-orange.svg)
 
 [BearSSL](https://bearssl.org/) wrapper.
 
@@ -12,7 +12,7 @@
 
 You can install the developement version of the library through nimble with the following command
 ```
-nimble install https://github.com/status-im/nim-bearssl@#master
+nimble install bearssl
 ```
 
 ## License
