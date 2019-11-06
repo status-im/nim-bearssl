@@ -8,3 +8,5 @@
 ## those terms.
 import bearssl/[decls, errors]
 export decls, errors
+
+when defined(nimHasUsed): {.used.}

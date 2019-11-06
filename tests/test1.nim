@@ -7,7 +7,5 @@
 import unittest
 import bearssl
 
-when defined(nimHasUsed): {.used.}
-
 test "dummy":
   check true
