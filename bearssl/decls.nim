@@ -619,7 +619,7 @@ proc md5sha1SetState*(ctx: ptr Md5sha1Context; stb: pointer; count: uint64) {.cd
 
 type
   HashCompatContext* {.importc: "br_hash_compat_context", header: "bearssl_hash.h",
-                      bycopy.} = object {.union.}
+                      union, bycopy.} = object
     vtable* {.importc: "vtable".}: ptr HashClass
     md5* {.importc: "md5".}: Md5Context
     sha1* {.importc: "sha1".}: Sha1Context
@@ -1178,8 +1178,8 @@ const
   aesX86niBLOCK_SIZE* = 16
 
 type
-  INNER_C_UNION_1159666335* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_1159666335* {.importc: "no_name", header: "bearssl_block.h",
+                              bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesX86niCbcencKeys* {.importc: "br_aes_x86ni_cbcenc_keys",
@@ -1190,8 +1190,8 @@ type
 
 
 type
-  INNER_C_UNION_3830826214* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_3830826214* {.importc: "no_name", header: "bearssl_block.h",
+                              bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesX86niCbcdecKeys* {.importc: "br_aes_x86ni_cbcdec_keys",
@@ -1202,8 +1202,8 @@ type
 
 
 type
-  INNER_C_UNION_1063979105* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_1063979105* {.importc: "no_name", header: "bearssl_block.h",
+                              bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesX86niCtrKeys* {.importc: "br_aes_x86ni_ctr_keys", header: "bearssl_block.h",
@@ -1214,8 +1214,8 @@ type
 
 
 type
-  INNER_C_UNION_220758887* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_220758887* {.importc: "no_name", header: "bearssl_block.h",
+                             bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesX86niCtrcbcKeys* {.importc: "br_aes_x86ni_ctrcbc_keys",
@@ -1293,8 +1293,8 @@ const
   aesPwr8BLOCK_SIZE* = 16
 
 type
-  INNER_C_UNION_2338321047* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_2338321047* {.importc: "no_name", header: "bearssl_block.h",
+                              bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesPwr8CbcencKeys* {.importc: "br_aes_pwr8_cbcenc_keys",
@@ -1305,8 +1305,8 @@ type
 
 
 type
-  INNER_C_UNION_714513630* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_714513630* {.importc: "no_name", header: "bearssl_block.h",
+                             bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesPwr8CbcdecKeys* {.importc: "br_aes_pwr8_cbcdec_keys",
@@ -1317,8 +1317,8 @@ type
 
 
 type
-  INNER_C_UNION_4166260708* {.importc: "no_name", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_4166260708* {.importc: "no_name", header: "bearssl_block.h",
+                              bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, cuchar]
 
   AesPwr8CtrKeys* {.importc: "br_aes_pwr8_ctr_keys", header: "bearssl_block.h",
@@ -1368,7 +1368,7 @@ proc aesPwr8CtrGetVtable*(): ptr BlockCtrClass {.cdecl,
 
 type
   AesGenCbcencKeys* {.importc: "br_aes_gen_cbcenc_keys", header: "bearssl_block.h",
-                     bycopy.} = object {.union.}
+                      bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcencClass
     cBig* {.importc: "c_big".}: AesBigCbcencKeys
     cSmall* {.importc: "c_small".}: AesSmallCbcencKeys
@@ -1380,7 +1380,7 @@ type
 
 type
   AesGenCbcdecKeys* {.importc: "br_aes_gen_cbcdec_keys", header: "bearssl_block.h",
-                     bycopy.} = object {.union.}
+                      bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
     cBig* {.importc: "c_big".}: AesBigCbcdecKeys
     cSmall* {.importc: "c_small".}: AesSmallCbcdecKeys
@@ -1391,8 +1391,8 @@ type
 
 
 type
-  AesGenCtrKeys* {.importc: "br_aes_gen_ctr_keys", header: "bearssl_block.h", bycopy.} = object {.
-      union.}
+  AesGenCtrKeys* {.importc: "br_aes_gen_ctr_keys", header: "bearssl_block.h",
+                   bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrClass
     cBig* {.importc: "c_big".}: AesBigCtrKeys
     cSmall* {.importc: "c_small".}: AesSmallCtrKeys
@@ -1403,8 +1403,8 @@ type
 
 
 type
-  AesGenCtrcbcKeys* {.importc: "br_aes_gen_ctrcbc_keys", header: "bearssl_block.h",
-                     bycopy.} = object {.union.}
+  AesGenCtrcbcKeys* {.importc: "br_aes_gen_ctrcbc_keys",
+                      header: "bearssl_block.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrcbcClass
     cBig* {.importc: "c_big".}: AesBigCtrcbcKeys
     cSmall* {.importc: "c_small".}: AesSmallCtrcbcKeys
@@ -1487,16 +1487,16 @@ proc desCtCbcdecRun*(ctx: ptr DesCtCbcdecKeys; iv: pointer; data: pointer; len: 
     cdecl, importc: "br_des_ct_cbcdec_run", header: "bearssl_block.h".}
 
 type
-  DesGenCbcencKeys* {.importc: "br_des_gen_cbcenc_keys", header: "bearssl_block.h",
-                     bycopy.} = object {.union.}
+  DesGenCbcencKeys* {.importc: "br_des_gen_cbcenc_keys",
+                      header: "bearssl_block.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcencClass
     tab* {.importc: "tab".}: DesTabCbcencKeys
     ct* {.importc: "ct".}: DesCtCbcencKeys
 
 
 type
-  DesGenCbcdecKeys* {.importc: "br_des_gen_cbcdec_keys", header: "bearssl_block.h",
-                     bycopy.} = object {.union.}
+  DesGenCbcdecKeys* {.importc: "br_des_gen_cbcdec_keys",
+                      header: "bearssl_block.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
     cTab* {.importc: "c_tab".}: DesTabCbcdecKeys
     cCt* {.importc: "c_ct".}: DesCtCbcdecKeys
@@ -2129,8 +2129,8 @@ const
   ERR_X509_NOT_TRUSTED* = 62
 
 type
-  INNER_C_UNION_2211491720* {.importc: "no_name", header: "bearssl_x509.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_2211491720* {.importc: "no_name", header: "bearssl_x509.h",
+                              bycopy, union.} = object
     rsa* {.importc: "rsa".}: RsaPublicKey
     ec* {.importc: "ec".}: EcPublicKey
 
@@ -2369,12 +2369,13 @@ type
 
 
 type
-  INNER_C_UNION_3754611343* {.importc: "no_name", header: "bearssl_x509.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_3754611343* {.importc: "no_name", header: "bearssl_x509.h",
+                              bycopy, union.} = object
     rsa* {.importc: "rsa".}: RsaPrivateKey
     ec* {.importc: "ec".}: EcPrivateKey
 
-  INNER_C_STRUCT_3633027466* {.importc: "no_name", header: "bearssl_x509.h", bycopy.} = object
+  INNER_C_STRUCT_3633027466* {.importc: "no_name", header: "bearssl_x509.h",
+                               bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr cuchar
@@ -2585,8 +2586,8 @@ type
 
 
 type
-  INNER_C_UNION_2105460304* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_2105460304* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
     aes* {.importc: "aes".}: AesGenCbcdecKeys
     des* {.importc: "des".}: DesGenCbcdecKeys
@@ -2605,8 +2606,8 @@ type
 var sslrecInCbcVtable* {.importc: "br_sslrec_in_cbc_vtable", header: "bearssl_ssl.h".}: SslrecInCbcClass
 
 type
-  INNER_C_UNION_3724465237* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_3724465237* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcencClass
     aes* {.importc: "aes".}: AesGenCbcencKeys
     des* {.importc: "des".}: DesGenCbcencKeys
@@ -2644,14 +2645,14 @@ type
 
 
 type
-  INNER_C_UNION_536016210* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_536016210* {.importc: "no_name", header: "bearssl_ssl.h",
+                             bycopy, union.} = object
     gen* {.importc: "gen".}: pointer
     `in`* {.importc: "in".}: ptr SslrecInGcmClass
     `out`* {.importc: "out".}: ptr SslrecOutGcmClass
 
-  INNER_C_UNION_1283557389* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_1283557389* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrClass
     aes* {.importc: "aes".}: AesGenCtrKeys
 
@@ -2689,8 +2690,8 @@ type
 
 
 type
-  INNER_C_UNION_1683842004* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_1683842004* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     gen* {.importc: "gen".}: pointer
     `in`* {.importc: "in".}: ptr SslrecInChapolClass
     `out`* {.importc: "out".}: ptr SslrecOutChapolClass
@@ -2725,15 +2726,15 @@ const
   MAX_CIPHER_SUITES* = 40
 
 type
-  INNER_C_UNION_861939089* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_861939089* {.importc: "no_name", header: "bearssl_ssl.h",
+                             bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslrecInClass
     cbc* {.importc: "cbc".}: SslrecInCbcContext
     gcm* {.importc: "gcm".}: SslrecGcmContext
     chapol* {.importc: "chapol".}: SslrecChapolContext
 
-  INNER_C_UNION_1609480268* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_1609480268* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslrecOutClass
     clear* {.importc: "clear".}: SslrecOutClearContext
     cbc* {.importc: "cbc".}: SslrecOutCbcContext
@@ -3088,8 +3089,8 @@ const
   AUTH_ECDSA* = 3
 
 type
-  INNER_C_UNION_2478042450* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_2478042450* {.importc: "no_name", header: "bearssl_ssl.h",
+                              bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslClientCertificateClass
     singleRsa* {.importc: "single_rsa".}: SslClientCertificateRsaContext
     singleEc* {.importc: "single_ec".}: SslClientCertificateEcContext
@@ -3263,8 +3264,8 @@ type
     iec* {.importc: "iec".}: ptr EcImpl
     iecdsa* {.importc: "iecdsa".}: EcdsaSign
 
-  INNER_C_UNION_537875083* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object {.
-      union.}
+  INNER_C_UNION_537875083* {.importc: "no_name", header: "bearssl_ssl.h",
+                             bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslServerPolicyClass
     singleRsa* {.importc: "single_rsa".}: SslServerPolicyRsaContext
     singleEc* {.importc: "single_ec".}: SslServerPolicyEcContext
