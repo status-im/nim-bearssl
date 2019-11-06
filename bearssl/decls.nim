@@ -375,14 +375,14 @@ type
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     desc* {.importc: "desc".}: uint32
-    init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.cdecl.}
+    init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.cdecl, gcsafe.}
     update* {.importc: "update".}: proc (ctx: ptr ptr HashClass; data: pointer; len: int) {.
-        cdecl.}
-    output* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.cdecl.}
+        cdecl, gcsafe.}
+    output* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.cdecl, gcsafe.}
     state* {.importc: "state".}: proc (ctx: ptr ptr HashClass; dst: pointer): uint64 {.
-        cdecl.}
+        cdecl, gcsafe.}
     setState* {.importc: "set_state".}: proc (ctx: ptr ptr HashClass; stb: pointer;
-        count: uint64) {.cdecl.}
+        count: uint64) {.cdecl, gcsafe.}
 
 template hashdesc_Id*(id: untyped): untyped =
   ((uint32)(id) shl hashdesc_Id_Off)
@@ -431,13 +431,13 @@ type
     val* {.importc: "val".}: array[4, uint32]
 
 
-proc md5Init*(ctx: ptr Md5Context) {.cdecl, importc: "br_md5_init",
+proc md5Init*(ctx: ptr Md5Context) {.cdecl, gcsafe, importc: "br_md5_init",
                                  header: "bearssl_hash.h".}
 
-proc md5Update*(ctx: ptr Md5Context; data: pointer; len: int) {.cdecl,
+proc md5Update*(ctx: ptr Md5Context; data: pointer; len: int) {.cdecl, gcsafe,
     importc: "br_md5_update", header: "bearssl_hash.h".}
 
-proc md5Out*(ctx: ptr Md5Context; `out`: pointer) {.cdecl, importc: "br_md5_out",
+proc md5Out*(ctx: ptr Md5Context; `out`: pointer) {.cdecl, gcsafe, importc: "br_md5_out",
     header: "bearssl_hash.h".}
 
 proc md5State*(ctx: ptr Md5Context; `out`: pointer): uint64 {.cdecl,
@@ -661,7 +661,7 @@ proc multihashOut*(ctx: ptr MultihashContext; id: cint; dst: pointer): int {.cde
     importc: "br_multihash_out", header: "bearssl_hash.h".}
 
 type
-  Ghash* = proc (y: pointer; h: pointer; data: pointer; len: int) {.cdecl.}
+  Ghash* = proc (y: pointer; h: pointer; data: pointer; len: int) {.cdecl, gcsafe.}
 
 proc ghashCtmul*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
     importc: "br_ghash_ctmul", header: "bearssl_hash.h".}
@@ -722,11 +722,11 @@ type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: pointer;
-                                 seed: pointer; seedLen: int) {.cdecl.}
+                                 seed: pointer; seedLen: int) {.cdecl, gcsafe.}
     generate* {.importc: "generate".}: proc (ctx: ptr ptr PrngClass; `out`: pointer;
-        len: int) {.cdecl.}
+        len: int) {.cdecl, gcsafe.}
     update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
-                                     seedLen: int) {.cdecl.}
+                                     seedLen: int) {.cdecl, gcsafe.}
 
 
 type
@@ -754,7 +754,7 @@ proc hmacDrbgGetHash*(ctx: ptr HmacDrbgContext): ptr HashClass {.inline.} =
   return ctx.digestClass
 
 type
-  PrngSeeder* = proc (ctx: ptr ptr PrngClass): cint {.cdecl.}
+  PrngSeeder* = proc (ctx: ptr ptr PrngClass): cint {.cdecl, gcsafe.}
 
 proc prngSeederSystem*(name: cstringArray): PrngSeeder {.cdecl,
     importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
@@ -780,7 +780,7 @@ proc tls12Sha384Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
 
 type
   TlsPrfImpl* = proc (dst: pointer; len: int; secret: pointer; secretLen: int;
-                   label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl.}
+                   label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl, gcsafe.}
 
 type
   BlockCbcencClass* {.importc: "br_block_cbcenc_class", header: "bearssl_block.h",
@@ -789,9 +789,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: pointer;
-                                 keyLen: int) {.cdecl.}
+                                 keyLen: int) {.cdecl, gcsafe.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcencClass; iv: pointer;
-                               data: pointer; len: int) {.cdecl.}
+                               data: pointer; len: int) {.cdecl, gcsafe.}
 
 
 type
@@ -801,9 +801,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: pointer;
-                                 keyLen: int) {.cdecl.}
+                                 keyLen: int) {.cdecl, gcsafe.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcdecClass; iv: pointer;
-                               data: pointer; len: int) {.cdecl.}
+                               data: pointer; len: int) {.cdecl, gcsafe.}
 
 
 type
@@ -812,9 +812,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: pointer;
-                                 keyLen: int) {.cdecl.}
+                                 keyLen: int) {.cdecl, gcsafe.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCtrClass; iv: pointer; cc: uint32;
-                               data: pointer; len: int): uint32 {.cdecl.}
+                               data: pointer; len: int): uint32 {.cdecl, gcsafe.}
 
 
 type
@@ -824,17 +824,17 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: pointer;
-                                 keyLen: int) {.cdecl.}
+                                 keyLen: int) {.cdecl, gcsafe.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                        cbcmac: pointer; data: pointer; len: int) {.
-        cdecl.}
+        cdecl, gcsafe.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                        cbcmac: pointer; data: pointer; len: int) {.
-        cdecl.}
+        cdecl, gcsafe.}
     ctr* {.importc: "ctr".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
-                               data: pointer; len: int) {.cdecl.}
+                               data: pointer; len: int) {.cdecl, gcsafe.}
     mac* {.importc: "mac".}: proc (ctx: ptr ptr BlockCtrcbcClass; cbcmac: pointer;
-                               data: pointer; len: int) {.cdecl.}
+                               data: pointer; len: int) {.cdecl, gcsafe.}
 
 
 const
@@ -1504,7 +1504,7 @@ type
 
 type
   Chacha20Run* = proc (key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
-      cdecl.}
+      cdecl, gcsafe.}
 
 proc chacha20CtRun*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
     cdecl, importc: "br_chacha20_ct_run", header: "bearssl_block.h".}
@@ -1518,7 +1518,7 @@ proc chacha20Sse2Get*(): Chacha20Run {.cdecl, importc: "br_chacha20_sse2_get",
 type
   Poly1305Run* = proc (key: pointer; iv: pointer; data: pointer; len: int; aad: pointer;
                     aadLen: int; tag: pointer; ichacha: Chacha20Run; encrypt: cint) {.
-      cdecl.}
+      cdecl, gcsafe.}
 
 proc poly1305CtmulRun*(key: pointer; iv: pointer; data: pointer; len: int;
                       aad: pointer; aadLen: int; tag: pointer; ichacha: Chacha20Run;
@@ -1546,19 +1546,19 @@ type
   AeadClass* {.importc: "br_aead_class", header: "bearssl_aead.h", bycopy.} = object
     tagSize* {.importc: "tag_size".}: int
     reset* {.importc: "reset".}: proc (cc: ptr ptr AeadClass; iv: pointer; len: int) {.
-        cdecl.}
+        cdecl, gcsafe.}
     aadInject* {.importc: "aad_inject".}: proc (cc: ptr ptr AeadClass; data: pointer;
-        len: int) {.cdecl.}
-    flip* {.importc: "flip".}: proc (cc: ptr ptr AeadClass) {.cdecl.}
+        len: int) {.cdecl, gcsafe.}
+    flip* {.importc: "flip".}: proc (cc: ptr ptr AeadClass) {.cdecl, gcsafe.}
     run* {.importc: "run".}: proc (cc: ptr ptr AeadClass; encrypt: cint; data: pointer;
-                               len: int) {.cdecl.}
-    getTag* {.importc: "get_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer) {.cdecl.}
+                               len: int) {.cdecl, gcsafe.}
+    getTag* {.importc: "get_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer) {.cdecl, gcsafe.}
     checkTag* {.importc: "check_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer): uint32 {.
-        cdecl.}
+        cdecl, gcsafe.}
     getTagTrunc* {.importc: "get_tag_trunc".}: proc (cc: ptr ptr AeadClass;
-        tag: pointer; len: int) {.cdecl.}
+        tag: pointer; len: int) {.cdecl, gcsafe.}
     checkTagTrunc* {.importc: "check_tag_trunc".}: proc (cc: ptr ptr AeadClass;
-        tag: pointer; len: int): uint32 {.cdecl.}
+        tag: pointer; len: int): uint32 {.cdecl, gcsafe.}
 
 
 type
@@ -1722,18 +1722,18 @@ type
 
 
 type
-  RsaPublic* = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl.}
+  RsaPublic* = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl, gcsafe.}
 
 type
   RsaPkcs1Vrfy* = proc (x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl.}
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl, gcsafe.}
 
 type
-  RsaPrivate* = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl.}
+  RsaPrivate* = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl, gcsafe.}
 
 type
   RsaPkcs1Sign* = proc (hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl.}
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl, gcsafe.}
 
 const
   HASH_OID_SHA1* = (("\x05+\x0E\x03\x02\x1A"))
@@ -1988,11 +1988,11 @@ proc ecdsaAsn1ToRaw*(sig: pointer; sigLen: int): int {.cdecl,
 
 type
   EcdsaSign* = proc (impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                  sk: ptr EcPrivateKey; sig: pointer): int {.cdecl.}
+                  sk: ptr EcPrivateKey; sig: pointer): int {.cdecl, gcsafe.}
 
 type
   EcdsaVrfy* = proc (impl: ptr EcImpl; hash: pointer; hashLen: int; pk: ptr EcPublicKey;
-                  sig: pointer; sigLen: int): uint32 {.cdecl.}
+                  sig: pointer; sigLen: int): uint32 {.cdecl, gcsafe.}
 
 proc ecdsaI31SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
                       sk: ptr EcPrivateKey; sig: pointer): int {.cdecl,
@@ -2172,15 +2172,15 @@ type
   X509Class* {.importc: "br_x509_class", header: "bearssl_x509.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     startChain* {.importc: "start_chain".}: proc (ctx: ptr ptr X509Class;
-        serverName: cstring) {.cdecl.}
+        serverName: cstring) {.cdecl, gcsafe.}
     startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
-        cdecl.}
+        cdecl, gcsafe.}
     append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ptr cuchar;
-                                     len: int) {.cdecl.}
-    endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.cdecl.}
-    endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.cdecl.}
+                                     len: int) {.cdecl, gcsafe.}
+    endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.cdecl, gcsafe.}
+    endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.cdecl, gcsafe.}
     getPkey* {.importc: "get_pkey".}: proc (ctx: ptr ptr X509Class; usages: ptr cuint): ptr X509Pkey {.
-        cdecl.}
+        cdecl, gcsafe.}
 
 
 type
@@ -2325,7 +2325,7 @@ type
     copyDn* {.importc: "copy_dn".}: cuchar
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
     appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: int) {.
-        cdecl.}
+        cdecl, gcsafe.}
     hbuf* {.importc: "hbuf".}: ptr cuchar
     hlen* {.importc: "hlen".}: int
     pkeyData* {.importc: "pkey_data".}: array[X509_BUFSIZE_KEY, cuchar]
@@ -2334,7 +2334,7 @@ type
 
 
 proc x509DecoderInit*(ctx: ptr X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: pointer; len: int) {.cdecl.}; appendDnCtx: pointer) {.cdecl,
+    buf: pointer; len: int) {.cdecl, gcsafe.}; appendDnCtx: pointer) {.cdecl,
     importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
 proc x509DecoderPush*(ctx: ptr X509DecoderContext; data: pointer; len: int) {.cdecl,
@@ -2536,21 +2536,21 @@ type
   SslrecInClass* {.importc: "br_sslrec_in_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     checkLength* {.importc: "check_length".}: proc (ctx: ptr ptr SslrecInClass;
-        recordLen: int): cint {.cdecl.}
+        recordLen: int): cint {.cdecl, gcsafe.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr SslrecInClass; recordType: cint;
                                        version: cuint; payload: pointer;
-                                       len: ptr int): ptr cuchar {.cdecl.}
+                                       len: ptr int): ptr cuchar {.cdecl, gcsafe.}
 
 
 type
   SslrecOutClass* {.importc: "br_sslrec_out_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     maxPlaintext* {.importc: "max_plaintext".}: proc (ctx: ptr ptr SslrecOutClass;
-        start: ptr int; `end`: ptr int) {.cdecl.}
+        start: ptr int; `end`: ptr int) {.cdecl, gcsafe.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr SslrecOutClass;
                                        recordType: cint; version: cuint;
                                        plaintext: pointer; len: ptr int): ptr cuchar {.
-        cdecl.}
+        cdecl, gcsafe.}
 
 
 type
@@ -2570,7 +2570,7 @@ type
                                  bcImpl: ptr BlockCbcdecClass; bcKey: pointer;
                                  bcKeyLen: int; digImpl: ptr HashClass;
                                  macKey: pointer; macKeyLen: int;
-                                 macOutLen: int; iv: pointer) {.cdecl.}
+                                 macOutLen: int; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2581,7 +2581,7 @@ type
                                  bcImpl: ptr BlockCbcencClass; bcKey: pointer;
                                  bcKeyLen: int; digImpl: ptr HashClass;
                                  macKey: pointer; macKeyLen: int;
-                                 macOutLen: int; iv: pointer) {.cdecl.}
+                                 macOutLen: int; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2631,7 +2631,7 @@ type
     inner* {.importc: "inner".}: SslrecInClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInGcmClass;
                                  bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl.}
+                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2640,7 +2640,7 @@ type
     inner* {.importc: "inner".}: SslrecOutClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutGcmClass;
                                  bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl.}
+                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2676,7 +2676,7 @@ type
     inner* {.importc: "inner".}: SslrecInClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.cdecl.}
+                                 key: pointer; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2685,7 +2685,7 @@ type
     inner* {.importc: "inner".}: SslrecOutClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.cdecl.}
+                                 key: pointer; iv: pointer) {.cdecl, gcsafe.}
 
 
 type
@@ -2797,7 +2797,7 @@ type
     savedHbufOut* {.importc: "saved_hbuf_out".}: ptr cuchar
     hlenIn* {.importc: "hlen_in".}: int
     hlenOut* {.importc: "hlen_out".}: int
-    hsrun* {.importc: "hsrun".}: proc (ctx: pointer) {.cdecl.}
+    hsrun* {.importc: "hsrun".}: proc (ctx: pointer) {.cdecl, gcsafe.}
     action* {.importc: "action".}: cuchar
     alert* {.importc: "alert".}: cuchar
     closeReceived* {.importc: "close_received".}: cuchar
@@ -3110,24 +3110,24 @@ type
                               header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     startNameList* {.importc: "start_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.cdecl.}
+        pctx: ptr ptr SslClientCertificateClass) {.cdecl, gcsafe.}
     startName* {.importc: "start_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; len: int) {.cdecl.}
+        pctx: ptr ptr SslClientCertificateClass; len: int) {.cdecl, gcsafe.}
     appendName* {.importc: "append_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; data: ptr cuchar; len: int) {.cdecl.}
+        pctx: ptr ptr SslClientCertificateClass; data: ptr cuchar; len: int) {.cdecl, gcsafe.}
     endName* {.importc: "end_name".}: proc (pctx: ptr ptr SslClientCertificateClass) {.
-        cdecl.}
+        cdecl, gcsafe.}
     endNameList* {.importc: "end_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.cdecl.}
+        pctx: ptr ptr SslClientCertificateClass) {.cdecl, gcsafe.}
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                      cc: ptr SslClientContext; authTypes: uint32;
-                                     choices: ptr SslClientCertificate) {.cdecl.}
+                                     choices: ptr SslClientCertificate) {.cdecl, gcsafe.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       data: ptr cuchar; len: ptr int): uint32 {.
-        cdecl.}
+        cdecl, gcsafe.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       hashId: cint; hvLen: int; data: ptr cuchar;
-                                      len: int): int {.cdecl.}
+                                      len: int): int {.cdecl, gcsafe.}
 
   SslClientCertificateRsaContext* {.importc: "br_ssl_client_certificate_rsa_context",
                                    header: "bearssl_ssl.h", bycopy.} = object
@@ -3233,13 +3233,13 @@ type
     contextSize* {.importc: "context_size".}: int
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                      cc: ptr SslServerContext;
-                                     choices: ptr SslServerChoices): cint {.cdecl.}
+                                     choices: ptr SslServerChoices): cint {.cdecl, gcsafe.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       data: ptr cuchar; len: ptr int): uint32 {.
-        cdecl.}
+        cdecl, gcsafe.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       algoId: cuint; data: ptr cuchar; hvLen: int;
-                                      len: int): int {.cdecl.}
+                                      len: int): int {.cdecl, gcsafe.}
 
   SslServerPolicyRsaContext* {.importc: "br_ssl_server_policy_rsa_context",
                               header: "bearssl_ssl.h", bycopy.} = object
@@ -3300,10 +3300,10 @@ type
     contextSize* {.importc: "context_size".}: int
     save* {.importc: "save".}: proc (ctx: ptr ptr SslSessionCacheClass;
                                  serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters) {.cdecl.}
+                                 params: ptr SslSessionParameters) {.cdecl, gcsafe.}
     load* {.importc: "load".}: proc (ctx: ptr ptr SslSessionCacheClass;
                                  serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters): cint {.cdecl.}
+                                 params: ptr SslSessionParameters): cint {.cdecl, gcsafe.}
 
   SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
                        header: "bearssl_ssl.h", bycopy.} = object
@@ -3419,17 +3419,17 @@ type
   SslioContext* {.importc: "br_sslio_context", header: "bearssl_ssl.h", bycopy.} = object
     engine* {.importc: "engine".}: ptr SslEngineContext
     lowRead* {.importc: "low_read".}: proc (readContext: pointer; data: ptr cuchar;
-                                        len: int): cint {.cdecl.}
+                                        len: int): cint {.cdecl, gcsafe.}
     readContext* {.importc: "read_context".}: pointer
     lowWrite* {.importc: "low_write".}: proc (writeContext: pointer; data: ptr cuchar;
-        len: int): cint {.cdecl.}
+        len: int): cint {.cdecl, gcsafe.}
     writeContext* {.importc: "write_context".}: pointer
 
 
 proc sslioInit*(ctx: ptr SslioContext; engine: ptr SslEngineContext; lowRead: proc (
-    readContext: pointer; data: ptr cuchar; len: int): cint {.cdecl.};
+    readContext: pointer; data: ptr cuchar; len: int): cint {.cdecl, gcsafe.};
                readContext: pointer; lowWrite: proc (writeContext: pointer;
-    data: ptr cuchar; len: int): cint {.cdecl.}; writeContext: pointer) {.cdecl,
+    data: ptr cuchar; len: int): cint {.cdecl, gcsafe.}; writeContext: pointer) {.cdecl,
     importc: "br_sslio_init", header: "bearssl_ssl.h".}
 
 proc sslioRead*(cc: ptr SslioContext; dst: pointer; len: int): cint {.cdecl,
@@ -3599,7 +3599,7 @@ type
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr cuchar
     hlen* {.importc: "hlen".}: int
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: int) {.cdecl.}
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: int) {.cdecl, gcsafe.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: cuchar
     name* {.importc: "name".}: array[128, char]
@@ -3614,7 +3614,7 @@ proc pemDecoderPush*(ctx: ptr PemDecoderContext; data: pointer; len: int): int {
     cdecl, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: ptr PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: int) {.cdecl.}; destCtx: pointer) {.inline.} =
+    src: pointer; len: int) {.cdecl, gcsafe.}; destCtx: pointer) {.inline.} =
   ctx.dest = dest
   ctx.destCtx = destCtx
 
