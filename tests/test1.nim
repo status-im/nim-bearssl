@@ -4,10 +4,10 @@
 # the letter 't').
 #
 # To run these tests, simply execute `nimble test`.
-
 import unittest
-
 import bearssl
+
+when defined(nimHasUsed): {.used.}
 
 test "dummy":
   check true
