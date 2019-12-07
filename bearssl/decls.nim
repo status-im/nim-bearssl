@@ -371,18 +371,20 @@ when sizeof(int) == 8:
 {.compile: bearToolsPath & "certs.c".}
 {.compile: bearToolsPath & "files.c".}
 
+{.pragma: bearSslFunc, cdecl, gcsafe, noSideEffect.}
+
 type
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     desc* {.importc: "desc".}: uint32
-    init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.cdecl, gcsafe.}
+    init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.bearSslFunc.}
     update* {.importc: "update".}: proc (ctx: ptr ptr HashClass; data: pointer; len: int) {.
-        cdecl, gcsafe.}
-    output* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.cdecl, gcsafe.}
+        bearSslFunc.}
+    output* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.bearSslFunc.}
     state* {.importc: "state".}: proc (ctx: ptr ptr HashClass; dst: pointer): uint64 {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     setState* {.importc: "set_state".}: proc (ctx: ptr ptr HashClass; stb: pointer;
-        count: uint64) {.cdecl, gcsafe.}
+        count: uint64) {.bearSslFunc.}
 
 template hashdesc_Id*(id: untyped): untyped =
   ((uint32)(id) shl hashdesc_Id_Off)
@@ -431,20 +433,20 @@ type
     val* {.importc: "val".}: array[4, uint32]
 
 
-proc md5Init*(ctx: ptr Md5Context) {.cdecl, gcsafe, importc: "br_md5_init",
-                                 header: "bearssl_hash.h".}
+proc md5Init*(ctx: ptr Md5Context) {.
+    bearSslFunc, importc: "br_md5_init", header: "bearssl_hash.h".}
 
-proc md5Update*(ctx: ptr Md5Context; data: pointer; len: int) {.cdecl, gcsafe,
-    importc: "br_md5_update", header: "bearssl_hash.h".}
+proc md5Update*(ctx: ptr Md5Context; data: pointer; len: int) {.
+    bearSslFunc, importc: "br_md5_update", header: "bearssl_hash.h".}
 
-proc md5Out*(ctx: ptr Md5Context; `out`: pointer) {.cdecl, gcsafe, importc: "br_md5_out",
-    header: "bearssl_hash.h".}
+proc md5Out*(ctx: ptr Md5Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_md5_out", header: "bearssl_hash.h".}
 
-proc md5State*(ctx: ptr Md5Context; `out`: pointer): uint64 {.cdecl,
-    importc: "br_md5_state", header: "bearssl_hash.h".}
+proc md5State*(ctx: ptr Md5Context; `out`: pointer): uint64 {.
+    bearSslFunc, importc: "br_md5_state", header: "bearssl_hash.h".}
 
-proc md5SetState*(ctx: ptr Md5Context; stb: pointer; count: uint64) {.cdecl,
-    importc: "br_md5_set_state", header: "bearssl_hash.h".}
+proc md5SetState*(ctx: ptr Md5Context; stb: pointer; count: uint64) {.
+    bearSslFunc, importc: "br_md5_set_state", header: "bearssl_hash.h".}
 
 const
   sha1ID* = 2
@@ -462,20 +464,20 @@ type
     val* {.importc: "val".}: array[5, uint32]
 
 
-proc sha1Init*(ctx: ptr Sha1Context) {.cdecl, importc: "br_sha1_init",
-                                   header: "bearssl_hash.h".}
+proc sha1Init*(ctx: ptr Sha1Context) {.
+    bearSslFunc, importc: "br_sha1_init", header: "bearssl_hash.h".}
 
-proc sha1Update*(ctx: ptr Sha1Context; data: pointer; len: int) {.cdecl,
-    importc: "br_sha1_update", header: "bearssl_hash.h".}
+proc sha1Update*(ctx: ptr Sha1Context; data: pointer; len: int) {.
+    bearSslFunc, importc: "br_sha1_update", header: "bearssl_hash.h".}
 
-proc sha1Out*(ctx: ptr Sha1Context; `out`: pointer) {.cdecl, importc: "br_sha1_out",
-    header: "bearssl_hash.h".}
+proc sha1Out*(ctx: ptr Sha1Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_sha1_out", header: "bearssl_hash.h".}
 
-proc sha1State*(ctx: ptr Sha1Context; `out`: pointer): uint64 {.cdecl,
-    importc: "br_sha1_state", header: "bearssl_hash.h".}
+proc sha1State*(ctx: ptr Sha1Context; `out`: pointer): uint64 {.
+    bearSslFunc, importc: "br_sha1_state", header: "bearssl_hash.h".}
 
-proc sha1SetState*(ctx: ptr Sha1Context; stb: pointer; count: uint64) {.cdecl,
-    importc: "br_sha1_set_state", header: "bearssl_hash.h".}
+proc sha1SetState*(ctx: ptr Sha1Context; stb: pointer; count: uint64) {.
+    bearSslFunc, importc: "br_sha1_set_state", header: "bearssl_hash.h".}
 
 const
   sha224ID* = 3
@@ -494,20 +496,20 @@ type
     val* {.importc: "val".}: array[8, uint32]
 
 
-proc sha224Init*(ctx: ptr Sha224Context) {.cdecl, importc: "br_sha224_init",
-                                       header: "bearssl_hash.h".}
+proc sha224Init*(ctx: ptr Sha224Context) {.
+    bearSslFunc, importc: "br_sha224_init", header: "bearssl_hash.h".}
 
-proc sha224Update*(ctx: ptr Sha224Context; data: pointer; len: int) {.cdecl,
-    importc: "br_sha224_update", header: "bearssl_hash.h".}
+proc sha224Update*(ctx: ptr Sha224Context; data: pointer; len: int) {.
+    bearSslFunc, importc: "br_sha224_update", header: "bearssl_hash.h".}
 
-proc sha224Out*(ctx: ptr Sha224Context; `out`: pointer) {.cdecl,
-    importc: "br_sha224_out", header: "bearssl_hash.h".}
+proc sha224Out*(ctx: ptr Sha224Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_sha224_out", header: "bearssl_hash.h".}
 
-proc sha224State*(ctx: ptr Sha224Context; `out`: pointer): uint64 {.cdecl,
-    importc: "br_sha224_state", header: "bearssl_hash.h".}
+proc sha224State*(ctx: ptr Sha224Context; `out`: pointer): uint64 {.
+    bearSslFunc, importc: "br_sha224_state", header: "bearssl_hash.h".}
 
-proc sha224SetState*(ctx: ptr Sha224Context; stb: pointer; count: uint64) {.cdecl,
-    importc: "br_sha224_set_state", header: "bearssl_hash.h".}
+proc sha224SetState*(ctx: ptr Sha224Context; stb: pointer; count: uint64) {.
+    bearSslFunc, importc: "br_sha224_set_state", header: "bearssl_hash.h".}
 
 const
   sha256ID* = 4
@@ -517,20 +519,22 @@ const
 
 var sha256Vtable* {.importc: "br_sha256_vtable", header: "bearssl_hash.h".}: HashClass
 
-proc sha256Init*(ctx: ptr Sha256Context) {.cdecl, importc: "br_sha256_init",
-                                       header: "bearssl_hash.h".}
+proc sha256Init*(ctx: ptr Sha256Context) {.
+    bearSslFunc, importc: "br_sha256_init", header: "bearssl_hash.h".}
 
-proc sha256Out*(ctx: ptr Sha256Context; `out`: pointer) {.cdecl,
-    importc: "br_sha256_out", header: "bearssl_hash.h".}
+proc sha256Out*(ctx: ptr Sha256Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_sha256_out", header: "bearssl_hash.h".}
+
 when false:
-  proc sha256State*(ctx: ptr Sha256Context; `out`: pointer): uint64 {.cdecl,
-      importc: "br_sha256_state", header: "bearssl_hash.h".}
+  proc sha256State*(ctx: ptr Sha256Context; `out`: pointer): uint64 {.
+      bearSslFunc, importc: "br_sha256_state", header: "bearssl_hash.h".}
 else:
   const
     sha256State* = sha224State
+
 when false:
-  proc sha256SetState*(ctx: ptr Sha256Context; stb: pointer; count: uint64) {.cdecl,
-      importc: "br_sha256_set_state", header: "bearssl_hash.h".}
+  proc sha256SetState*(ctx: ptr Sha256Context; stb: pointer; count: uint64) {.
+      bearSslFunc, importc: "br_sha256_set_state", header: "bearssl_hash.h".}
 else:
   const
     sha256SetState* = sha224SetState
@@ -551,20 +555,20 @@ type
     val* {.importc: "val".}: array[8, uint64]
 
 
-proc sha384Init*(ctx: ptr Sha384Context) {.cdecl, importc: "br_sha384_init",
-                                       header: "bearssl_hash.h".}
+proc sha384Init*(ctx: ptr Sha384Context) {.
+    bearSslFunc, importc: "br_sha384_init", header: "bearssl_hash.h".}
 
-proc sha384Update*(ctx: ptr Sha384Context; data: pointer; len: int) {.cdecl,
-    importc: "br_sha384_update", header: "bearssl_hash.h".}
+proc sha384Update*(ctx: ptr Sha384Context; data: pointer; len: int) {.
+    bearSslFunc, importc: "br_sha384_update", header: "bearssl_hash.h".}
 
-proc sha384Out*(ctx: ptr Sha384Context; `out`: pointer) {.cdecl,
-    importc: "br_sha384_out", header: "bearssl_hash.h".}
+proc sha384Out*(ctx: ptr Sha384Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_sha384_out", header: "bearssl_hash.h".}
 
-proc sha384State*(ctx: ptr Sha384Context; `out`: pointer): uint64 {.cdecl,
-    importc: "br_sha384_state", header: "bearssl_hash.h".}
+proc sha384State*(ctx: ptr Sha384Context; `out`: pointer): uint64 {.
+    bearSslFunc, importc: "br_sha384_state", header: "bearssl_hash.h".}
 
-proc sha384SetState*(ctx: ptr Sha384Context; stb: pointer; count: uint64) {.cdecl,
-    importc: "br_sha384_set_state", header: "bearssl_hash.h".}
+proc sha384SetState*(ctx: ptr Sha384Context; stb: pointer; count: uint64) {.
+    bearSslFunc, importc: "br_sha384_set_state", header: "bearssl_hash.h".}
 
 const
   sha512ID* = 6
@@ -577,13 +581,14 @@ var sha512Vtable* {.importc: "br_sha512_vtable", header: "bearssl_hash.h".}: Has
 type
   Sha512Context* = Sha384Context
 
-proc sha512Init*(ctx: ptr Sha512Context) {.cdecl, importc: "br_sha512_init",
-                                       header: "bearssl_hash.h".}
+proc sha512Init*(ctx: ptr Sha512Context) {.
+    bearSslFunc, importc: "br_sha512_init", header: "bearssl_hash.h".}
+
 const
   sha512Update* = sha384Update
 
-proc sha512Out*(ctx: ptr Sha512Context; `out`: pointer) {.cdecl,
-    importc: "br_sha512_out", header: "bearssl_hash.h".}
+proc sha512Out*(ctx: ptr Sha512Context; `out`: pointer) {.
+    bearSslFunc, importc: "br_sha512_out", header: "bearssl_hash.h".}
 
 const
   md5sha1ID* = 0
@@ -602,19 +607,19 @@ type
     valSha1* {.importc: "val_sha1".}: array[5, uint32]
 
 
-proc md5sha1Init*(ctx: ptr Md5sha1Context) {.cdecl, importc: "br_md5sha1_init",
+proc md5sha1Init*(ctx: ptr Md5sha1Context) {.bearSslFunc, importc: "br_md5sha1_init",
     header: "bearssl_hash.h".}
 
-proc md5sha1Update*(ctx: ptr Md5sha1Context; data: pointer; len: int) {.cdecl,
+proc md5sha1Update*(ctx: ptr Md5sha1Context; data: pointer; len: int) {.bearSslFunc,
     importc: "br_md5sha1_update", header: "bearssl_hash.h".}
 
-proc md5sha1Out*(ctx: ptr Md5sha1Context; `out`: pointer) {.cdecl,
+proc md5sha1Out*(ctx: ptr Md5sha1Context; `out`: pointer) {.bearSslFunc,
     importc: "br_md5sha1_out", header: "bearssl_hash.h".}
 
-proc md5sha1State*(ctx: ptr Md5sha1Context; `out`: pointer): uint64 {.cdecl,
+proc md5sha1State*(ctx: ptr Md5sha1Context; `out`: pointer): uint64 {.bearSslFunc,
     importc: "br_md5sha1_state", header: "bearssl_hash.h".}
 
-proc md5sha1SetState*(ctx: ptr Md5sha1Context; stb: pointer; count: uint64) {.cdecl,
+proc md5sha1SetState*(ctx: ptr Md5sha1Context; stb: pointer; count: uint64) {.bearSslFunc,
     importc: "br_md5sha1_set_state", header: "bearssl_hash.h".}
 
 type
@@ -640,7 +645,7 @@ type
     impl* {.importc: "impl".}: array[6, ptr HashClass]
 
 
-proc multihashZero*(ctx: ptr MultihashContext) {.cdecl, importc: "br_multihash_zero",
+proc multihashZero*(ctx: ptr MultihashContext) {.bearSslFunc, importc: "br_multihash_zero",
     header: "bearssl_hash.h".}
 
 proc multihashSetimpl*(ctx: ptr MultihashContext; id: cint; impl: ptr HashClass) {.
@@ -648,40 +653,40 @@ proc multihashSetimpl*(ctx: ptr MultihashContext; id: cint; impl: ptr HashClass)
   ctx.impl[id - 1] = impl
 
 proc multihashGetimpl*(ctx: ptr MultihashContext; id: cint): ptr HashClass {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   return ctx.impl[id - 1]
 
-proc multihashInit*(ctx: ptr MultihashContext) {.cdecl, importc: "br_multihash_init",
+proc multihashInit*(ctx: ptr MultihashContext) {.bearSslFunc, importc: "br_multihash_init",
     header: "bearssl_hash.h".}
 
-proc multihashUpdate*(ctx: ptr MultihashContext; data: pointer; len: int) {.cdecl,
+proc multihashUpdate*(ctx: ptr MultihashContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_multihash_update", header: "bearssl_hash.h".}
 
-proc multihashOut*(ctx: ptr MultihashContext; id: cint; dst: pointer): int {.cdecl,
+proc multihashOut*(ctx: ptr MultihashContext; id: cint; dst: pointer): int {.bearSslFunc,
     importc: "br_multihash_out", header: "bearssl_hash.h".}
 
 type
-  Ghash* = proc (y: pointer; h: pointer; data: pointer; len: int) {.cdecl, gcsafe.}
+  Ghash* = proc (y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc.}
 
-proc ghashCtmul*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
+proc ghashCtmul*(y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ghash_ctmul", header: "bearssl_hash.h".}
 
-proc ghashCtmul32*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
+proc ghashCtmul32*(y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ghash_ctmul32", header: "bearssl_hash.h".}
 
-proc ghashCtmul64*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
+proc ghashCtmul64*(y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ghash_ctmul64", header: "bearssl_hash.h".}
 
-proc ghashPclmul*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
+proc ghashPclmul*(y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ghash_pclmul", header: "bearssl_hash.h".}
 
-proc ghashPclmulGet*(): Ghash {.cdecl, importc: "br_ghash_pclmul_get",
+proc ghashPclmulGet*(): Ghash {.bearSslFunc, importc: "br_ghash_pclmul_get",
                              header: "bearssl_hash.h".}
 
-proc ghashPwr8*(y: pointer; h: pointer; data: pointer; len: int) {.cdecl,
+proc ghashPwr8*(y: pointer; h: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ghash_pwr8", header: "bearssl_hash.h".}
 
-proc ghashPwr8Get*(): Ghash {.cdecl, importc: "br_ghash_pwr8_get",
+proc ghashPwr8Get*(): Ghash {.bearSslFunc, importc: "br_ghash_pwr8_get",
                            header: "bearssl_hash.h".}
 
 type
@@ -692,7 +697,7 @@ type
 
 
 proc hmacKeyInit*(kc: ptr HmacKeyContext; digestVtable: ptr HashClass; key: pointer;
-                 keyLen: int) {.cdecl, importc: "br_hmac_key_init",
+                 keyLen: int) {.bearSslFunc, importc: "br_hmac_key_init",
                                 header: "bearssl_hmac.h".}
 
 type
@@ -702,32 +707,31 @@ type
     outLen* {.importc: "out_len".}: int
 
 
-proc hmacInit*(ctx: ptr HmacContext; kc: ptr HmacKeyContext; outLen: int) {.cdecl,
+proc hmacInit*(ctx: ptr HmacContext; kc: ptr HmacKeyContext; outLen: int) {.bearSslFunc,
     importc: "br_hmac_init", header: "bearssl_hmac.h".}
 
 proc hmacSize*(ctx: ptr HmacContext): int {.inline.} =
   return ctx.outLen
 
-proc hmacUpdate*(ctx: ptr HmacContext; data: pointer; len: int) {.cdecl,
+proc hmacUpdate*(ctx: ptr HmacContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_hmac_update", header: "bearssl_hmac.h".}
 
-proc hmacOut*(ctx: ptr HmacContext; `out`: pointer): int {.cdecl,
+proc hmacOut*(ctx: ptr HmacContext; `out`: pointer): int {.bearSslFunc,
     importc: "br_hmac_out", header: "bearssl_hmac.h".}
 
 proc hmacOutCT*(ctx: ptr HmacContext; data: pointer; len: int; minLen: int;
-               maxLen: int; `out`: pointer): int {.cdecl,
+               maxLen: int; `out`: pointer): int {.bearSslFunc,
     importc: "br_hmac_outCT", header: "bearssl_hmac.h".}
 
 type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: pointer;
-                                 seed: pointer; seedLen: int) {.cdecl, gcsafe.}
+                                 seed: pointer; seedLen: int) {.bearSslFunc.}
     generate* {.importc: "generate".}: proc (ctx: ptr ptr PrngClass; `out`: pointer;
-        len: int) {.cdecl, gcsafe.}
+        len: int) {.bearSslFunc.}
     update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
-                                     seedLen: int) {.cdecl, gcsafe.}
-
+                                     seedLen: int) {.bearSslFunc.}
 
 type
   HmacDrbgContext* {.importc: "br_hmac_drbg_context", header: "bearssl_rand.h",
@@ -741,22 +745,22 @@ type
 var hmacDrbgVtable* {.importc: "br_hmac_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
 
 proc hmacDrbgInit*(ctx: ptr HmacDrbgContext; digestClass: ptr HashClass; seed: pointer;
-                  seedLen: int) {.cdecl, importc: "br_hmac_drbg_init",
+                  seedLen: int) {.bearSslFunc, importc: "br_hmac_drbg_init",
                                   header: "bearssl_rand.h".}
 
-proc hmacDrbgGenerate*(ctx: ptr HmacDrbgContext; `out`: pointer; len: int) {.cdecl,
+proc hmacDrbgGenerate*(ctx: ptr HmacDrbgContext; `out`: pointer; len: int) {.bearSslFunc,
     importc: "br_hmac_drbg_generate", header: "bearssl_rand.h".}
 
-proc hmacDrbgUpdate*(ctx: ptr HmacDrbgContext; seed: pointer; seedLen: int) {.cdecl,
+proc hmacDrbgUpdate*(ctx: ptr HmacDrbgContext; seed: pointer; seedLen: int) {.bearSslFunc,
     importc: "br_hmac_drbg_update", header: "bearssl_rand.h".}
 
 proc hmacDrbgGetHash*(ctx: ptr HmacDrbgContext): ptr HashClass {.inline.} =
   return ctx.digestClass
 
 type
-  PrngSeeder* = proc (ctx: ptr ptr PrngClass): cint {.cdecl, gcsafe.}
+  PrngSeeder* = proc (ctx: ptr ptr PrngClass): cint {.bearSslFunc.}
 
-proc prngSeederSystem*(name: cstringArray): PrngSeeder {.cdecl,
+proc prngSeederSystem*(name: cstringArray): PrngSeeder {.bearSslFunc,
     importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
 
 type
@@ -767,20 +771,20 @@ type
 
 
 proc tls10Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
-              label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl,
+              label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.bearSslFunc,
     importc: "br_tls10_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha256Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
-                    label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl,
+                    label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.bearSslFunc,
     importc: "br_tls12_sha256_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha384Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
-                    label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl,
+                    label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.bearSslFunc,
     importc: "br_tls12_sha384_prf", header: "bearssl_prf.h".}
 
 type
   TlsPrfImpl* = proc (dst: pointer; len: int; secret: pointer; secretLen: int;
-                   label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.cdecl, gcsafe.}
+                   label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.bearSslFunc.}
 
 type
   BlockCbcencClass* {.importc: "br_block_cbcenc_class", header: "bearssl_block.h",
@@ -789,10 +793,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: pointer;
-                                 keyLen: int) {.cdecl, gcsafe.}
+                                 keyLen: int) {.bearSslFunc.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcencClass; iv: pointer;
-                               data: pointer; len: int) {.cdecl, gcsafe.}
-
+                               data: pointer; len: int) {.bearSslFunc.}
 
 type
   BlockCbcdecClass* {.importc: "br_block_cbcdec_class", header: "bearssl_block.h",
@@ -801,10 +804,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: pointer;
-                                 keyLen: int) {.cdecl, gcsafe.}
+                                 keyLen: int) {.bearSslFunc.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcdecClass; iv: pointer;
-                               data: pointer; len: int) {.cdecl, gcsafe.}
-
+                               data: pointer; len: int) {.bearSslFunc.}
 
 type
   BlockCtrClass* {.importc: "br_block_ctr_class", header: "bearssl_block.h", bycopy.} = object
@@ -812,10 +814,9 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: pointer;
-                                 keyLen: int) {.cdecl, gcsafe.}
+                                 keyLen: int) {.bearSslFunc.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCtrClass; iv: pointer; cc: uint32;
-                               data: pointer; len: int): uint32 {.cdecl, gcsafe.}
-
+                               data: pointer; len: int): uint32 {.bearSslFunc.}
 
 type
   BlockCtrcbcClass* {.importc: "br_block_ctrcbc_class", header: "bearssl_block.h",
@@ -824,18 +825,17 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: pointer;
-                                 keyLen: int) {.cdecl, gcsafe.}
+                                 keyLen: int) {.bearSslFunc.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                        cbcmac: pointer; data: pointer; len: int) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                        cbcmac: pointer; data: pointer; len: int) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     ctr* {.importc: "ctr".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
-                               data: pointer; len: int) {.cdecl, gcsafe.}
+                               data: pointer; len: int) {.bearSslFunc.}
     mac* {.importc: "mac".}: proc (ctx: ptr ptr BlockCtrcbcClass; cbcmac: pointer;
-                               data: pointer; len: int) {.cdecl, gcsafe.}
-
+                               data: pointer; len: int) {.bearSslFunc.}
 
 const
   aesBigBLOCK_SIZE* = 16
@@ -882,41 +882,41 @@ var aesBigCtrVtable* {.importc: "br_aes_big_ctr_vtable", header: "bearssl_block.
 var aesBigCtrcbcVtable* {.importc: "br_aes_big_ctrcbc_vtable",
                         header: "bearssl_block.h".}: BlockCtrcbcClass
 
-proc aesBigCbcencInit*(ctx: ptr AesBigCbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesBigCbcencInit*(ctx: ptr AesBigCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesBigCbcdecInit*(ctx: ptr AesBigCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesBigCbcdecInit*(ctx: ptr AesBigCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesBigCtrInit*(ctx: ptr AesBigCtrKeys; key: pointer; len: int) {.cdecl,
+proc aesBigCtrInit*(ctx: ptr AesBigCtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_ctr_init", header: "bearssl_block.h".}
 
-proc aesBigCtrcbcInit*(ctx: ptr AesBigCtrcbcKeys; key: pointer; len: int) {.cdecl,
+proc aesBigCtrcbcInit*(ctx: ptr AesBigCtrcbcKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesBigCbcencRun*(ctx: ptr AesBigCbcencKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_big_cbcenc_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_big_cbcenc_run", header: "bearssl_block.h".}
 
 proc aesBigCbcdecRun*(ctx: ptr AesBigCbcdecKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_big_cbcdec_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_big_cbcdec_run", header: "bearssl_block.h".}
 
 proc aesBigCtrRun*(ctx: ptr AesBigCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                  len: int): uint32 {.cdecl, importc: "br_aes_big_ctr_run",
+                  len: int): uint32 {.bearSslFunc, importc: "br_aes_big_ctr_run",
                                       header: "bearssl_block.h".}
 
 proc aesBigCtrcbcEncrypt*(ctx: ptr AesBigCtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                         data: pointer; len: int) {.cdecl,
+                         data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_ctrcbc_encrypt", header: "bearssl_block.h".}
 
 proc aesBigCtrcbcDecrypt*(ctx: ptr AesBigCtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                         data: pointer; len: int) {.cdecl,
+                         data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_big_ctrcbc_decrypt", header: "bearssl_block.h".}
 
 proc aesBigCtrcbcCtr*(ctx: ptr AesBigCtrcbcKeys; ctr: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_big_ctrcbc_ctr", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_big_ctrcbc_ctr", header: "bearssl_block.h".}
 
 proc aesBigCtrcbcMac*(ctx: ptr AesBigCtrcbcKeys; cbcmac: pointer; data: pointer;
-                     len: int) {.cdecl, importc: "br_aes_big_ctrcbc_mac",
+                     len: int) {.bearSslFunc, importc: "br_aes_big_ctrcbc_mac",
                                  header: "bearssl_block.h".}
 
 const
@@ -966,44 +966,44 @@ var aesSmallCtrVtable* {.importc: "br_aes_small_ctr_vtable",
 var aesSmallCtrcbcVtable* {.importc: "br_aes_small_ctrcbc_vtable",
                           header: "bearssl_block.h".}: BlockCtrcbcClass
 
-proc aesSmallCbcencInit*(ctx: ptr AesSmallCbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesSmallCbcencInit*(ctx: ptr AesSmallCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesSmallCbcdecInit*(ctx: ptr AesSmallCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesSmallCbcdecInit*(ctx: ptr AesSmallCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesSmallCtrInit*(ctx: ptr AesSmallCtrKeys; key: pointer; len: int) {.cdecl,
+proc aesSmallCtrInit*(ctx: ptr AesSmallCtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_ctr_init", header: "bearssl_block.h".}
 
-proc aesSmallCtrcbcInit*(ctx: ptr AesSmallCtrcbcKeys; key: pointer; len: int) {.cdecl,
+proc aesSmallCtrcbcInit*(ctx: ptr AesSmallCtrcbcKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesSmallCbcencRun*(ctx: ptr AesSmallCbcencKeys; iv: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_small_cbcenc_run",
+                       len: int) {.bearSslFunc, importc: "br_aes_small_cbcenc_run",
                                    header: "bearssl_block.h".}
 
 proc aesSmallCbcdecRun*(ctx: ptr AesSmallCbcdecKeys; iv: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_small_cbcdec_run",
+                       len: int) {.bearSslFunc, importc: "br_aes_small_cbcdec_run",
                                    header: "bearssl_block.h".}
 
 proc aesSmallCtrRun*(ctx: ptr AesSmallCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                    len: int): uint32 {.cdecl, importc: "br_aes_small_ctr_run",
+                    len: int): uint32 {.bearSslFunc, importc: "br_aes_small_ctr_run",
                                         header: "bearssl_block.h".}
 
 proc aesSmallCtrcbcEncrypt*(ctx: ptr AesSmallCtrcbcKeys; ctr: pointer;
-                           cbcmac: pointer; data: pointer; len: int) {.cdecl,
+                           cbcmac: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_ctrcbc_encrypt", header: "bearssl_block.h".}
 
 proc aesSmallCtrcbcDecrypt*(ctx: ptr AesSmallCtrcbcKeys; ctr: pointer;
-                           cbcmac: pointer; data: pointer; len: int) {.cdecl,
+                           cbcmac: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_small_ctrcbc_decrypt", header: "bearssl_block.h".}
 
 proc aesSmallCtrcbcCtr*(ctx: ptr AesSmallCtrcbcKeys; ctr: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_small_ctrcbc_ctr",
+                       len: int) {.bearSslFunc, importc: "br_aes_small_ctrcbc_ctr",
                                    header: "bearssl_block.h".}
 
 proc aesSmallCtrcbcMac*(ctx: ptr AesSmallCtrcbcKeys; cbcmac: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_small_ctrcbc_mac",
+                       len: int) {.bearSslFunc, importc: "br_aes_small_ctrcbc_mac",
                                    header: "bearssl_block.h".}
 
 const
@@ -1051,41 +1051,41 @@ var aesCtCtrVtable* {.importc: "br_aes_ct_ctr_vtable", header: "bearssl_block.h"
 var aesCtCtrcbcVtable* {.importc: "br_aes_ct_ctrcbc_vtable",
                        header: "bearssl_block.h".}: BlockCtrcbcClass
 
-proc aesCtCbcencInit*(ctx: ptr AesCtCbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesCtCbcencInit*(ctx: ptr AesCtCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesCtCbcdecInit*(ctx: ptr AesCtCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesCtCbcdecInit*(ctx: ptr AesCtCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesCtCtrInit*(ctx: ptr AesCtCtrKeys; key: pointer; len: int) {.cdecl,
+proc aesCtCtrInit*(ctx: ptr AesCtCtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_ctr_init", header: "bearssl_block.h".}
 
-proc aesCtCtrcbcInit*(ctx: ptr AesCtCtrcbcKeys; key: pointer; len: int) {.cdecl,
+proc aesCtCtrcbcInit*(ctx: ptr AesCtCtrcbcKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesCtCbcencRun*(ctx: ptr AesCtCbcencKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_ct_cbcenc_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_ct_cbcenc_run", header: "bearssl_block.h".}
 
 proc aesCtCbcdecRun*(ctx: ptr AesCtCbcdecKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_ct_cbcdec_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_ct_cbcdec_run", header: "bearssl_block.h".}
 
 proc aesCtCtrRun*(ctx: ptr AesCtCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                 len: int): uint32 {.cdecl, importc: "br_aes_ct_ctr_run",
+                 len: int): uint32 {.bearSslFunc, importc: "br_aes_ct_ctr_run",
                                      header: "bearssl_block.h".}
 
 proc aesCtCtrcbcEncrypt*(ctx: ptr AesCtCtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                        data: pointer; len: int) {.cdecl,
+                        data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_ctrcbc_encrypt", header: "bearssl_block.h".}
 
 proc aesCtCtrcbcDecrypt*(ctx: ptr AesCtCtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                        data: pointer; len: int) {.cdecl,
+                        data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct_ctrcbc_decrypt", header: "bearssl_block.h".}
 
 proc aesCtCtrcbcCtr*(ctx: ptr AesCtCtrcbcKeys; ctr: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_aes_ct_ctrcbc_ctr", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_aes_ct_ctrcbc_ctr", header: "bearssl_block.h".}
 
 proc aesCtCtrcbcMac*(ctx: ptr AesCtCtrcbcKeys; cbcmac: pointer; data: pointer;
-                    len: int) {.cdecl, importc: "br_aes_ct_ctrcbc_mac",
+                    len: int) {.bearSslFunc, importc: "br_aes_ct_ctrcbc_mac",
                                 header: "bearssl_block.h".}
 
 const
@@ -1134,44 +1134,44 @@ var aesCt64CtrVtable* {.importc: "br_aes_ct64_ctr_vtable", header: "bearssl_bloc
 var aesCt64CtrcbcVtable* {.importc: "br_aes_ct64_ctrcbc_vtable",
                          header: "bearssl_block.h".}: BlockCtrcbcClass
 
-proc aesCt64CbcencInit*(ctx: ptr AesCt64CbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesCt64CbcencInit*(ctx: ptr AesCt64CbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesCt64CbcdecInit*(ctx: ptr AesCt64CbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesCt64CbcdecInit*(ctx: ptr AesCt64CbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesCt64CtrInit*(ctx: ptr AesCt64CtrKeys; key: pointer; len: int) {.cdecl,
+proc aesCt64CtrInit*(ctx: ptr AesCt64CtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_ctr_init", header: "bearssl_block.h".}
 
-proc aesCt64CtrcbcInit*(ctx: ptr AesCt64CtrcbcKeys; key: pointer; len: int) {.cdecl,
+proc aesCt64CtrcbcInit*(ctx: ptr AesCt64CtrcbcKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesCt64CbcencRun*(ctx: ptr AesCt64CbcencKeys; iv: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_ct64_cbcenc_run",
+                      len: int) {.bearSslFunc, importc: "br_aes_ct64_cbcenc_run",
                                   header: "bearssl_block.h".}
 
 proc aesCt64CbcdecRun*(ctx: ptr AesCt64CbcdecKeys; iv: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_ct64_cbcdec_run",
+                      len: int) {.bearSslFunc, importc: "br_aes_ct64_cbcdec_run",
                                   header: "bearssl_block.h".}
 
 proc aesCt64CtrRun*(ctx: ptr AesCt64CtrKeys; iv: pointer; cc: uint32; data: pointer;
-                   len: int): uint32 {.cdecl, importc: "br_aes_ct64_ctr_run",
+                   len: int): uint32 {.bearSslFunc, importc: "br_aes_ct64_ctr_run",
                                        header: "bearssl_block.h".}
 
 proc aesCt64CtrcbcEncrypt*(ctx: ptr AesCt64CtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                          data: pointer; len: int) {.cdecl,
+                          data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_ctrcbc_encrypt", header: "bearssl_block.h".}
 
 proc aesCt64CtrcbcDecrypt*(ctx: ptr AesCt64CtrcbcKeys; ctr: pointer; cbcmac: pointer;
-                          data: pointer; len: int) {.cdecl,
+                          data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_ct64_ctrcbc_decrypt", header: "bearssl_block.h".}
 
 proc aesCt64CtrcbcCtr*(ctx: ptr AesCt64CtrcbcKeys; ctr: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_ct64_ctrcbc_ctr",
+                      len: int) {.bearSslFunc, importc: "br_aes_ct64_ctrcbc_ctr",
                                   header: "bearssl_block.h".}
 
 proc aesCt64CtrcbcMac*(ctx: ptr AesCt64CtrcbcKeys; cbcmac: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_ct64_ctrcbc_mac",
+                      len: int) {.bearSslFunc, importc: "br_aes_ct64_ctrcbc_mac",
                                   header: "bearssl_block.h".}
 
 const
@@ -1237,56 +1237,56 @@ var aesX86niCtrVtable* {.importc: "br_aes_x86ni_ctr_vtable",
 var aesX86niCtrcbcVtable* {.importc: "br_aes_x86ni_ctrcbc_vtable",
                           header: "bearssl_block.h".}: BlockCtrcbcClass
 
-proc aesX86niCbcencInit*(ctx: ptr AesX86niCbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesX86niCbcencInit*(ctx: ptr AesX86niCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesX86niCbcdecInit*(ctx: ptr AesX86niCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesX86niCbcdecInit*(ctx: ptr AesX86niCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesX86niCtrInit*(ctx: ptr AesX86niCtrKeys; key: pointer; len: int) {.cdecl,
+proc aesX86niCtrInit*(ctx: ptr AesX86niCtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_ctr_init", header: "bearssl_block.h".}
 
-proc aesX86niCtrcbcInit*(ctx: ptr AesX86niCtrcbcKeys; key: pointer; len: int) {.cdecl,
+proc aesX86niCtrcbcInit*(ctx: ptr AesX86niCtrcbcKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesX86niCbcencRun*(ctx: ptr AesX86niCbcencKeys; iv: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_x86ni_cbcenc_run",
+                       len: int) {.bearSslFunc, importc: "br_aes_x86ni_cbcenc_run",
                                    header: "bearssl_block.h".}
 
 proc aesX86niCbcdecRun*(ctx: ptr AesX86niCbcdecKeys; iv: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_x86ni_cbcdec_run",
+                       len: int) {.bearSslFunc, importc: "br_aes_x86ni_cbcdec_run",
                                    header: "bearssl_block.h".}
 
 proc aesX86niCtrRun*(ctx: ptr AesX86niCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                    len: int): uint32 {.cdecl, importc: "br_aes_x86ni_ctr_run",
+                    len: int): uint32 {.bearSslFunc, importc: "br_aes_x86ni_ctr_run",
                                         header: "bearssl_block.h".}
 
 proc aesX86niCtrcbcEncrypt*(ctx: ptr AesX86niCtrcbcKeys; ctr: pointer;
-                           cbcmac: pointer; data: pointer; len: int) {.cdecl,
+                           cbcmac: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_ctrcbc_encrypt", header: "bearssl_block.h".}
 
 proc aesX86niCtrcbcDecrypt*(ctx: ptr AesX86niCtrcbcKeys; ctr: pointer;
-                           cbcmac: pointer; data: pointer; len: int) {.cdecl,
+                           cbcmac: pointer; data: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_x86ni_ctrcbc_decrypt", header: "bearssl_block.h".}
 
 proc aesX86niCtrcbcCtr*(ctx: ptr AesX86niCtrcbcKeys; ctr: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_x86ni_ctrcbc_ctr",
+                       len: int) {.bearSslFunc, importc: "br_aes_x86ni_ctrcbc_ctr",
                                    header: "bearssl_block.h".}
 
 proc aesX86niCtrcbcMac*(ctx: ptr AesX86niCtrcbcKeys; cbcmac: pointer; data: pointer;
-                       len: int) {.cdecl, importc: "br_aes_x86ni_ctrcbc_mac",
+                       len: int) {.bearSslFunc, importc: "br_aes_x86ni_ctrcbc_mac",
                                    header: "bearssl_block.h".}
 
-proc aesX86niCbcencGetVtable*(): ptr BlockCbcencClass {.cdecl,
+proc aesX86niCbcencGetVtable*(): ptr BlockCbcencClass {.bearSslFunc,
     importc: "br_aes_x86ni_cbcenc_get_vtable", header: "bearssl_block.h".}
 
-proc aesX86niCbcdecGetVtable*(): ptr BlockCbcdecClass {.cdecl,
+proc aesX86niCbcdecGetVtable*(): ptr BlockCbcdecClass {.bearSslFunc,
     importc: "br_aes_x86ni_cbcdec_get_vtable", header: "bearssl_block.h".}
 
-proc aesX86niCtrGetVtable*(): ptr BlockCtrClass {.cdecl,
+proc aesX86niCtrGetVtable*(): ptr BlockCtrClass {.bearSslFunc,
     importc: "br_aes_x86ni_ctr_get_vtable", header: "bearssl_block.h".}
 
-proc aesX86niCtrcbcGetVtable*(): ptr BlockCtrcbcClass {.cdecl,
+proc aesX86niCtrcbcGetVtable*(): ptr BlockCtrcbcClass {.bearSslFunc,
     importc: "br_aes_x86ni_ctrcbc_get_vtable", header: "bearssl_block.h".}
 
 const
@@ -1336,34 +1336,34 @@ var aesPwr8CbcdecVtable* {.importc: "br_aes_pwr8_cbcdec_vtable",
 
 var aesPwr8CtrVtable* {.importc: "br_aes_pwr8_ctr_vtable", header: "bearssl_block.h".}: BlockCtrClass
 
-proc aesPwr8CbcencInit*(ctx: ptr AesPwr8CbcencKeys; key: pointer; len: int) {.cdecl,
+proc aesPwr8CbcencInit*(ctx: ptr AesPwr8CbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_pwr8_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesPwr8CbcdecInit*(ctx: ptr AesPwr8CbcdecKeys; key: pointer; len: int) {.cdecl,
+proc aesPwr8CbcdecInit*(ctx: ptr AesPwr8CbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_pwr8_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesPwr8CtrInit*(ctx: ptr AesPwr8CtrKeys; key: pointer; len: int) {.cdecl,
+proc aesPwr8CtrInit*(ctx: ptr AesPwr8CtrKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_aes_pwr8_ctr_init", header: "bearssl_block.h".}
 
 proc aesPwr8CbcencRun*(ctx: ptr AesPwr8CbcencKeys; iv: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_pwr8_cbcenc_run",
+                      len: int) {.bearSslFunc, importc: "br_aes_pwr8_cbcenc_run",
                                   header: "bearssl_block.h".}
 
 proc aesPwr8CbcdecRun*(ctx: ptr AesPwr8CbcdecKeys; iv: pointer; data: pointer;
-                      len: int) {.cdecl, importc: "br_aes_pwr8_cbcdec_run",
+                      len: int) {.bearSslFunc, importc: "br_aes_pwr8_cbcdec_run",
                                   header: "bearssl_block.h".}
 
 proc aesPwr8CtrRun*(ctx: ptr AesPwr8CtrKeys; iv: pointer; cc: uint32; data: pointer;
-                   len: int): uint32 {.cdecl, importc: "br_aes_pwr8_ctr_run",
+                   len: int): uint32 {.bearSslFunc, importc: "br_aes_pwr8_ctr_run",
                                        header: "bearssl_block.h".}
 
-proc aesPwr8CbcencGetVtable*(): ptr BlockCbcencClass {.cdecl,
+proc aesPwr8CbcencGetVtable*(): ptr BlockCbcencClass {.bearSslFunc,
     importc: "br_aes_pwr8_cbcenc_get_vtable", header: "bearssl_block.h".}
 
-proc aesPwr8CbcdecGetVtable*(): ptr BlockCbcdecClass {.cdecl,
+proc aesPwr8CbcdecGetVtable*(): ptr BlockCbcdecClass {.bearSslFunc,
     importc: "br_aes_pwr8_cbcdec_get_vtable", header: "bearssl_block.h".}
 
-proc aesPwr8CtrGetVtable*(): ptr BlockCtrClass {.cdecl,
+proc aesPwr8CtrGetVtable*(): ptr BlockCtrClass {.bearSslFunc,
     importc: "br_aes_pwr8_ctr_get_vtable", header: "bearssl_block.h".}
 
 type
@@ -1437,17 +1437,17 @@ var desTabCbcencVtable* {.importc: "br_des_tab_cbcenc_vtable",
 var desTabCbcdecVtable* {.importc: "br_des_tab_cbcdec_vtable",
                         header: "bearssl_block.h".}: BlockCbcdecClass
 
-proc desTabCbcencInit*(ctx: ptr DesTabCbcencKeys; key: pointer; len: int) {.cdecl,
+proc desTabCbcencInit*(ctx: ptr DesTabCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_des_tab_cbcenc_init", header: "bearssl_block.h".}
 
-proc desTabCbcdecInit*(ctx: ptr DesTabCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc desTabCbcdecInit*(ctx: ptr DesTabCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_des_tab_cbcdec_init", header: "bearssl_block.h".}
 
 proc desTabCbcencRun*(ctx: ptr DesTabCbcencKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_des_tab_cbcenc_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_des_tab_cbcenc_run", header: "bearssl_block.h".}
 
 proc desTabCbcdecRun*(ctx: ptr DesTabCbcdecKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_des_tab_cbcdec_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_des_tab_cbcdec_run", header: "bearssl_block.h".}
 
 const
   desCtBLOCK_SIZE* = 8
@@ -1474,17 +1474,17 @@ var desCtCbcencVtable* {.importc: "br_des_ct_cbcenc_vtable",
 var desCtCbcdecVtable* {.importc: "br_des_ct_cbcdec_vtable",
                        header: "bearssl_block.h".}: BlockCbcdecClass
 
-proc desCtCbcencInit*(ctx: ptr DesCtCbcencKeys; key: pointer; len: int) {.cdecl,
+proc desCtCbcencInit*(ctx: ptr DesCtCbcencKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_des_ct_cbcenc_init", header: "bearssl_block.h".}
 
-proc desCtCbcdecInit*(ctx: ptr DesCtCbcdecKeys; key: pointer; len: int) {.cdecl,
+proc desCtCbcdecInit*(ctx: ptr DesCtCbcdecKeys; key: pointer; len: int) {.bearSslFunc,
     importc: "br_des_ct_cbcdec_init", header: "bearssl_block.h".}
 
 proc desCtCbcencRun*(ctx: ptr DesCtCbcencKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_des_ct_cbcenc_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_des_ct_cbcenc_run", header: "bearssl_block.h".}
 
 proc desCtCbcdecRun*(ctx: ptr DesCtCbcdecKeys; iv: pointer; data: pointer; len: int) {.
-    cdecl, importc: "br_des_ct_cbcdec_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_des_ct_cbcdec_run", header: "bearssl_block.h".}
 
 type
   DesGenCbcencKeys* {.importc: "br_des_gen_cbcenc_keys",
@@ -1504,62 +1504,61 @@ type
 
 type
   Chacha20Run* = proc (key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
-      cdecl, gcsafe.}
+      bearSslFunc.}
 
 proc chacha20CtRun*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
-    cdecl, importc: "br_chacha20_ct_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_chacha20_ct_run", header: "bearssl_block.h".}
 
 proc chacha20Sse2Run*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
-    cdecl, importc: "br_chacha20_sse2_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_chacha20_sse2_run", header: "bearssl_block.h".}
 
-proc chacha20Sse2Get*(): Chacha20Run {.cdecl, importc: "br_chacha20_sse2_get",
+proc chacha20Sse2Get*(): Chacha20Run {.bearSslFunc, importc: "br_chacha20_sse2_get",
                                     header: "bearssl_block.h".}
 
 type
   Poly1305Run* = proc (key: pointer; iv: pointer; data: pointer; len: int; aad: pointer;
                     aadLen: int; tag: pointer; ichacha: Chacha20Run; encrypt: cint) {.
-      cdecl, gcsafe.}
+      bearSslFunc.}
 
 proc poly1305CtmulRun*(key: pointer; iv: pointer; data: pointer; len: int;
                       aad: pointer; aadLen: int; tag: pointer; ichacha: Chacha20Run;
-                      encrypt: cint) {.cdecl, importc: "br_poly1305_ctmul_run",
+                      encrypt: cint) {.bearSslFunc, importc: "br_poly1305_ctmul_run",
                                      header: "bearssl_block.h".}
 
 proc poly1305Ctmul32Run*(key: pointer; iv: pointer; data: pointer; len: int;
                         aad: pointer; aadLen: int; tag: pointer;
-                        ichacha: Chacha20Run; encrypt: cint) {.cdecl,
+                        ichacha: Chacha20Run; encrypt: cint) {.bearSslFunc,
     importc: "br_poly1305_ctmul32_run", header: "bearssl_block.h".}
 
 proc poly1305I15Run*(key: pointer; iv: pointer; data: pointer; len: int; aad: pointer;
                     aadLen: int; tag: pointer; ichacha: Chacha20Run; encrypt: cint) {.
-    cdecl, importc: "br_poly1305_i15_run", header: "bearssl_block.h".}
+    bearSslFunc, importc: "br_poly1305_i15_run", header: "bearssl_block.h".}
 
 proc poly1305CtmulqRun*(key: pointer; iv: pointer; data: pointer; len: int;
                        aad: pointer; aadLen: int; tag: pointer;
-                       ichacha: Chacha20Run; encrypt: cint) {.cdecl,
+                       ichacha: Chacha20Run; encrypt: cint) {.bearSslFunc,
     importc: "br_poly1305_ctmulq_run", header: "bearssl_block.h".}
 
-proc poly1305CtmulqGet*(): Poly1305Run {.cdecl, importc: "br_poly1305_ctmulq_get",
+proc poly1305CtmulqGet*(): Poly1305Run {.bearSslFunc, importc: "br_poly1305_ctmulq_get",
                                       header: "bearssl_block.h".}
 
 type
   AeadClass* {.importc: "br_aead_class", header: "bearssl_aead.h", bycopy.} = object
     tagSize* {.importc: "tag_size".}: int
     reset* {.importc: "reset".}: proc (cc: ptr ptr AeadClass; iv: pointer; len: int) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     aadInject* {.importc: "aad_inject".}: proc (cc: ptr ptr AeadClass; data: pointer;
-        len: int) {.cdecl, gcsafe.}
-    flip* {.importc: "flip".}: proc (cc: ptr ptr AeadClass) {.cdecl, gcsafe.}
+        len: int) {.bearSslFunc.}
+    flip* {.importc: "flip".}: proc (cc: ptr ptr AeadClass) {.bearSslFunc.}
     run* {.importc: "run".}: proc (cc: ptr ptr AeadClass; encrypt: cint; data: pointer;
-                               len: int) {.cdecl, gcsafe.}
-    getTag* {.importc: "get_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer) {.cdecl, gcsafe.}
+                               len: int) {.bearSslFunc.}
+    getTag* {.importc: "get_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer) {.bearSslFunc.}
     checkTag* {.importc: "check_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer): uint32 {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     getTagTrunc* {.importc: "get_tag_trunc".}: proc (cc: ptr ptr AeadClass;
-        tag: pointer; len: int) {.cdecl, gcsafe.}
+        tag: pointer; len: int) {.bearSslFunc.}
     checkTagTrunc* {.importc: "check_tag_trunc".}: proc (cc: ptr ptr AeadClass;
-        tag: pointer; len: int): uint32 {.cdecl, gcsafe.}
-
+        tag: pointer; len: int): uint32 {.bearSslFunc.}
 
 type
   GcmContext* {.importc: "br_gcm_context", header: "bearssl_aead.h", bycopy.} = object
@@ -1576,31 +1575,31 @@ type
     countCtr* {.importc: "count_ctr".}: uint64
 
 
-proc gcmInit*(ctx: ptr GcmContext; bctx: ptr ptr BlockCtrClass; gh: Ghash) {.cdecl,
+proc gcmInit*(ctx: ptr GcmContext; bctx: ptr ptr BlockCtrClass; gh: Ghash) {.bearSslFunc,
     importc: "br_gcm_init", header: "bearssl_aead.h".}
 
-proc gcmReset*(ctx: ptr GcmContext; iv: pointer; len: int) {.cdecl,
+proc gcmReset*(ctx: ptr GcmContext; iv: pointer; len: int) {.bearSslFunc,
     importc: "br_gcm_reset", header: "bearssl_aead.h".}
 
-proc gcmAadInject*(ctx: ptr GcmContext; data: pointer; len: int) {.cdecl,
+proc gcmAadInject*(ctx: ptr GcmContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_gcm_aad_inject", header: "bearssl_aead.h".}
 
-proc gcmFlip*(ctx: ptr GcmContext) {.cdecl, importc: "br_gcm_flip",
+proc gcmFlip*(ctx: ptr GcmContext) {.bearSslFunc, importc: "br_gcm_flip",
                                  header: "bearssl_aead.h".}
 
-proc gcmRun*(ctx: ptr GcmContext; encrypt: cint; data: pointer; len: int) {.cdecl,
+proc gcmRun*(ctx: ptr GcmContext; encrypt: cint; data: pointer; len: int) {.bearSslFunc,
     importc: "br_gcm_run", header: "bearssl_aead.h".}
 
-proc gcmGetTag*(ctx: ptr GcmContext; tag: pointer) {.cdecl, importc: "br_gcm_get_tag",
+proc gcmGetTag*(ctx: ptr GcmContext; tag: pointer) {.bearSslFunc, importc: "br_gcm_get_tag",
     header: "bearssl_aead.h".}
 
-proc gcmCheckTag*(ctx: ptr GcmContext; tag: pointer): uint32 {.cdecl,
+proc gcmCheckTag*(ctx: ptr GcmContext; tag: pointer): uint32 {.bearSslFunc,
     importc: "br_gcm_check_tag", header: "bearssl_aead.h".}
 
-proc gcmGetTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int) {.cdecl,
+proc gcmGetTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int) {.bearSslFunc,
     importc: "br_gcm_get_tag_trunc", header: "bearssl_aead.h".}
 
-proc gcmCheckTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int): uint32 {.cdecl,
+proc gcmCheckTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int): uint32 {.bearSslFunc,
     importc: "br_gcm_check_tag_trunc", header: "bearssl_aead.h".}
 
 var gcmVtable* {.importc: "br_gcm_vtable", header: "bearssl_aead.h".}: AeadClass
@@ -1624,43 +1623,43 @@ type
     st* {.importc: "st".}: array[3, array[16, cuchar]]
 
 
-proc eaxInit*(ctx: ptr EaxContext; bctx: ptr ptr BlockCtrcbcClass) {.cdecl,
+proc eaxInit*(ctx: ptr EaxContext; bctx: ptr ptr BlockCtrcbcClass) {.bearSslFunc,
     importc: "br_eax_init", header: "bearssl_aead.h".}
 
-proc eaxCapture*(ctx: ptr EaxContext; st: ptr EaxState) {.cdecl,
+proc eaxCapture*(ctx: ptr EaxContext; st: ptr EaxState) {.bearSslFunc,
     importc: "br_eax_capture", header: "bearssl_aead.h".}
 
-proc eaxReset*(ctx: ptr EaxContext; nonce: pointer; len: int) {.cdecl,
+proc eaxReset*(ctx: ptr EaxContext; nonce: pointer; len: int) {.bearSslFunc,
     importc: "br_eax_reset", header: "bearssl_aead.h".}
 
 proc eaxResetPreAad*(ctx: ptr EaxContext; st: ptr EaxState; nonce: pointer; len: int) {.
-    cdecl, importc: "br_eax_reset_pre_aad", header: "bearssl_aead.h".}
+    bearSslFunc, importc: "br_eax_reset_pre_aad", header: "bearssl_aead.h".}
 
 proc eaxResetPostAad*(ctx: ptr EaxContext; st: ptr EaxState; nonce: pointer; len: int) {.
-    cdecl, importc: "br_eax_reset_post_aad", header: "bearssl_aead.h".}
+    bearSslFunc, importc: "br_eax_reset_post_aad", header: "bearssl_aead.h".}
 
-proc eaxAadInject*(ctx: ptr EaxContext; data: pointer; len: int) {.cdecl,
+proc eaxAadInject*(ctx: ptr EaxContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_eax_aad_inject", header: "bearssl_aead.h".}
 
-proc eaxFlip*(ctx: ptr EaxContext) {.cdecl, importc: "br_eax_flip",
+proc eaxFlip*(ctx: ptr EaxContext) {.bearSslFunc, importc: "br_eax_flip",
                                  header: "bearssl_aead.h".}
 
 proc eaxGetAadMac*(ctx: ptr EaxContext; st: ptr EaxState) {.inline.} =
   copyMem(unsafeAddr st.st[1], unsafeAddr ctx.head, sizeof(ctx.head))
 
-proc eaxRun*(ctx: ptr EaxContext; encrypt: cint; data: pointer; len: int) {.cdecl,
+proc eaxRun*(ctx: ptr EaxContext; encrypt: cint; data: pointer; len: int) {.bearSslFunc,
     importc: "br_eax_run", header: "bearssl_aead.h".}
 
-proc eaxGetTag*(ctx: ptr EaxContext; tag: pointer) {.cdecl, importc: "br_eax_get_tag",
+proc eaxGetTag*(ctx: ptr EaxContext; tag: pointer) {.bearSslFunc, importc: "br_eax_get_tag",
     header: "bearssl_aead.h".}
 
-proc eaxCheckTag*(ctx: ptr EaxContext; tag: pointer): uint32 {.cdecl,
+proc eaxCheckTag*(ctx: ptr EaxContext; tag: pointer): uint32 {.bearSslFunc,
     importc: "br_eax_check_tag", header: "bearssl_aead.h".}
 
-proc eaxGetTagTrunc*(ctx: ptr EaxContext; tag: pointer; len: int) {.cdecl,
+proc eaxGetTagTrunc*(ctx: ptr EaxContext; tag: pointer; len: int) {.bearSslFunc,
     importc: "br_eax_get_tag_trunc", header: "bearssl_aead.h".}
 
-proc eaxCheckTagTrunc*(ctx: ptr EaxContext; tag: pointer; len: int): uint32 {.cdecl,
+proc eaxCheckTagTrunc*(ctx: ptr EaxContext; tag: pointer; len: int): uint32 {.bearSslFunc,
     importc: "br_eax_check_tag_trunc", header: "bearssl_aead.h".}
 
 var eaxVtable* {.importc: "br_eax_vtable", header: "bearssl_aead.h".}: AeadClass
@@ -1676,26 +1675,26 @@ type
     tagLen* {.importc: "tag_len".}: int
 
 
-proc ccmInit*(ctx: ptr CcmContext; bctx: ptr ptr BlockCtrcbcClass) {.cdecl,
+proc ccmInit*(ctx: ptr CcmContext; bctx: ptr ptr BlockCtrcbcClass) {.bearSslFunc,
     importc: "br_ccm_init", header: "bearssl_aead.h".}
 
 proc ccmReset*(ctx: ptr CcmContext; nonce: pointer; nonceLen: int; aadLen: uint64;
-              dataLen: uint64; tagLen: int): cint {.cdecl, importc: "br_ccm_reset",
+              dataLen: uint64; tagLen: int): cint {.bearSslFunc, importc: "br_ccm_reset",
     header: "bearssl_aead.h".}
 
-proc ccmAadInject*(ctx: ptr CcmContext; data: pointer; len: int) {.cdecl,
+proc ccmAadInject*(ctx: ptr CcmContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ccm_aad_inject", header: "bearssl_aead.h".}
 
-proc ccmFlip*(ctx: ptr CcmContext) {.cdecl, importc: "br_ccm_flip",
+proc ccmFlip*(ctx: ptr CcmContext) {.bearSslFunc, importc: "br_ccm_flip",
                                  header: "bearssl_aead.h".}
 
-proc ccmRun*(ctx: ptr CcmContext; encrypt: cint; data: pointer; len: int) {.cdecl,
+proc ccmRun*(ctx: ptr CcmContext; encrypt: cint; data: pointer; len: int) {.bearSslFunc,
     importc: "br_ccm_run", header: "bearssl_aead.h".}
 
-proc ccmGetTag*(ctx: ptr CcmContext; tag: pointer): int {.cdecl,
+proc ccmGetTag*(ctx: ptr CcmContext; tag: pointer): int {.bearSslFunc,
     importc: "br_ccm_get_tag", header: "bearssl_aead.h".}
 
-proc ccmCheckTag*(ctx: ptr CcmContext; tag: pointer): uint32 {.cdecl,
+proc ccmCheckTag*(ctx: ptr CcmContext; tag: pointer): uint32 {.bearSslFunc,
     importc: "br_ccm_check_tag", header: "bearssl_aead.h".}
 
 type
@@ -1722,18 +1721,18 @@ type
 
 
 type
-  RsaPublic* = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl, gcsafe.}
+  RsaPublic* = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.bearSslFunc.}
 
 type
   RsaPkcs1Vrfy* = proc (x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl, gcsafe.}
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.bearSslFunc.}
 
 type
-  RsaPrivate* = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl, gcsafe.}
+  RsaPrivate* = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.bearSslFunc.}
 
 type
   RsaPkcs1Sign* = proc (hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl, gcsafe.}
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.bearSslFunc.}
 
 const
   HASH_OID_SHA1* = (("\x05+\x0E\x03\x02\x1A"))
@@ -1750,92 +1749,92 @@ const
 const
   HASH_OID_SHA512* = (("\t`\x86H\x01e\x03\x04\x02\x03"))
 
-proc rsaI32Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl,
+proc rsaI32Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i32_public", header: "bearssl_rsa.h".}
 
 proc rsaI32Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl,
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i32_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI32Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl,
+proc rsaI32Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i32_private", header: "bearssl_rsa.h".}
 
 proc rsaI32Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl,
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i32_pkcs1_sign", header: "bearssl_rsa.h".}
 
-proc rsaI31Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl,
+proc rsaI31Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i31_public", header: "bearssl_rsa.h".}
 
 proc rsaI31Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl,
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i31_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI31Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl,
+proc rsaI31Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i31_private", header: "bearssl_rsa.h".}
 
 proc rsaI31Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl,
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i31_pkcs1_sign", header: "bearssl_rsa.h".}
 
-proc rsaI62Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl,
+proc rsaI62Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i62_public", header: "bearssl_rsa.h".}
 
 proc rsaI62Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl,
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i62_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI62Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl,
+proc rsaI62Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i62_private", header: "bearssl_rsa.h".}
 
 proc rsaI62Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl,
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i62_pkcs1_sign", header: "bearssl_rsa.h".}
 
-proc rsaI62PublicGet*(): RsaPublic {.cdecl, importc: "br_rsa_i62_public_get",
+proc rsaI62PublicGet*(): RsaPublic {.bearSslFunc, importc: "br_rsa_i62_public_get",
                                   header: "bearssl_rsa.h".}
 
-proc rsaI62Pkcs1VrfyGet*(): RsaPkcs1Vrfy {.cdecl,
+proc rsaI62Pkcs1VrfyGet*(): RsaPkcs1Vrfy {.bearSslFunc,
                                         importc: "br_rsa_i62_pkcs1_vrfy_get",
                                         header: "bearssl_rsa.h".}
 
-proc rsaI62PrivateGet*(): RsaPrivate {.cdecl, importc: "br_rsa_i62_private_get",
+proc rsaI62PrivateGet*(): RsaPrivate {.bearSslFunc, importc: "br_rsa_i62_private_get",
                                     header: "bearssl_rsa.h".}
 
-proc rsaI62Pkcs1SignGet*(): RsaPkcs1Sign {.cdecl,
+proc rsaI62Pkcs1SignGet*(): RsaPkcs1Sign {.bearSslFunc,
                                         importc: "br_rsa_i62_pkcs1_sign_get",
                                         header: "bearssl_rsa.h".}
 
-proc rsaI15Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.cdecl,
+proc rsaI15Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i15_public", header: "bearssl_rsa.h".}
 
 proc rsaI15Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
-                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.cdecl,
+                     pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i15_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI15Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.cdecl,
+proc rsaI15Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.bearSslFunc,
     importc: "br_rsa_i15_private", header: "bearssl_rsa.h".}
 
 proc rsaI15Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.cdecl,
+                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.bearSslFunc,
     importc: "br_rsa_i15_pkcs1_sign", header: "bearssl_rsa.h".}
 
-proc rsaPublicGetDefault*(): RsaPublic {.cdecl,
+proc rsaPublicGetDefault*(): RsaPublic {.bearSslFunc,
                                       importc: "br_rsa_public_get_default",
                                       header: "bearssl_rsa.h".}
 
-proc rsaPrivateGetDefault*(): RsaPrivate {.cdecl,
+proc rsaPrivateGetDefault*(): RsaPrivate {.bearSslFunc,
                                         importc: "br_rsa_private_get_default",
                                         header: "bearssl_rsa.h".}
 
-proc rsaPkcs1VrfyGetDefault*(): RsaPkcs1Vrfy {.cdecl,
+proc rsaPkcs1VrfyGetDefault*(): RsaPkcs1Vrfy {.bearSslFunc,
     importc: "br_rsa_pkcs1_vrfy_get_default", header: "bearssl_rsa.h".}
 
-proc rsaPkcs1SignGetDefault*(): RsaPkcs1Sign {.cdecl,
+proc rsaPkcs1SignGetDefault*(): RsaPkcs1Sign {.bearSslFunc,
     importc: "br_rsa_pkcs1_sign_get_default", header: "bearssl_rsa.h".}
 
 proc rsaSslDecrypt*(core: RsaPrivate; sk: ptr RsaPrivateKey; data: ptr cuchar; len: int): uint32 {.
-    cdecl, importc: "br_rsa_ssl_decrypt", header: "bearssl_rsa.h".}
+    bearSslFunc, importc: "br_rsa_ssl_decrypt", header: "bearssl_rsa.h".}
 
 const
   EC_sect163k1* = 1
@@ -1944,17 +1943,16 @@ type
 type
   EcImpl* {.importc: "br_ec_impl", header: "bearssl_ec.h", bycopy.} = object
     supportedCurves* {.importc: "supported_curves".}: uint32
-    generator* {.importc: "generator".}: proc (curve: cint; len: ptr int): ptr cuchar {.
-        cdecl, gcsafe.}
-    order* {.importc: "order".}: proc (curve: cint; len: ptr int): ptr cuchar {.cdecl, gcsafe.}
-    xoff* {.importc: "xoff".}: proc (curve: cint; len: ptr int): int {.cdecl, gcsafe.}
+    generator* {.importc: "generator".}: proc (curve: cint; len: ptr int): ptr cuchar {.bearSslFunc.}
+    order* {.importc: "order".}: proc (curve: cint; len: ptr int): ptr cuchar {.bearSslFunc.}
+    xoff* {.importc: "xoff".}: proc (curve: cint; len: ptr int): int {.bearSslFunc.}
     mul* {.importc: "mul".}: proc (g: ptr cuchar; glen: int; x: ptr cuchar; xlen: int;
-                               curve: cint): uint32 {.cdecl, gcsafe.}
+                               curve: cint): uint32 {.bearSslFunc.}
     mulgen* {.importc: "mulgen".}: proc (r: ptr cuchar; x: ptr cuchar; xlen: int;
-                                     curve: cint): int {.cdecl, gcsafe.}
+                                     curve: cint): int {.bearSslFunc.}
     muladd* {.importc: "muladd".}: proc (a: ptr cuchar; b: ptr cuchar; len: int;
                                      x: ptr cuchar; xlen: int; y: ptr cuchar;
-                                     ylen: int; curve: cint): uint32 {.cdecl, gcsafe.}
+                                     ylen: int; curve: cint): uint32 {.bearSslFunc.}
 
 
 var ecPrimeI31* {.importc: "br_ec_prime_i31", header: "bearssl_ec.h".}: EcImpl
@@ -1977,65 +1975,65 @@ var ecAllM15* {.importc: "br_ec_all_m15", header: "bearssl_ec.h".}: EcImpl
 
 var ecAllM31* {.importc: "br_ec_all_m31", header: "bearssl_ec.h".}: EcImpl
 
-proc ecGetDefault*(): ptr EcImpl {.cdecl, importc: "br_ec_get_default",
+proc ecGetDefault*(): ptr EcImpl {.bearSslFunc, importc: "br_ec_get_default",
                                header: "bearssl_ec.h".}
 
-proc ecdsaRawToAsn1*(sig: pointer; sigLen: int): int {.cdecl,
+proc ecdsaRawToAsn1*(sig: pointer; sigLen: int): int {.bearSslFunc,
     importc: "br_ecdsa_raw_to_asn1", header: "bearssl_ec.h".}
 
-proc ecdsaAsn1ToRaw*(sig: pointer; sigLen: int): int {.cdecl,
+proc ecdsaAsn1ToRaw*(sig: pointer; sigLen: int): int {.bearSslFunc,
     importc: "br_ecdsa_asn1_to_raw", header: "bearssl_ec.h".}
 
 type
   EcdsaSign* = proc (impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                  sk: ptr EcPrivateKey; sig: pointer): int {.cdecl, gcsafe.}
+                  sk: ptr EcPrivateKey; sig: pointer): int {.bearSslFunc.}
 
 type
   EcdsaVrfy* = proc (impl: ptr EcImpl; hash: pointer; hashLen: int; pk: ptr EcPublicKey;
-                  sig: pointer; sigLen: int): uint32 {.cdecl, gcsafe.}
+                  sig: pointer; sigLen: int): uint32 {.bearSslFunc.}
 
 proc ecdsaI31SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                      sk: ptr EcPrivateKey; sig: pointer): int {.cdecl,
+                      sk: ptr EcPrivateKey; sig: pointer): int {.bearSslFunc,
     importc: "br_ecdsa_i31_sign_asn1", header: "bearssl_ec.h".}
 
 proc ecdsaI31SignRaw*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                     sk: ptr EcPrivateKey; sig: pointer): int {.cdecl,
+                     sk: ptr EcPrivateKey; sig: pointer): int {.bearSslFunc,
     importc: "br_ecdsa_i31_sign_raw", header: "bearssl_ec.h".}
 
 proc ecdsaI31VrfyAsn1*(impl: ptr EcImpl; hash: pointer; hashLen: int;
                       pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.
-    cdecl, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
+    bearSslFunc, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
 
 proc ecdsaI31VrfyRaw*(impl: ptr EcImpl; hash: pointer; hashLen: int;
-                     pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.cdecl,
+                     pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.bearSslFunc,
     importc: "br_ecdsa_i31_vrfy_raw", header: "bearssl_ec.h".}
 
 proc ecdsaI15SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                      sk: ptr EcPrivateKey; sig: pointer): int {.cdecl,
+                      sk: ptr EcPrivateKey; sig: pointer): int {.bearSslFunc,
     importc: "br_ecdsa_i15_sign_asn1", header: "bearssl_ec.h".}
 
 proc ecdsaI15SignRaw*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                     sk: ptr EcPrivateKey; sig: pointer): int {.cdecl,
+                     sk: ptr EcPrivateKey; sig: pointer): int {.bearSslFunc,
     importc: "br_ecdsa_i15_sign_raw", header: "bearssl_ec.h".}
 
 proc ecdsaI15VrfyAsn1*(impl: ptr EcImpl; hash: pointer; hashLen: int;
                       pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.
-    cdecl, importc: "br_ecdsa_i15_vrfy_asn1", header: "bearssl_ec.h".}
+    bearSslFunc, importc: "br_ecdsa_i15_vrfy_asn1", header: "bearssl_ec.h".}
 
 proc ecdsaI15VrfyRaw*(impl: ptr EcImpl; hash: pointer; hashLen: int;
-                     pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.cdecl,
+                     pk: ptr EcPublicKey; sig: pointer; sigLen: int): uint32 {.bearSslFunc,
     importc: "br_ecdsa_i15_vrfy_raw", header: "bearssl_ec.h".}
 
-proc ecdsaSignAsn1GetDefault*(): EcdsaSign {.cdecl,
+proc ecdsaSignAsn1GetDefault*(): EcdsaSign {.bearSslFunc,
     importc: "br_ecdsa_sign_asn1_get_default", header: "bearssl_ec.h".}
 
-proc ecdsaSignRawGetDefault*(): EcdsaSign {.cdecl,
+proc ecdsaSignRawGetDefault*(): EcdsaSign {.bearSslFunc,
     importc: "br_ecdsa_sign_raw_get_default", header: "bearssl_ec.h".}
 
-proc ecdsaVrfyAsn1GetDefault*(): EcdsaVrfy {.cdecl,
+proc ecdsaVrfyAsn1GetDefault*(): EcdsaVrfy {.bearSslFunc,
     importc: "br_ecdsa_vrfy_asn1_get_default", header: "bearssl_ec.h".}
 
-proc ecdsaVrfyRawGetDefault*(): EcdsaVrfy {.cdecl,
+proc ecdsaVrfyRawGetDefault*(): EcdsaVrfy {.bearSslFunc,
     importc: "br_ecdsa_vrfy_raw_get_default", header: "bearssl_ec.h".}
 
 const
@@ -2172,16 +2170,15 @@ type
   X509Class* {.importc: "br_x509_class", header: "bearssl_x509.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     startChain* {.importc: "start_chain".}: proc (ctx: ptr ptr X509Class;
-        serverName: cstring) {.cdecl, gcsafe.}
+        serverName: cstring) {.bearSslFunc.}
     startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ptr cuchar;
-                                     len: int) {.cdecl, gcsafe.}
-    endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.cdecl, gcsafe.}
-    endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.cdecl, gcsafe.}
+                                     len: int) {.bearSslFunc.}
+    endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.bearSslFunc.}
+    endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.bearSslFunc.}
     getPkey* {.importc: "get_pkey".}: proc (ctx: ptr ptr X509Class; usages: ptr cuint): ptr X509Pkey {.
-        cdecl, gcsafe.}
-
+        bearSslFunc.}
 
 type
   X509KnownkeyContext* {.importc: "br_x509_knownkey_context",
@@ -2195,12 +2192,12 @@ var x509KnownkeyVtable* {.importc: "br_x509_knownkey_vtable",
                         header: "bearssl_x509.h".}: X509Class
 
 proc x509KnownkeyInitRsa*(ctx: ptr X509KnownkeyContext; pk: ptr RsaPublicKey;
-                         usages: cuint) {.cdecl,
+                         usages: cuint) {.bearSslFunc,
                                         importc: "br_x509_knownkey_init_rsa",
                                         header: "bearssl_x509.h".}
 
 proc x509KnownkeyInitEc*(ctx: ptr X509KnownkeyContext; pk: ptr EcPublicKey;
-                        usages: cuint) {.cdecl,
+                        usages: cuint) {.bearSslFunc,
                                        importc: "br_x509_knownkey_init_ec",
                                        header: "bearssl_x509.h".}
 
@@ -2269,14 +2266,14 @@ var x509MinimalVtable* {.importc: "br_x509_minimal_vtable", header: "bearssl_x50
 
 proc x509MinimalInit*(ctx: ptr X509MinimalContext; dnHashImpl: ptr HashClass;
                      trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: int) {.
-    cdecl, importc: "br_x509_minimal_init", header: "bearssl_x509.h".}
+    bearSslFunc, importc: "br_x509_minimal_init", header: "bearssl_x509.h".}
 
 proc x509MinimalSetHash*(ctx: ptr X509MinimalContext; id: cint; impl: ptr HashClass) {.
     inline.} =
   multihashSetimpl(addr(ctx.mhash), id, impl)
 
 proc x509MinimalSetRsa*(ctx: ptr X509MinimalContext; irsa: RsaPkcs1Vrfy) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   ctx.irsa = irsa
 
 proc x509MinimalSetEcdsa*(ctx: ptr X509MinimalContext; iec: ptr EcImpl;
@@ -2286,7 +2283,7 @@ proc x509MinimalSetEcdsa*(ctx: ptr X509MinimalContext; iec: ptr EcImpl;
 
 proc x509MinimalInitFull*(ctx: ptr X509MinimalContext;
                          trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: int) {.
-    cdecl, importc: "br_x509_minimal_init_full", header: "bearssl_x509.h".}
+    bearSslFunc, importc: "br_x509_minimal_init_full", header: "bearssl_x509.h".}
 
 proc x509MinimalSetTime*(ctx: ptr X509MinimalContext; days: uint32; seconds: uint32) {.
     inline.} =
@@ -2294,7 +2291,7 @@ proc x509MinimalSetTime*(ctx: ptr X509MinimalContext; days: uint32; seconds: uin
   ctx.seconds = seconds
 
 proc x509MinimalSetMinrsa*(ctx: ptr X509MinimalContext; byteLength: cint) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   ctx.minRsaSize = (int16)(byteLength - 128)
 
 proc x509MinimalSetNameElements*(ctx: ptr X509MinimalContext; elts: ptr NameElement;
@@ -2325,7 +2322,7 @@ type
     copyDn* {.importc: "copy_dn".}: cuchar
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
     appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: int) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     hbuf* {.importc: "hbuf".}: ptr cuchar
     hlen* {.importc: "hlen".}: int
     pkeyData* {.importc: "pkey_data".}: array[X509_BUFSIZE_KEY, cuchar]
@@ -2334,10 +2331,10 @@ type
 
 
 proc x509DecoderInit*(ctx: ptr X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: pointer; len: int) {.cdecl, gcsafe.}; appendDnCtx: pointer) {.cdecl,
+    buf: pointer; len: int) {.bearSslFunc.}; appendDnCtx: pointer) {.bearSslFunc,
     importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
-proc x509DecoderPush*(ctx: ptr X509DecoderContext; data: pointer; len: int) {.cdecl,
+proc x509DecoderPush*(ctx: ptr X509DecoderContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_x509_decoder_push", header: "bearssl_x509.h".}
 
 proc x509DecoderGetPkey*(ctx: ptr X509DecoderContext): ptr X509Pkey {.inline.} =
@@ -2394,10 +2391,10 @@ type
     keyData* {.importc: "key_data".}: array[3 * X509_BUFSIZE_SIG, cuchar]
 
 
-proc skeyDecoderInit*(ctx: ptr SkeyDecoderContext) {.cdecl,
+proc skeyDecoderInit*(ctx: ptr SkeyDecoderContext) {.bearSslFunc,
     importc: "br_skey_decoder_init", header: "bearssl_x509.h".}
 
-proc skeyDecoderPush*(ctx: ptr SkeyDecoderContext; data: pointer; len: int) {.cdecl,
+proc skeyDecoderPush*(ctx: ptr SkeyDecoderContext; data: pointer; len: int) {.bearSslFunc,
     importc: "br_skey_decoder_push", header: "bearssl_x509.h".}
 
 proc skeyDecoderLastError*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
@@ -2537,22 +2534,20 @@ type
   SslrecInClass* {.importc: "br_sslrec_in_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     checkLength* {.importc: "check_length".}: proc (ctx: ptr ptr SslrecInClass;
-        recordLen: int): cint {.cdecl, gcsafe.}
+        recordLen: int): cint {.bearSslFunc.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr SslrecInClass; recordType: cint;
                                        version: cuint; payload: pointer;
-                                       len: ptr int): ptr cuchar {.cdecl, gcsafe.}
-
+                                       len: ptr int): ptr cuchar {.bearSslFunc.}
 
 type
   SslrecOutClass* {.importc: "br_sslrec_out_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     maxPlaintext* {.importc: "max_plaintext".}: proc (ctx: ptr ptr SslrecOutClass;
-        start: ptr int; `end`: ptr int) {.cdecl, gcsafe.}
+        start: ptr int; `end`: ptr int) {.bearSslFunc.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr SslrecOutClass;
                                        recordType: cint; version: cuint;
                                        plaintext: pointer; len: ptr int): ptr cuchar {.
-        cdecl, gcsafe.}
-
+        bearSslFunc.}
 
 type
   SslrecOutClearContext* {.importc: "br_sslrec_out_clear_context",
@@ -2571,8 +2566,7 @@ type
                                  bcImpl: ptr BlockCbcdecClass; bcKey: pointer;
                                  bcKeyLen: int; digImpl: ptr HashClass;
                                  macKey: pointer; macKeyLen: int;
-                                 macOutLen: int; iv: pointer) {.cdecl, gcsafe.}
-
+                                 macOutLen: int; iv: pointer) {.bearSslFunc.}
 
 type
   SslrecOutCbcClass* {.importc: "br_sslrec_out_cbc_class",
@@ -2582,8 +2576,7 @@ type
                                  bcImpl: ptr BlockCbcencClass; bcKey: pointer;
                                  bcKeyLen: int; digImpl: ptr HashClass;
                                  macKey: pointer; macKeyLen: int;
-                                 macOutLen: int; iv: pointer) {.cdecl, gcsafe.}
-
+                                 macOutLen: int; iv: pointer) {.bearSslFunc.}
 
 type
   INNER_C_UNION_2105460304* {.importc: "no_name", header: "bearssl_ssl.h",
@@ -2632,8 +2625,7 @@ type
     inner* {.importc: "inner".}: SslrecInClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInGcmClass;
                                  bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl, gcsafe.}
-
+                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.bearSslFunc.}
 
 type
   SslrecOutGcmClass* {.importc: "br_sslrec_out_gcm_class",
@@ -2641,8 +2633,7 @@ type
     inner* {.importc: "inner".}: SslrecOutClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutGcmClass;
                                  bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.cdecl, gcsafe.}
-
+                                 keyLen: int; ghImpl: Ghash; iv: pointer) {.bearSslFunc.}
 
 type
   INNER_C_UNION_536016210* {.importc: "no_name", header: "bearssl_ssl.h",
@@ -2677,8 +2668,7 @@ type
     inner* {.importc: "inner".}: SslrecInClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.cdecl, gcsafe.}
-
+                                 key: pointer; iv: pointer) {.bearSslFunc.}
 
 type
   SslrecOutChapolClass* {.importc: "br_sslrec_out_chapol_class",
@@ -2686,8 +2676,7 @@ type
     inner* {.importc: "inner".}: SslrecOutClass
     init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.cdecl, gcsafe.}
-
+                                 key: pointer; iv: pointer) {.bearSslFunc.}
 
 type
   INNER_C_UNION_1683842004* {.importc: "no_name", header: "bearssl_ssl.h",
@@ -2798,7 +2787,7 @@ type
     savedHbufOut* {.importc: "saved_hbuf_out".}: ptr cuchar
     hlenIn* {.importc: "hlen_in".}: int
     hlenOut* {.importc: "hlen_out".}: int
-    hsrun* {.importc: "hsrun".}: proc (ctx: pointer) {.cdecl, gcsafe.}
+    hsrun* {.importc: "hsrun".}: proc (ctx: pointer) {.bearSslFunc.}
     action* {.importc: "action".}: cuchar
     alert* {.importc: "alert".}: cuchar
     closeReceived* {.importc: "close_received".}: cuchar
@@ -2863,11 +2852,11 @@ proc sslEngineSetVersions*(cc: ptr SslEngineContext; versionMin: uint16;
   cc.versionMax = versionMax
 
 proc sslEngineSetSuites*(cc: ptr SslEngineContext; suites: ptr uint16;
-                        suitesNum: int) {.cdecl,
+                        suitesNum: int) {.bearSslFunc,
     importc: "br_ssl_engine_set_suites", header: "bearssl_ssl.h".}
 
 proc sslEngineSetX509*(cc: ptr SslEngineContext; x509ctx: ptr ptr X509Class) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.x509ctx = x509ctx
 
 proc sslEngineSetProtocolNames*(ctx: ptr SslEngineContext; names: cstringArray;
@@ -2885,7 +2874,7 @@ proc sslEngineSetHash*(ctx: ptr SslEngineContext; id: cint; impl: ptr HashClass)
   multihashSetimpl(addr(ctx.mhash), id, impl)
 
 proc sslEngineGetHash*(ctx: ptr SslEngineContext; id: cint): ptr HashClass {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   return multihashGetimpl(addr(ctx.mhash), id)
 
 proc sslEngineSetPrf10*(cc: ptr SslEngineContext; impl: TlsPrfImpl) {.inline.} =
@@ -2902,14 +2891,14 @@ proc sslEngineSetAesCbc*(cc: ptr SslEngineContext; implEnc: ptr BlockCbcencClass
   cc.iaesCbcenc = implEnc
   cc.iaesCbcdec = implDec
 
-proc sslEngineSetDefaultAesCbc*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultAesCbc*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_aes_cbc", header: "bearssl_ssl.h".}
 
 proc sslEngineSetAesCtr*(cc: ptr SslEngineContext; impl: ptr BlockCtrClass) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.iaesCtr = impl
 
-proc sslEngineSetDefaultAesGcm*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultAesGcm*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_aes_gcm", header: "bearssl_ssl.h".}
 
 proc sslEngineSetDesCbc*(cc: ptr SslEngineContext; implEnc: ptr BlockCbcencClass;
@@ -2917,21 +2906,21 @@ proc sslEngineSetDesCbc*(cc: ptr SslEngineContext; implEnc: ptr BlockCbcencClass
   cc.idesCbcenc = implEnc
   cc.idesCbcdec = implDec
 
-proc sslEngineSetDefaultDesCbc*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultDesCbc*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_des_cbc", header: "bearssl_ssl.h".}
 
 proc sslEngineSetGhash*(cc: ptr SslEngineContext; impl: Ghash) {.inline.} =
   cc.ighash = impl
 
 proc sslEngineSetChacha20*(cc: ptr SslEngineContext; ichacha: Chacha20Run) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.ichacha = ichacha
 
 proc sslEngineSetPoly1305*(cc: ptr SslEngineContext; ipoly: Poly1305Run) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.ipoly = ipoly
 
-proc sslEngineSetDefaultChapol*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultChapol*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_chapol", header: "bearssl_ssl.h".}
 
 proc sslEngineSetCbc*(cc: ptr SslEngineContext; implIn: ptr SslrecInCbcClass;
@@ -2952,17 +2941,17 @@ proc sslEngineSetChapol*(cc: ptr SslEngineContext; implIn: ptr SslrecInChapolCla
 proc sslEngineSetEc*(cc: ptr SslEngineContext; iec: ptr EcImpl) {.inline.} =
   cc.iec = iec
 
-proc sslEngineSetDefaultEc*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultEc*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_ec", header: "bearssl_ssl.h".}
 
 proc sslEngineGetEc*(cc: ptr SslEngineContext): ptr EcImpl {.inline.} =
   return cc.iec
 
 proc sslEngineSetRsavrfy*(cc: ptr SslEngineContext; irsavrfy: RsaPkcs1Vrfy) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.irsavrfy = irsavrfy
 
-proc sslEngineSetDefaultRsavrfy*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultRsavrfy*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_rsavrfy", header: "bearssl_ssl.h".}
 
 proc sslEngineGetRsavrfy*(cc: ptr SslEngineContext): RsaPkcs1Vrfy {.inline.} =
@@ -2971,7 +2960,7 @@ proc sslEngineGetRsavrfy*(cc: ptr SslEngineContext): RsaPkcs1Vrfy {.inline.} =
 proc sslEngineSetEcdsa*(cc: ptr SslEngineContext; iecdsa: EcdsaVrfy) {.inline.} =
   cc.iecdsa = iecdsa
 
-proc sslEngineSetDefaultEcdsa*(cc: ptr SslEngineContext) {.cdecl,
+proc sslEngineSetDefaultEcdsa*(cc: ptr SslEngineContext) {.bearSslFunc,
     importc: "br_ssl_engine_set_default_ecdsa", header: "bearssl_ssl.h".}
 
 proc sslEngineGetEcdsa*(cc: ptr SslEngineContext): EcdsaVrfy {.inline.} =
@@ -2979,14 +2968,14 @@ proc sslEngineGetEcdsa*(cc: ptr SslEngineContext): EcdsaVrfy {.inline.} =
 
 proc sslEngineSetBuffer*(cc: ptr SslEngineContext, iobuf: ptr byte,
                          iobufLen: uint, bidi: cint) {.
-     cdecl, importc: "br_ssl_engine_set_buffer", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_set_buffer", header: "bearssl_ssl.h".}
 
 proc sslEngineSetBuffersBidi*(cc: ptr SslEngineContext, ibuf: ptr byte,
                               ibufLen: uint, obuf: ptr byte, obufLen: uint) {.
-    cdecl, importc: "br_ssl_engine_set_buffers_bidi", header: "bearssl_ssl.h".}
+    bearSslFunc, importc: "br_ssl_engine_set_buffers_bidi", header: "bearssl_ssl.h".}
 
 proc sslEngineInjectEntropy*(cc: ptr SslEngineContext; data: pointer; len: int) {.
-    cdecl, importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
+    bearSslFunc, importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
 
 proc sslEngineGetServerName*(cc: ptr SslEngineContext): cstring {.inline.} =
   return addr cc.serverName
@@ -3005,7 +2994,7 @@ proc sslEngineSetSessionParameters*(cc: ptr SslEngineContext;
 proc sslEngineGetEcdheCurve*(cc: ptr SslEngineContext): cint {.inline.} =
   return cint cc.ecdheCurve
 
-proc sslEngineCurrentState*(cc: ptr SslEngineContext): cuint {.cdecl,
+proc sslEngineCurrentState*(cc: ptr SslEngineContext): cuint {.bearSslFunc,
     importc: "br_ssl_engine_current_state", header: "bearssl_ssl.h".}
 
 const
@@ -3028,46 +3017,46 @@ proc sslEngineLastError*(cc: ptr SslEngineContext): cint {.inline.} =
 
 proc sslEngineSendappBuf*(cc: ptr SslEngineContext,
                           length: var uint): ptr byte {.
-     cdecl, importc: "br_ssl_engine_sendapp_buf", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_sendapp_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineSendappAck*(cc: ptr SslEngineContext,
                           length: uint) {.
-     cdecl, importc: "br_ssl_engine_sendapp_ack", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_sendapp_ack", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvappBuf*(cc: ptr SslEngineContext,
                           length: var uint): ptr byte {.
-     cdecl, importc: "br_ssl_engine_recvapp_buf", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_recvapp_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvappAck*(cc: ptr SslEngineContext,
                           length: uint) {.
-     cdecl, importc: "br_ssl_engine_recvapp_ack", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_recvapp_ack", header: "bearssl_ssl.h".}
 
 proc sslEngineSendrecBuf*(cc: ptr SslEngineContext,
                           length: var uint): ptr byte {.
-     cdecl, importc: "br_ssl_engine_sendrec_buf", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_sendrec_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineSendrecAck*(cc: ptr SslEngineContext,
                           length: uint) {.
-     cdecl, importc: "br_ssl_engine_sendrec_ack", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_sendrec_ack", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvrecBuf*(cc: ptr SslEngineContext,
                           length: var uint): ptr byte {.
-     cdecl, importc: "br_ssl_engine_recvrec_buf", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_recvrec_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvrecAck*(cc: ptr SslEngineContext; length: uint) {.
-     cdecl, importc: "br_ssl_engine_recvrec_ack", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_recvrec_ack", header: "bearssl_ssl.h".}
 
 proc sslEngineFlush*(cc: ptr SslEngineContext; force: cint) {.
-     cdecl, importc: "br_ssl_engine_flush", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_flush", header: "bearssl_ssl.h".}
 
 proc sslEngineClose*(cc: ptr SslEngineContext) {.
-     cdecl, importc: "br_ssl_engine_close", header: "bearssl_ssl.h".}
+     bearSslFunc, importc: "br_ssl_engine_close", header: "bearssl_ssl.h".}
 
 proc sslEngineRenegotiate*(cc: ptr SslEngineContext): cint {.
-    cdecl, importc: "br_ssl_engine_renegotiate", header: "bearssl_ssl.h".}
+    bearSslFunc, importc: "br_ssl_engine_renegotiate", header: "bearssl_ssl.h".}
 
 proc sslKeyExport*(cc: ptr SslEngineContext; dst: pointer; len: int; label: cstring;
-                   context: pointer; contextLen: int): cint {.cdecl,
+                   context: pointer; contextLen: int): cint {.bearSslFunc,
     importc: "br_ssl_key_export", header: "bearssl_ssl.h".}
 
 type
@@ -3111,24 +3100,24 @@ type
                               header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
     startNameList* {.importc: "start_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.cdecl, gcsafe.}
+        pctx: ptr ptr SslClientCertificateClass) {.bearSslFunc.}
     startName* {.importc: "start_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; len: int) {.cdecl, gcsafe.}
+        pctx: ptr ptr SslClientCertificateClass; len: int) {.bearSslFunc.}
     appendName* {.importc: "append_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; data: ptr cuchar; len: int) {.cdecl, gcsafe.}
+        pctx: ptr ptr SslClientCertificateClass; data: ptr cuchar; len: int) {.bearSslFunc.}
     endName* {.importc: "end_name".}: proc (pctx: ptr ptr SslClientCertificateClass) {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     endNameList* {.importc: "end_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.cdecl, gcsafe.}
+        pctx: ptr ptr SslClientCertificateClass) {.bearSslFunc.}
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                      cc: ptr SslClientContext; authTypes: uint32;
-                                     choices: ptr SslClientCertificate) {.cdecl, gcsafe.}
+                                     choices: ptr SslClientCertificate) {.bearSslFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       data: ptr cuchar; len: ptr int): uint32 {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       hashId: cint; hvLen: int; data: ptr cuchar;
-                                      len: int): int {.cdecl, gcsafe.}
+                                      len: int): int {.bearSslFunc.}
 
   SslClientCertificateRsaContext* {.importc: "br_ssl_client_certificate_rsa_context",
                                    header: "bearssl_ssl.h", bycopy.} = object
@@ -3160,9 +3149,9 @@ proc sslClientGetServerCurve*(cc: ptr SslClientContext): cint {.inline.} =
 
 proc sslClientInitFull*(cc: ptr SslClientContext; xc: ptr X509MinimalContext;
                        trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: int) {.
-    cdecl, importc: "br_ssl_client_init_full", header: "bearssl_ssl.h".}
+    bearSslFunc, importc: "br_ssl_client_init_full", header: "bearssl_ssl.h".}
 
-proc sslClientZero*(cc: ptr SslClientContext) {.cdecl, importc: "br_ssl_client_zero",
+proc sslClientZero*(cc: ptr SslClientContext) {.bearSslFunc, importc: "br_ssl_client_zero",
     header: "bearssl_ssl.h".}
 
 proc sslClientSetClientCertificate*(cc: ptr SslClientContext;
@@ -3173,15 +3162,15 @@ proc sslClientSetClientCertificate*(cc: ptr SslClientContext;
 proc sslClientSetRsapub*(cc: ptr SslClientContext; irsapub: RsaPublic) {.inline.} =
   cc.irsapub = irsapub
 
-proc sslClientSetDefaultRsapub*(cc: ptr SslClientContext) {.cdecl,
+proc sslClientSetDefaultRsapub*(cc: ptr SslClientContext) {.bearSslFunc,
     importc: "br_ssl_client_set_default_rsapub", header: "bearssl_ssl.h".}
 
 proc sslClientSetMinClienthelloLen*(cc: ptr SslClientContext; len: uint16) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.minClienthelloLen = len
 
 proc sslClientReset*(cc: ptr SslClientContext; serverName: cstring;
-                    resumeSession: cint): cint {.cdecl,
+                    resumeSession: cint): cint {.bearSslFunc,
     importc: "br_ssl_client_reset", header: "bearssl_ssl.h".}
 
 proc sslClientForgetSession*(cc: ptr SslClientContext) {.inline.} =
@@ -3189,13 +3178,13 @@ proc sslClientForgetSession*(cc: ptr SslClientContext) {.inline.} =
 
 proc sslClientSetSingleRsa*(cc: ptr SslClientContext; chain: ptr X509Certificate;
                            chainLen: int; sk: ptr RsaPrivateKey;
-                           irsasign: RsaPkcs1Sign) {.cdecl,
+                           irsasign: RsaPkcs1Sign) {.bearSslFunc,
     importc: "br_ssl_client_set_single_rsa", header: "bearssl_ssl.h".}
 
 proc sslClientSetSingleEc*(cc: ptr SslClientContext; chain: ptr X509Certificate;
                           chainLen: int; sk: ptr EcPrivateKey;
                           allowedUsages: cuint; certIssuerKeyType: cuint;
-                          iec: ptr EcImpl; iecdsa: EcdsaSign) {.cdecl,
+                          iec: ptr EcImpl; iecdsa: EcdsaSign) {.bearSslFunc,
     importc: "br_ssl_client_set_single_ec", header: "bearssl_ssl.h".}
 
 type
@@ -3234,13 +3223,13 @@ type
     contextSize* {.importc: "context_size".}: int
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                      cc: ptr SslServerContext;
-                                     choices: ptr SslServerChoices): cint {.cdecl, gcsafe.}
+                                     choices: ptr SslServerChoices): cint {.bearSslFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       data: ptr cuchar; len: ptr int): uint32 {.
-        cdecl, gcsafe.}
+        bearSslFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       algoId: cuint; data: ptr cuchar; hvLen: int;
-                                      len: int): int {.cdecl, gcsafe.}
+                                      len: int): int {.bearSslFunc.}
 
   SslServerPolicyRsaContext* {.importc: "br_ssl_server_policy_rsa_context",
                               header: "bearssl_ssl.h", bycopy.} = object
@@ -3301,10 +3290,10 @@ type
     contextSize* {.importc: "context_size".}: int
     save* {.importc: "save".}: proc (ctx: ptr ptr SslSessionCacheClass;
                                  serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters) {.cdecl, gcsafe.}
+                                 params: ptr SslSessionParameters) {.bearSslFunc.}
     load* {.importc: "load".}: proc (ctx: ptr ptr SslSessionCacheClass;
                                  serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters): cint {.cdecl, gcsafe.}
+                                 params: ptr SslSessionParameters): cint {.bearSslFunc.}
 
   SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
                        header: "bearssl_ssl.h", bycopy.} = object
@@ -3321,48 +3310,48 @@ type
 
 
 proc sslSessionCacheLruInit*(cc: ptr SslSessionCacheLru; store: ptr cuchar;
-                            storeLen: int) {.cdecl,
+                            storeLen: int) {.bearSslFunc,
     importc: "br_ssl_session_cache_lru_init", header: "bearssl_ssl.h".}
 
-proc sslSessionCacheLruForget*(cc: ptr SslSessionCacheLru; id: ptr cuchar) {.cdecl,
+proc sslSessionCacheLruForget*(cc: ptr SslSessionCacheLru; id: ptr cuchar) {.bearSslFunc,
     importc: "br_ssl_session_cache_lru_forget", header: "bearssl_ssl.h".}
 
 
 proc sslServerInitFullRsa*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                          chainLen: int; sk: ptr RsaPrivateKey) {.cdecl,
+                          chainLen: int; sk: ptr RsaPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_full_rsa", header: "bearssl_ssl.h".}
 
 proc sslServerInitFullEc*(cc: ptr SslServerContext; chain: ptr X509Certificate;
                          chainLen: int; certIssuerKeyType: cuint;
-                         sk: ptr EcPrivateKey) {.cdecl,
+                         sk: ptr EcPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_full_ec", header: "bearssl_ssl.h".}
 
 proc sslServerInitMinr2g*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr RsaPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr RsaPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_minr2g", header: "bearssl_ssl.h".}
 
 proc sslServerInitMine2g*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr RsaPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr RsaPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_mine2g", header: "bearssl_ssl.h".}
 
 proc sslServerInitMinf2g*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr EcPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr EcPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_minf2g", header: "bearssl_ssl.h".}
 
 proc sslServerInitMinu2g*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr EcPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr EcPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_minu2g", header: "bearssl_ssl.h".}
 
 proc sslServerInitMinv2g*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr EcPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr EcPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_minv2g", header: "bearssl_ssl.h".}
 
 proc sslServerInitMine2c*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr RsaPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr RsaPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_mine2c", header: "bearssl_ssl.h".}
 
 proc sslServerInitMinf2c*(cc: ptr SslServerContext; chain: ptr X509Certificate;
-                         chainLen: int; sk: ptr EcPrivateKey) {.cdecl,
+                         chainLen: int; sk: ptr EcPrivateKey) {.bearSslFunc,
     importc: "br_ssl_server_init_minf2c", header: "bearssl_ssl.h".}
 
 proc sslServerGetClientSuites*(cc: ptr SslServerContext; num: ptr int):
@@ -3377,7 +3366,7 @@ proc sslServerGetClientHashes*(cc: ptr SslServerContext): uint32 {.inline.} =
 proc sslServerGetClientCurves*(cc: ptr SslServerContext): uint32 {.inline.} =
   return cc.curves
 
-proc sslServerZero*(cc: ptr SslServerContext) {.cdecl, importc: "br_ssl_server_zero",
+proc sslServerZero*(cc: ptr SslServerContext) {.bearSslFunc, importc: "br_ssl_server_zero",
     header: "bearssl_ssl.h".}
 
 proc sslServerSetPolicy*(cc: ptr SslServerContext;
@@ -3387,13 +3376,13 @@ proc sslServerSetPolicy*(cc: ptr SslServerContext;
 proc sslServerSetSingleRsa*(cc: ptr SslServerContext; chain: ptr X509Certificate;
                            chainLen: int; sk: ptr RsaPrivateKey;
                            allowedUsages: cuint; irsacore: RsaPrivate;
-                           irsasign: RsaPkcs1Sign) {.cdecl,
+                           irsasign: RsaPkcs1Sign) {.bearSslFunc,
     importc: "br_ssl_server_set_single_rsa", header: "bearssl_ssl.h".}
 
 proc sslServerSetSingleEc*(cc: ptr SslServerContext; chain: ptr X509Certificate;
                           chainLen: int; sk: ptr EcPrivateKey;
                           allowedUsages: cuint; certIssuerKeyType: cuint;
-                          iec: ptr EcImpl; iecdsa: EcdsaSign) {.cdecl,
+                          iec: ptr EcImpl; iecdsa: EcdsaSign) {.bearSslFunc,
     importc: "br_ssl_server_set_single_ec", header: "bearssl_ssl.h".}
 
 proc sslServerSetTrustAnchorNames*(cc: ptr SslServerContext; taNames: ptr X500Name;
@@ -3404,7 +3393,7 @@ proc sslServerSetTrustAnchorNames*(cc: ptr SslServerContext; taNames: ptr X500Na
 
 proc sslServerSetTrustAnchorNamesAlt*(cc: ptr SslServerContext;
                                      tas: ptr X509TrustAnchor; num: int) {.inline,
-    cdecl.} =
+    bearSslFunc.} =
   cc.taNames = nil
   cc.tas = tas
   cc.numTas = num
@@ -3413,42 +3402,42 @@ proc sslServerSetCache*(cc: ptr SslServerContext;
                        vtable: ptr ptr SslSessionCacheClass) {.inline.} =
   cc.cacheVtable = vtable
 
-proc sslServerReset*(cc: ptr SslServerContext): cint {.cdecl,
+proc sslServerReset*(cc: ptr SslServerContext): cint {.bearSslFunc,
     importc: "br_ssl_server_reset", header: "bearssl_ssl.h".}
 
 type
   SslioContext* {.importc: "br_sslio_context", header: "bearssl_ssl.h", bycopy.} = object
     engine* {.importc: "engine".}: ptr SslEngineContext
     lowRead* {.importc: "low_read".}: proc (readContext: pointer; data: ptr cuchar;
-                                        len: int): cint {.cdecl, gcsafe.}
+                                        len: int): cint {.bearSslFunc.}
     readContext* {.importc: "read_context".}: pointer
     lowWrite* {.importc: "low_write".}: proc (writeContext: pointer; data: ptr cuchar;
-        len: int): cint {.cdecl, gcsafe.}
+        len: int): cint {.bearSslFunc.}
     writeContext* {.importc: "write_context".}: pointer
 
 
 proc sslioInit*(ctx: ptr SslioContext; engine: ptr SslEngineContext; lowRead: proc (
-    readContext: pointer; data: ptr cuchar; len: int): cint {.cdecl, gcsafe.};
+    readContext: pointer; data: ptr cuchar; len: int): cint {.bearSslFunc.};
                readContext: pointer; lowWrite: proc (writeContext: pointer;
-    data: ptr cuchar; len: int): cint {.cdecl, gcsafe.}; writeContext: pointer) {.cdecl,
+    data: ptr cuchar; len: int): cint {.bearSslFunc.}; writeContext: pointer) {.bearSslFunc,
     importc: "br_sslio_init", header: "bearssl_ssl.h".}
 
-proc sslioRead*(cc: ptr SslioContext; dst: pointer; len: int): cint {.cdecl,
+proc sslioRead*(cc: ptr SslioContext; dst: pointer; len: int): cint {.bearSslFunc,
     importc: "br_sslio_read", header: "bearssl_ssl.h".}
 
-proc sslioReadAll*(cc: ptr SslioContext; dst: pointer; len: int): cint {.cdecl,
+proc sslioReadAll*(cc: ptr SslioContext; dst: pointer; len: int): cint {.bearSslFunc,
     importc: "br_sslio_read_all", header: "bearssl_ssl.h".}
 
-proc sslioWrite*(cc: ptr SslioContext; src: pointer; len: int): cint {.cdecl,
+proc sslioWrite*(cc: ptr SslioContext; src: pointer; len: int): cint {.bearSslFunc,
     importc: "br_sslio_write", header: "bearssl_ssl.h".}
 
-proc sslioWriteAll*(cc: ptr SslioContext; src: pointer; len: int): cint {.cdecl,
+proc sslioWriteAll*(cc: ptr SslioContext; src: pointer; len: int): cint {.bearSslFunc,
     importc: "br_sslio_write_all", header: "bearssl_ssl.h".}
 
-proc sslioFlush*(cc: ptr SslioContext): cint {.cdecl, importc: "br_sslio_flush",
+proc sslioFlush*(cc: ptr SslioContext): cint {.bearSslFunc, importc: "br_sslio_flush",
     header: "bearssl_ssl.h".}
 
-proc sslioClose*(cc: ptr SslioContext): cint {.cdecl, importc: "br_sslio_close",
+proc sslioClose*(cc: ptr SslioContext): cint {.bearSslFunc, importc: "br_sslio_close",
     header: "bearssl_ssl.h".}
 
 const
@@ -3600,7 +3589,7 @@ type
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr cuchar
     hlen* {.importc: "hlen".}: int
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: int) {.cdecl, gcsafe.}
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: int) {.bearSslFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: cuchar
     name* {.importc: "name".}: array[128, char]
@@ -3608,18 +3597,18 @@ type
     `ptr`* {.importc: "ptr".}: int
 
 
-proc pemDecoderInit*(ctx: ptr PemDecoderContext) {.cdecl,
+proc pemDecoderInit*(ctx: ptr PemDecoderContext) {.bearSslFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
 proc pemDecoderPush*(ctx: ptr PemDecoderContext; data: pointer; len: int): int {.
-    cdecl, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
+    bearSslFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: ptr PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: int) {.cdecl, gcsafe.}; destCtx: pointer) {.inline.} =
+    src: pointer; len: int) {.bearSslFunc.}; destCtx: pointer) {.inline.} =
   ctx.dest = dest
   ctx.destCtx = destCtx
 
-proc pemDecoderEvent*(ctx: ptr PemDecoderContext): cint {.cdecl,
+proc pemDecoderEvent*(ctx: ptr PemDecoderContext): cint {.bearSslFunc,
     importc: "br_pem_decoder_event", header: "bearssl_pem.h".}
 
 const
@@ -3640,7 +3629,7 @@ type
     value* {.importc: "value".}: clong
 
 
-proc getConfig*(): ptr ConfigOption {.cdecl, importc: "br_get_config",
+proc getConfig*(): ptr ConfigOption {.bearSslFunc, importc: "br_get_config",
   header: "bearssl.h".}
 
 const
@@ -3657,7 +3646,7 @@ type
     vtable* {.importc: "vtable".}: ptr X509Class
 
 proc initNoAnchor*(xwc: ptr X509NoAnchorContext, inner: ptr ptr X509Class) {.
-     cdecl, importc: "x509_noanchor_init", header: "brssl.h".}
+     bearSslFunc, importc: "x509_noanchor_init", header: "brssl.h".}
 
 # Following declarations are used inside `nim-libp2p`.
 
@@ -3681,80 +3670,80 @@ type
   BrRsaKeygen* = proc (ctx: ptr ptr BrPrngClass,
                        sk: ptr BrRsaPrivateKey, bufsec: ptr byte,
                        pk: ptr BrRsaPublicKey, bufpub: ptr byte,
-                       size: cuint, pubexp: uint32): uint32 {.cdecl, gcsafe.}
+                       size: cuint, pubexp: uint32): uint32 {.bearSslFunc.}
   BrRsaComputeModulus* = proc (n: pointer,
-                               sk: ptr BrRsaPrivateKey): int {.cdecl, gcsafe.}
-  BrRsaComputePubexp* = proc (sk: ptr BrRsaPrivateKey): uint32 {.cdecl, gcsafe.}
+                               sk: ptr BrRsaPrivateKey): int {.bearSslFunc.}
+  BrRsaComputePubexp* = proc (sk: ptr BrRsaPrivateKey): uint32 {.bearSslFunc.}
   BrRsaComputePrivexp* = proc (d: pointer,
                                sk: ptr BrRsaPrivateKey,
-                               pubexp: uint32): int {.cdecl, gcsafe.}
+                               pubexp: uint32): int {.bearSslFunc.}
   BrRsaPkcs1Verify* = proc (x: ptr cuchar, xlen: int,
                             hash_oid: ptr cuchar, hash_len: int,
                             pk: ptr BrRsaPublicKey,
-                            hash_out: ptr cuchar): uint32 {.cdecl, gcsafe.}
+                            hash_out: ptr cuchar): uint32 {.bearSslFunc.}
   BrPemDecoderProc* = proc (destctx: pointer, src: pointer,
-                            length: int) {.cdecl, gcsafe.}
+                            length: int) {.bearSslFunc.}
   BrRsaPkcs1Sign* = RsaPkcs1Sign
 
-proc brPrngSeederSystem*(name: cstringArray): BrPrngSeeder {.cdecl,
+proc brPrngSeederSystem*(name: cstringArray): BrPrngSeeder {.bearSslFunc,
      importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
 
 proc brHmacDrbgInit*(ctx: ptr BrHmacDrbgContext, digestClass: ptr BrHashClass,
                      seed: pointer, seedLen: int) {.
-     cdecl, importc: "br_hmac_drbg_init", header: "bearssl_rand.h".}
+     bearSslFunc, importc: "br_hmac_drbg_init", header: "bearssl_rand.h".}
 
 proc brRsaKeygenGetDefault*(): BrRsaKeygen {.
-     cdecl, importc: "br_rsa_keygen_get_default", header: "bearssl_rsa.h".}
+     bearSslFunc, importc: "br_rsa_keygen_get_default", header: "bearssl_rsa.h".}
 
 proc BrRsaPkcs1SignGetDefault*(): BrRsaPkcs1Sign {.
-     cdecl, importc: "br_rsa_pkcs1_sign_get_default", header: "bearssl_rsa.h".}
+     bearSslFunc, importc: "br_rsa_pkcs1_sign_get_default", header: "bearssl_rsa.h".}
 
 proc BrRsaPkcs1VrfyGetDefault*(): BrRsaPkcs1Verify {.
-     cdecl, importc: "br_rsa_pkcs1_vrfy_get_default", header: "bearssl_rsa.h".}
+     bearSslFunc, importc: "br_rsa_pkcs1_vrfy_get_default", header: "bearssl_rsa.h".}
 
 proc brRsaComputeModulusGetDefault*(): BrRsaComputeModulus {.
-     cdecl, importc: "br_rsa_compute_modulus_get_default",
+     bearSslFunc, importc: "br_rsa_compute_modulus_get_default",
      header: "bearssl_rsa.h".}
 
 proc brRsaComputePubexpGetDefault*(): BrRsaComputePubexp {.
-     cdecl, importc: "br_rsa_compute_pubexp_get_default",
+     bearSslFunc, importc: "br_rsa_compute_pubexp_get_default",
      header: "bearssl_rsa.h".}
 
 proc brRsaComputePrivexpGetDefault*(): BrRsaComputePrivexp {.
-     cdecl, importc: "br_rsa_compute_privexp_get_default",
+     bearSslFunc, importc: "br_rsa_compute_privexp_get_default",
      header: "bearssl_rsa.h".}
 
 proc brEcGetDefault*(): ptr BrEcImplementation {.
-     cdecl, importc: "br_ec_get_default", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ec_get_default", header: "bearssl_ec.h".}
 
 proc brEcKeygen*(ctx: ptr ptr BrPrngClass, impl: ptr BrEcImplementation,
                  sk: ptr BrEcPrivateKey, keybuf: ptr byte,
-                 curve: cint): int {.cdecl,
+                 curve: cint): int {.bearSslFunc,
      importc: "br_ec_keygen", header: "bearssl_ec.h".}
 
 proc brEcComputePublicKey*(impl: ptr BrEcImplementation, pk: ptr BrEcPublicKey,
                            kbuf: ptr byte, sk: ptr BrEcPrivateKey): int {.
-     cdecl, importc: "br_ec_compute_pub", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ec_compute_pub", header: "bearssl_ec.h".}
 
 proc brEcdsaSignRaw*(impl: ptr BrEcImplementation, hf: ptr BrHashClass,
                      value: pointer, sk: ptr BrEcPrivateKey,
                      sig: pointer): int {.
-     cdecl, importc: "br_ecdsa_i31_sign_raw", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ecdsa_i31_sign_raw", header: "bearssl_ec.h".}
 
 proc brEcdsaVerifyRaw*(impl: ptr BrEcImplementation, hash: pointer,
                        hashlen: int, pk: ptr BrEcPublicKey, sig: pointer,
                        siglen: int): uint32 {.
-     cdecl, importc: "br_ecdsa_i31_vrfy_raw", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ecdsa_i31_vrfy_raw", header: "bearssl_ec.h".}
 
 proc brEcdsaSignAsn1*(impl: ptr BrEcImplementation, hf: ptr BrHashClass,
                      value: pointer, sk: ptr BrEcPrivateKey,
                      sig: pointer): int {.
-     cdecl, importc: "br_ecdsa_i31_sign_asn1", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ecdsa_i31_sign_asn1", header: "bearssl_ec.h".}
 
 proc brEcdsaVerifyAsn1*(impl: ptr BrEcImplementation, hash: pointer,
                         hashlen: int, pk: ptr BrEcPublicKey, sig: pointer,
                         siglen: int): uint32 {.
-     cdecl, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
+     bearSslFunc, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
 
 template brRsaPrivateKeyBufferSize*(size: int): int =
   # BR_RSA_KBUF_PRIV_SIZE(size)
