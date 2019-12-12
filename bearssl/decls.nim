@@ -31,9 +31,21 @@ const
   bearToolsPath = bearPath & "tools" & DirSep
   bearRootPath = bearSrcPath & DirSep
 
-{.passC: "-I" & bearSrcPath}
-{.passC: "-I" & bearIncPath}
-{.passC: "-I" & bearPath & "tools"}
+when defined(gcc) or defined(llvm_gcc) or defined(clang) or defined(icc):
+  {.passC: "-fdata-sections -ffunction-sections".}
+elif defined(vcc):
+  {.passC: "/Gy".}
+
+when defined(clang):
+  {.passL: "-Wl,-dead_strip".}
+elif defined(gcc) or defined(llvm_gcc) or defined(icc):
+  {.passL: "-Wl,--gc-sections".}
+elif defined(vcc):
+  {.passL: "/OPT:REF".}
+
+{.passC: "-I" & bearSrcPath.}
+{.passC: "-I" & bearIncPath.}
+{.passC: "-I" & bearPath & "tools".}
 
 when defined(windows):
   {.passC: "-DBR_USE_WIN32_TIME=1".}
