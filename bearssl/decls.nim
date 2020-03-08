@@ -8,7 +8,7 @@
 ## those terms.
 ## This module implements interface with BearSSL library sources.
 import strutils
-from os import DirSep
+from os import DirSep, quoteShell
 
 const
   bearPath = currentSourcePath.rsplit(DirSep, 1)[0] & DirSep &
@@ -31,9 +31,9 @@ const
   bearToolsPath = bearPath & "tools" & DirSep
   bearRootPath = bearSrcPath & DirSep
 
-{.passC: "-I" & bearSrcPath}
-{.passC: "-I" & bearIncPath}
-{.passC: "-I" & bearPath & "tools"}
+{.passC: "-I" & quoteShell(bearSrcPath)}
+{.passC: "-I" & quoteShell(bearIncPath)}
+{.passC: "-I" & quoteShell(bearPath & "tools")}
 
 when defined(windows):
   {.passC: "-DBR_USE_WIN32_TIME=1".}
