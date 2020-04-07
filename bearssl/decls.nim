@@ -371,7 +371,7 @@ when sizeof(int) == 8:
 {.compile: bearToolsPath & "certs.c".}
 {.compile: bearToolsPath & "files.c".}
 
-{.pragma: bearSslFunc, cdecl, gcsafe, noSideEffect, raises: [].}
+{.pragma: bearSslFunc, cdecl, gcsafe, noSideEffect.}
 
 type
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
