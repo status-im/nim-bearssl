@@ -3692,6 +3692,12 @@ proc brHmacDrbgInit*(ctx: ptr BrHmacDrbgContext, digestClass: ptr BrHashClass,
                      seed: pointer, seedLen: int) {.
      bearSslFunc, importc: "br_hmac_drbg_init", header: "bearssl_rand.h".}
 
+proc brHmacDrbgGenerate*(ctx: ptr BrHmacDrbgContext, outs: pointer, len: csize_t) {.
+     bearSslFunc, importc: "br_hmac_drbg_generate", header: "bearssl_rand.h".}
+
+proc brHmacDrbgGenerate*(ctx: var BrHmacDrbgContext, outp: var openArray[byte]) =
+  brHmacDrbgGenerate(addr ctx, addr outp, csize_t(outp.len))
+
 proc brRsaKeygenGetDefault*(): BrRsaKeygen {.
      bearSslFunc, importc: "br_rsa_keygen_get_default", header: "bearssl_rsa.h".}
 
