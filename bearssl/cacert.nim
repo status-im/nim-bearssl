@@ -9,8 +9,8 @@
 
 ## This module provides access to Mozilla's CA certificate store in PEM format.
 ## This certificate store was downloaded from
-## https://curl.haxx.se/ca/cacert-2020-01-01.pem
-## And converted to C header using ``brssl ta cacert-2020-01-01.pem > cacert``.
+## https://curl.haxx.se/ca/cacert-2020-06-24.pem
+## And converted to C header using ``brssl ta cacert-2020-06-24.pem > cacert``.
 from decls import X509TrustAnchor
 from strutils import rsplit
 from os import DirSep
@@ -20,6 +20,6 @@ const CurrentPath = currentSourcePath.rsplit(DirSep, 1)[0]
 {.passC: "-I" & CurrentPath & DirSep & "certs".}
 
 var MozillaTrustAnchors* {.
-    importc: "TAs", header: "cacert20200101.h".}: array[138, X509TrustAnchor]
+    importc: "TAs", header: "cacert20200624.h".}: array[138, X509TrustAnchor]
 var MozillaTrustAnchorsCount* {.
-    importc: "TAs_NUM", header: "cacert20200101.h".}: cint
+    importc: "TAs_NUM", header: "cacert20200624.h".}: cint
