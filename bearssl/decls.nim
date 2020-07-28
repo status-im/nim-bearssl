@@ -42,9 +42,11 @@ else:
   {.passC: "-DBR_USE_UNIX_TIME=1".}
   {.passC: "-DBR_USE_URANDOM=1".}
 
-when system.cpuEndian == bigEndian:
+when defined(i386) or defined(amd64) or defined(arm64):
+  {.passC: "-DBR_LE_UNALIGNED=1".}
+elif defined(powerpc) or defined(powerpc64):
   {.passC: "-DBR_BE_UNALIGNED=1".}
-else:
+elif defined(powerpc64el):
   {.passC: "-DBR_LE_UNALIGNED=1".}
 
 when sizeof(int) == 8:
