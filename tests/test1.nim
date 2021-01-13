@@ -5,7 +5,7 @@
 #
 # To run these tests, simply execute `nimble test`.
 import unittest
-import bearssl
+import ../bearssl
 
 test "dummy":
   check true
