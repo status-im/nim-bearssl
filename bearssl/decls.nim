@@ -8,28 +8,28 @@
 ## those terms.
 ## This module implements interface with BearSSL library sources.
 import strutils
-from os import DirSep, quoteShell
+from os import quoteShell, DirSep, AltSep
 
 const
-  bearPath = currentSourcePath.rsplit(DirSep, 1)[0] & DirSep &
-             "csources" & DirSep
+  bearPath = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/" &
+             "csources" & "/"
 
   bearSrcPath = bearPath & "src"
   bearIncPath = bearPath & "inc"
-  bearIntPath = bearSrcPath & DirSep & "int" & DirSep
-  bearCodecPath = bearSrcPath & DirSep & "codec" & DirSep
-  bearRandPath = bearSrcPath & DirSep & "rand" & DirSep
-  bearRsaPath = bearSrcPath & DirSep & "rsa" & DirSep
-  bearEcPath = bearSrcPath & DirSep & "ec" & DirSep
-  bearX509Path = bearSrcPath & DirSep & "x509" & DirSep
-  bearSslPath = bearSrcPath & DirSep & "ssl" & DirSep
-  bearMacPath = bearSrcPath & DirSep & "mac" & DirSep
-  bearKdfPath = bearSrcPath & DirSep & "kdf" & DirSep
-  bearHashPath = bearSrcPath & DirSep & "hash" & DirSep
-  bearSymcPath = bearSrcPath & DirSep & "symcipher" & DirSep
-  bearAeadPath = bearSrcPath & DirSep & "aead" & DirSep
-  bearToolsPath = bearPath & "tools" & DirSep
-  bearRootPath = bearSrcPath & DirSep
+  bearIntPath = bearSrcPath & "/" & "int" & "/"
+  bearCodecPath = bearSrcPath & "/" & "codec" & "/"
+  bearRandPath = bearSrcPath & "/" & "rand" & "/"
+  bearRsaPath = bearSrcPath & "/" & "rsa" & "/"
+  bearEcPath = bearSrcPath & "/" & "ec" & "/"
+  bearX509Path = bearSrcPath & "/" & "x509" & "/"
+  bearSslPath = bearSrcPath & "/" & "ssl" & "/"
+  bearMacPath = bearSrcPath & "/" & "mac" & "/"
+  bearKdfPath = bearSrcPath & "/" & "kdf" & "/"
+  bearHashPath = bearSrcPath & "/" & "hash" & "/"
+  bearSymcPath = bearSrcPath & "/" & "symcipher" & "/"
+  bearAeadPath = bearSrcPath & "/" & "aead" & "/"
+  bearToolsPath = bearPath & "tools" & "/"
+  bearRootPath = bearSrcPath & "/"
 
 {.passC: "-I" & quoteShell(bearSrcPath)}
 {.passC: "-I" & quoteShell(bearIncPath)}

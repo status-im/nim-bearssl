@@ -1,5 +1,5 @@
 ## Nim-BearSSL
-## Copyright (c) 2018 Status Research & Development GmbH
+## Copyright (c) 2018-2021 Status Research & Development GmbH
 ## Licensed under either of
 ##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
 ##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
@@ -13,11 +13,11 @@
 ## And converted to C header using ``brssl ta cacert-2020-06-24.pem > cacert``.
 from decls import X509TrustAnchor
 from strutils import rsplit
-from os import DirSep
+from os import DirSep, AltSep
 
-const CurrentPath = currentSourcePath.rsplit(DirSep, 1)[0]
+const CurrentPath = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]
 
-{.passC: "-I" & CurrentPath & DirSep & "certs".}
+{.passC: "-I" & CurrentPath & "/certs".}
 
 var MozillaTrustAnchors* {.
     importc: "TAs", header: "cacert20200624.h".}: array[138, X509TrustAnchor]
