@@ -184,5 +184,6 @@ jobs:
         run: |
           # Nimble should automatically fetch submodules
           # git submodule update --init --recursive
-          nimble install -y --depsOnly
+          # nimble install -y --depsOnly
+          nimble install -y
           env TEST_LANG="${{ matrix.target.TEST_LANG }}" nimble test
