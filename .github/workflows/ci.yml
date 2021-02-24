@@ -182,8 +182,6 @@ jobs:
         shell: bash
         working-directory: nim-bearssl
         run: |
-          # Nimble should automatically fetch submodules
-          # git submodule update --init --recursive
-          # nimble install -y --depsOnly
-          nimble install -y
+          git submodule update --init --recursive
+          nimble install -y --depsOnly
           env TEST_LANG="${{ matrix.target.TEST_LANG }}" nimble test
