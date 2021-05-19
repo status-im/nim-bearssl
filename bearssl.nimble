@@ -3,6 +3,7 @@ version       = "0.1.5"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
+mode          = ScriptMode.Verbose
 
 # Dependencies
 requires "nim >= 1.2.0"
@@ -15,7 +16,7 @@ proc test(env, path: string) =
     lang = getEnv"TEST_LANG"
 
   exec "nim " & lang & " " & env &
-    " -r --hints:off --warnings:off " & path
+    " -r --hints:off --skipParentCfg " & path
 
 task test, "Run tests":
   exec "nim -v"

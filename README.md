@@ -5,7 +5,7 @@
 ![Stability: experimental](https://img.shields.io/badge/stability-experimental-orange.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![Github action](https://github.com/status-im/nim-bearssl/workflows/nim-bearssl%20CI/badge.svg)
+![Github action](https://github.com/status-im/nim-bearssl/workflows/CI/badge.svg)
 
 [BearSSL](https://bearssl.org/) wrapper.
 
