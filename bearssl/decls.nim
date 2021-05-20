@@ -2402,7 +2402,7 @@ proc skeyDecoderPush*(ctx: ptr SkeyDecoderContext; data: pointer; len: int) {.be
 proc skeyDecoderLastError*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
   if ctx.err != 0:
     return ctx.err
-  if ctx.keyType == '\0':
+  if ctx.keyType == '\0'.cuchar:
     return ERR_X509_TRUNCATED
   return 0
 
