@@ -31,32 +31,32 @@ const
   bearToolsPath = bearPath & "tools" & "/"
   bearRootPath = bearSrcPath & "/"
 
-{.passC: "-I" & quoteShell(bearSrcPath)}
-{.passC: "-I" & quoteShell(bearIncPath)}
-{.passC: "-I" & quoteShell(bearPath & "tools")}
+{.passc: "-I" & quoteShell(bearSrcPath)}
+{.passc: "-I" & quoteShell(bearIncPath)}
+{.passc: "-I" & quoteShell(bearPath & "tools")}
 
 when defined(windows):
-  {.passC: "-DBR_USE_WIN32_TIME=1".}
-  {.passC: "-DBR_USE_WIN32_RAND=1".}
+  {.passc: "-DBR_USE_WIN32_TIME=1".}
+  {.passc: "-DBR_USE_WIN32_RAND=1".}
 else:
-  {.passC: "-DBR_USE_UNIX_TIME=1".}
-  {.passC: "-DBR_USE_URANDOM=1".}
+  {.passc: "-DBR_USE_UNIX_TIME=1".}
+  {.passc: "-DBR_USE_URANDOM=1".}
 
 when defined(i386) or defined(amd64) or defined(arm64):
-  {.passC: "-DBR_LE_UNALIGNED=1".}
+  {.passc: "-DBR_LE_UNALIGNED=1".}
 elif defined(powerpc) or defined(powerpc64):
-  {.passC: "-DBR_BE_UNALIGNED=1".}
+  {.passc: "-DBR_BE_UNALIGNED=1".}
 elif defined(powerpc64el):
-  {.passC: "-DBR_LE_UNALIGNED=1".}
+  {.passc: "-DBR_LE_UNALIGNED=1".}
 
 when sizeof(int) == 8:
-  {.passC: "-DBR_64=1".}
+  {.passc: "-DBR_64=1".}
   when hostCPU == "amd64":
-    {.passC:" -DBR_amd64=1".}
+    {.passc:" -DBR_amd64=1".}
   when defined(vcc):
-    {.passC: "-DBR_UMUL128=1".}
+    {.passc: "-DBR_UMUL128=1".}
   else:
-    {.passC: "-DBR_INT128=1".}
+    {.passc: "-DBR_INT128=1".}
 
 {.compile: bearCodecPath & "ccopy.c".}
 {.compile: bearCodecPath & "dec16be.c".}
