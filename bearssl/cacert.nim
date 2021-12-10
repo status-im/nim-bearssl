@@ -17,7 +17,7 @@ from os import DirSep, AltSep
 
 const CurrentPath = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]
 
-{.passC: "-I" & CurrentPath & "/certs".}
+{.passc: "-I" & CurrentPath & "/certs".}
 
 var MozillaTrustAnchors* {.
     importc: "TAs", header: "cacert20210119.h".}: array[129, X509TrustAnchor]
