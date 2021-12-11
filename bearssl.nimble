@@ -1,3 +1,5 @@
+import os, strutils
+
 # Package
 version       = "0.1.5"
 author        = "Status Research & Development GmbH"
@@ -6,20 +8,20 @@ license       = "MIT or Apache License 2.0"
 mode          = ScriptMode.Verbose
 
 # Dependencies
-requires "nim >= 1.2.0"
+requires "nim >= 1.2.0",
+          "unittest2"
 
 ### Helper functions
 proc test(env, path: string) =
   # Compilation language is controlled by TEST_LANG
-  var lang = "c"
-  if existsEnv"TEST_LANG":
-    lang = getEnv"TEST_LANG"
-
-  exec "nim " & lang & " " & env &
-    " -r --hints:off --skipParentCfg --styleCheck:usages --styleCheck:error " & path
+  exec "nim " & getEnv("TEST_LANG", "c") & " " & getEnv("NIMFLAGS") & " " & env &
+    " -rf --hints:off --skipParentCfg --styleCheck:usages --styleCheck:error " & path
 
 task test, "Run tests":
-  exec "nim -v"
-  test "-d:debug", "tests/test1"
-  test "-d:release", "tests/test1"
-  test "--gc:arc -d:release", "tests/test1"
+  for path in listFiles(thisDir() / "tests"):
+    if path.split(".")[^1] != "nim":
+      continue
+    test "-d:debug", path
+    test "-d:release", path
+    test "--gc:arc -d:release", path
+    rmFile(path[0..^5].toExe())
