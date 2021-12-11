@@ -41,12 +41,14 @@ jobs:
       run:
         shell: ${{ matrix.shell }}
 
-    name: '${{ matrix.target.os }}-${{ matrix.target.cpu }}-${{ matrix.test_lang }} (Nim ${{ matrix.branch }})'
+    name: '${{ matrix.target.os }}-${{ matrix.target.cpu }} (Nim ${{ matrix.branch }})'
     runs-on: ${{ matrix.builder }}
     continue-on-error: ${{ matrix.branch == 'version-1-6' || matrix.branch == 'devel' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Install build dependencies (Linux i386)
         if: runner.os == 'Linux' && matrix.target.cpu == 'i386'
