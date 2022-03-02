@@ -1838,6 +1838,71 @@ proc rsaPkcs1SignGetDefault*(): RsaPkcs1Sign {.bearSslFunc,
 proc rsaSslDecrypt*(core: RsaPrivate; sk: ptr RsaPrivateKey; data: ptr cuchar; len: int): uint32 {.
     bearSslFunc, importc: "br_rsa_ssl_decrypt", header: "bearssl_rsa.h".}
 
+type
+  RsaPssSign* = proc(rng: ptr ptr PrngClass,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash_value: ptr cuchar, salt_len: int,
+                   sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.bearSslFunc.}
+
+  RsaPssVrfy* = proc(x: ptr cuchar, xlen: int,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash: ptr cuchar, salt_len: int,
+                   pk: ptr RsaPublicKey): uint32 {.bearSslFunc.}
+
+proc rsaPssSignGetDefault*(): RsaPssSign {.bearSslFunc,
+    importc: "br_rsa_pss_sign_get_default", header: "bearssl_rsa.h".}
+
+proc rsaPssVrfyGetDefault*(): RsaPssVrfy {.bearSslFunc,
+    importc: "br_rsa_pss_vrfy_get_default", header: "bearssl_rsa.h".}
+
+proc rsaI15PssSign*(rng: ptr ptr PrngClass,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash_value: ptr cuchar, salt_len: int,
+                   sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.bearSslFunc,
+    importc: "br_rsa_i15_pss_sign", header: "bearssl_rsa.h".}
+
+proc rsaI15PssVrfy*(x: ptr cuchar, xlen: int,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash: ptr cuchar, salt_len: int,
+                   pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
+    importc: "br_rsa_i15_pss_vrfy", header: "bearssl_rsa.h".}
+
+proc rsaI31PssSign*(rng: ptr ptr PrngClass,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash_value: ptr cuchar, salt_len: int,
+                   sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.bearSslFunc,
+    importc: "br_rsa_i31_pss_sign", header: "bearssl_rsa.h".}
+
+proc rsaI31PssVrfy*(x: ptr cuchar, xlen: int,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash: ptr cuchar, salt_len: int,
+                   pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
+    importc: "br_rsa_i31_pss_vrfy", header: "bearssl_rsa.h".}
+
+proc rsaI32PssSign*(rng: ptr ptr PrngClass,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash_value: ptr cuchar, salt_len: int,
+                   sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.bearSslFunc,
+    importc: "br_rsa_i32_pss_sign", header: "bearssl_rsa.h".}
+
+proc rsaI32PssVrfy*(x: ptr cuchar, xlen: int,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash: ptr cuchar, salt_len: int,
+                   pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
+    importc: "br_rsa_i32_pss_vrfy", header: "bearssl_rsa.h".}
+
+proc rsaI62PssSign*(rng: ptr ptr PrngClass,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash_value: ptr cuchar, salt_len: int,
+                   sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.bearSslFunc,
+    importc: "br_rsa_i62_pss_sign", header: "bearssl_rsa.h".}
+
+proc rsaI62PssVrfy*(x: ptr cuchar, xlen: int,
+                   hf_data, hf_mgf1: ptr HashClass,
+                   hash: ptr cuchar, salt_len: int,
+                   pk: ptr RsaPublicKey): uint32 {.bearSslFunc,
+    importc: "br_rsa_i62_pss_vrfy", header: "bearssl_rsa.h".}
+
 const
   EC_sect163k1* = 1
 
