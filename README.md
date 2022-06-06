@@ -7,14 +7,32 @@
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Github action](https://github.com/status-im/nim-bearssl/workflows/CI/badge.svg)
 
-[BearSSL](https://bearssl.org/) wrapper.
+Simple [BearSSL](https://bearssl.org/) wrapper for Nim.
+
+## Usage
+
+The library is organised into two parts:
+
+* `bearssl/abi` exposes the raw C functions of bearssl
+* `bearssl/` (except for `abi`) exposes thin wrappers around the raw ABI making the functions more convenient to use in Nim
+
+```nim
+# You can import the whole library
+import bearssl
+
+# ... or simply parts thereof, which can save compilation time
+import bearssl/random
+```
 
 ## Installation
 
-You can install the developement version of the library through nimble with the following command
+You can install the developement version of the library through nimble with the following command:
+
 ```
 nimble install bearssl
 ```
+
+`BearSSL` itself is compiled as part of your project - there is no need to install any third-party libraries.
 
 ## License
 

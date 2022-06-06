@@ -1,6 +1,8 @@
 import std/[strutils, sequtils],
   unittest2,
-  ../bearssl
+  ../bearssl/abi/hash
+
+{.used.}
 
 suite "Hashing":
   test "MD5":
