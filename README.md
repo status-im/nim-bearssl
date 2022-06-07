@@ -7,7 +7,9 @@
 [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Github action](https://github.com/status-im/nim-bearssl/workflows/CI/badge.svg)
 
-Simple [BearSSL](https://bearssl.org/) wrapper for Nim.
+Simple [BearSSL](https://bearssl.org/) wrapper for Nim, fully integrated with the Nim build system.
+
+Applications using `nim-bearssl` are fully stand-alone, needing no additional DLL or shared library.
 
 ## Usage
 
