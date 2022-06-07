@@ -6,23 +6,19 @@
 ## at your option.
 ## This file may not be copied, modified, or distributed except according to
 ## those terms.
-## This module implements interface with BearSSL library sources.
-
-from os import quoteShell, DirSep, AltSep
+##
+## This module reexports the whole raw beassl C api, as found in the api/
+## directory as well as some legacy helpers. It should not be used in new
+## projects (either import `bearssl` or individual abi modules)
 
 import
   ./abi/[
-    aead, blockx, brssl, csources, ec, hash, hmac, intx, kdf, pem, prf, rand,
-    rsa, ssl, x509]
+    aead, blockx, brssl, config, ec, hash, hmac, intx, kdf, pem, prf,
+    rand, rsa, ssl, x509]
 
 export
-  aead, blockx, brssl, csources, ec, hash, hmac, intx, kdf, pem, prf, rand,
-  rsa, ssl, x509
-
-const
-  bearRootPath = bearSrcPath & "/"
-
-{.compile: bearRootPath & "settings.c".}
+  aead, blockx, brssl, config, ec, hash, hmac, intx, kdf, pem, prf,
+  rand, rsa, ssl, x509
 
 # This modules must be reimplemented using Nim, because it can be changed
 # freely.
@@ -163,15 +159,6 @@ const
   ALERT_NO_RENEGOTIATION* = 100
   ALERT_UNSUPPORTED_EXTENSION* = 110
   ALERT_NO_APPLICATION_PROTOCOL* = 120
-
-type
-  ConfigOption* {.importc: "br_config_option", header: "bearssl.h", bycopy.} = object
-    name* {.importc: "name".}: cstring
-    value* {.importc: "value".}: clong
-
-
-proc getConfig*(): ptr ConfigOption {.importcFunc, importc: "br_get_config",
-  header: "bearssl.h".}
 
 const
   BR_EC_SECP256R1* {.deprecated.} = 23
