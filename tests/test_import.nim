@@ -2,4 +2,7 @@
 
 import ../bearssl
 
-discard getConfig()
+# TODO doesn't work from C++ due to missing `export "C"`
+# discard getConfig()
+
+discard ecGetDefault()
