@@ -40,7 +40,9 @@ proc new*[A](T: type HmacDrbgContext, seed: openArray[A]): ref HmacDrbgContext =
 const randMax = uint64.high
 
 proc rand*(rng: var HmacDrbgContext, max: uint64): uint64 =
-  ## Return a random number in the range [0, max] (inclusive)
+  ## Return a random number in the range 0..max (inclusive)
+  if max == 0: return 0
+
   var x: uint64
   hmacDrbgGenerate(addr rng, addr x, csize_t(sizeof(x)))
 
@@ -54,7 +56,7 @@ proc rand*(rng: var HmacDrbgContext, max: uint64): uint64 =
     hmacDrbgGenerate(addr rng, addr x, csize_t(sizeof(x)))
 
 proc rand*(rng: var HmacDrbgContext, max: Natural): int =
-  ## Return a random number in the range [0, max] (inclusive)
+  ## Return a random number in the range 0..max (inclusive)
   int(rand(rng, uint64(max)))
 
 proc sample*[T](rng: var HmacDrbgContext, a: openArray[T]): T =
