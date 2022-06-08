@@ -32,5 +32,5 @@ proc tls12Sha384Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
     importc: "br_tls12_sha384_prf", headerFunc.}
 
 type
-  TlsPrfImpl* = proc (dst: pointer; len: int; secret: pointer; secretLen: int;
+  TlsPrfImpl* {.importc: "br_tls_prf_impl".} = proc (dst: pointer; len: int; secret: pointer; secretLen: int;
                    label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.importcFunc.}

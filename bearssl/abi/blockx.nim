@@ -776,7 +776,7 @@ type
 
 
 type
-  Chacha20Run* = proc (key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
+  Chacha20Run* {.importc: "br_chacha20_run".} = proc (key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
       importcFunc.}
 
 proc chacha20CtRun*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: int): uint32 {.
@@ -789,7 +789,7 @@ proc chacha20Sse2Get*(): Chacha20Run {.importcFunc, importc: "br_chacha20_sse2_g
                                     header: "bearssl_block.h".}
 
 type
-  Poly1305Run* = proc (key: pointer; iv: pointer; data: pointer; len: int; aad: pointer;
+  Poly1305Run* {.importc: "br_poly1305_run".} = proc (key: pointer; iv: pointer; data: pointer; len: int; aad: pointer;
                     aadLen: int; tag: pointer; ichacha: Chacha20Run; encrypt: cint) {.
       importcFunc.}
 

@@ -196,11 +196,11 @@ proc ecdsaAsn1ToRaw*(sig: pointer; sigLen: int): int {.importcFunc,
     importc: "br_ecdsa_asn1_to_raw", header: "bearssl_ec.h".}
 
 type
-  EcdsaSign* = proc (impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
+  EcdsaSign* {.importc: "br_ecdsa_sign".} = proc (impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
                   sk: ptr EcPrivateKey; sig: pointer): int {.importcFunc.}
 
 type
-  EcdsaVrfy* = proc (impl: ptr EcImpl; hash: pointer; hashLen: int; pk: ptr EcPublicKey;
+  EcdsaVrfy* {.importc: "br_ecdsa_vrfy".} = proc (impl: ptr EcImpl; hash: pointer; hashLen: int; pk: ptr EcPublicKey;
                   sig: pointer; sigLen: int): uint32 {.importcFunc.}
 
 proc ecdsaI31SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;

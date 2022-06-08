@@ -94,17 +94,17 @@ type
 
 
 type
-  RsaPublic* = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc.}
+  RsaPublic* {.importc: "br_rsa_public".} = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc.}
 
 type
-  RsaPkcs1Vrfy* = proc (x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
+  RsaPkcs1Vrfy* {.importc: "br_rsa_pkcs1_vrfy".} = proc (x: ptr cuchar; xlen: int; hashOid: ptr cuchar; hashLen: int;
                      pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.importcFunc.}
 
 type
-  RsaPrivate* = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc.}
+  RsaPrivate* {.importc: "br_rsa_private".} = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc.}
 
 type
-  RsaPkcs1Sign* = proc (hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
+  RsaPkcs1Sign* {.importc: "br_rsa_pkcs1_sign".} = proc (hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
                      sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc.}
 
 const
@@ -210,12 +210,12 @@ proc rsaSslDecrypt*(core: RsaPrivate; sk: ptr RsaPrivateKey; data: ptr cuchar; l
     importcFunc, importc: "br_rsa_ssl_decrypt", header: "bearssl_rsa.h".}
 
 type
-  RsaPssSign* = proc(rng: ptr ptr PrngClass,
+  RsaPssSign* {.importc: "br_rsa_pss_sign".} = proc(rng: ptr ptr PrngClass,
                    hf_data, hf_mgf1: ptr HashClass,
                    hash_value: ptr cuchar, salt_len: int,
                    sk: ptr RsaPrivateKey, x: ptr cuchar): uint32 {.importcFunc.}
 
-  RsaPssVrfy* = proc(x: ptr cuchar, xlen: int,
+  RsaPssVrfy* {.importc: "br_rsa_pss_vrfy".} = proc(x: ptr cuchar, xlen: int,
                    hf_data, hf_mgf1: ptr HashClass,
                    hash: ptr cuchar, salt_len: int,
                    pk: ptr RsaPublicKey): uint32 {.importcFunc.}

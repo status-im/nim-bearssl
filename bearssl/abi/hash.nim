@@ -314,7 +314,7 @@ proc multihashOut*(ctx: ptr MultihashContext; id: cint; dst: pointer): int {.
     importc: "br_multihash_out", headerFunc.}
 
 type
-  Ghash* = proc (y: pointer; h: pointer; data: pointer; len: int) {.importcFunc.}
+  Ghash* {.importc: "br_ghash".} = proc (y: pointer; h: pointer; data: pointer; len: int) {.importcFunc.}
 
 proc ghashCtmul*(y: pointer; h: pointer; data: pointer; len: int) {.
     importc: "br_ghash_ctmul", headerFunc.}
