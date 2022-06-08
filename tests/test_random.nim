@@ -19,6 +19,15 @@ suite "random":
       v != default(array[1024, byte]) # possible, but not likely
       v2 != default(array[1024, byte]) # possible, but not likely
 
+      rng[].rand(0) == 0
+
+    # Just ensure it doesn't crash..
+    discard rng[].rand(uint64.high)
+
+    for i in 0..<1000:
+      check:
+        rng[].rand(1) in [uint64 0, 1]
+
   test "seed":
     let
       rng = HmacDrbgContext.new([byte 0])
