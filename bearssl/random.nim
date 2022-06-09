@@ -34,7 +34,9 @@ proc new*[A](T: type HmacDrbgContext, seed: openArray[A]): ref HmacDrbgContext =
 
   doAssert seed.len > 0, "Seed must not be empty"
   let rng = (ref T)()
-  hmacDrbgInit(addr rng[], addr sha256Vtable, unsafeAddr seed[0], seed.len * sizeof(seed[0]))
+  hmacDrbgInit(
+    addr rng[], addr sha256Vtable, unsafeAddr seed[0],
+    seed.len * sizeof(seed[0]))
   rng
 
 const randMax = uint64.high
@@ -50,7 +52,7 @@ proc rand*(rng: var HmacDrbgContext, max: uint64): uint64 =
     return x
 
   while true:
-    if x <= randMax - (randMax mod max): # against modulo bias
+    if x < randMax - (randMax mod (max + 1)): # against modulo bias
       return x mod (max + 1) # inclusive of max
 
     hmacDrbgGenerate(addr rng, addr x, csize_t(sizeof(x)))
