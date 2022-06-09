@@ -237,10 +237,11 @@ var ecC25519M31* {.importc: "br_ec_c25519_m31", header: "bearssl_ec.h".}: EcImpl
 
 var ecC25519M62* {.importc: "br_ec_c25519_m62", header: "bearssl_ec.h".}: EcImpl
 
+
 proc ecC25519M62Get*(): ptr EcImpl {.importcFunc, importc: "br_ec_c25519_m62_get",
                                  header: "bearssl_ec.h".}
 
-var ecC25519M64* {.importc: "br"ec"c25519_m64", header: "bearssl_ec.h".}: EcImpl
+var ecC25519M64* {.importc: "br_ec_c25519_m64", header: "bearssl_ec.h".}: EcImpl
 
 
 proc ecC25519M64Get*(): ptr EcImpl {.importcFunc, importc: "br_ec_c25519_m64_get",

@@ -628,12 +628,12 @@ proc sslEngineGetSelectedProtocol*(ctx: var SslEngineContext): cstring {.inline.
 
 proc sslEngineSetHash*(ctx: var SslEngineContext; id: cint; impl: ptr HashClass) {.
     inline.} =
-  multihashSetimpl(addr(ctx.mhash), id, impl)
+  multihashSetimpl(ctx.mhash, id, impl)
 
 
 proc sslEngineGetHash*(ctx: var SslEngineContext; id: cint): ptr HashClass {.inline,
     importcFunc.} =
-  return multihashGetimpl(addr(ctx.mhash), id)
+  return multihashGetimpl(ctx.mhash, id)
 
 
 proc sslEngineSetPrf10*(cc: var SslEngineContext; impl: TlsPrfImpl) {.inline.} =
@@ -980,7 +980,7 @@ proc sslClientReset*(cc: var SslClientContext; serverName: cstring;
     importc: "br_ssl_client_reset", header: "bearssl_ssl.h".}
 
 proc sslClientForgetSession*(cc: var SslClientContext) {.inline.} =
-  cc.eng.session.sessionIdLen = cuchar(0)
+  cc.eng.session.sessionIdLen = byte(0)
 
 
 proc sslClientSetSingleRsa*(cc: var SslClientContext; chain: ptr X509Certificate;

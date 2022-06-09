@@ -27,7 +27,7 @@ suite "Hashing":
         ctx = Md5Context()
         res: array[md5SIZE, uint8]
 
-      md5Init(addr ctx)
-      md5Update(addr ctx, input[i].cstring, input[i].len)
-      md5Out(addr ctx, addr res[0])
+      md5Init(ctx)
+      md5Update(ctx, input[i].cstring, uint input[i].len)
+      md5Out(ctx, addr res[0])
       check res.foldl(a & b.toHex(), "").toLower() == output[i]

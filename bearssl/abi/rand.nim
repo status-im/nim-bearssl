@@ -7,7 +7,7 @@ import
 const
   bearRandPath = bearSrcPath / "rand"
 
-{.compile: bearRandPath / "aesctr_drbg.c".}
+# {.compile: bearRandPath / "aesctr_drbg.c".}
 {.compile: bearRandPath / "hmac_drbg.c".}
 {.compile: bearRandPath / "sysrng.c".}
 
@@ -57,24 +57,24 @@ type
 proc prngSeederSystem*(name: cstringArray): PrngSeeder {.importcFunc,
     importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
 
-type
-  AesctrDrbgContext* {.importc: "br_aesctr_drbg_context", header: "bearssl_rand.h",
-                      bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr PrngClass
-    sk* {.importc: "sk".}: AesGenCtrKeys
-    cc* {.importc: "cc".}: uint32
+# type
+#   AesctrDrbgContext* {.importc: "br_aesctr_drbg_context", header: "bearssl_rand.h",
+#                       bycopy.} = object
+#     vtable* {.importc: "vtable".}: ptr PrngClass
+#     sk* {.importc: "sk".}: AesGenCtrKeys
+#     cc* {.importc: "cc".}: uint32
 
 
 
-var aesctrDrbgVtable* {.importc: "br_aesctr_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
+# var aesctrDrbgVtable* {.importc: "br_aesctr_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
 
 
-proc aesctrDrbgInit*(ctx: var AesctrDrbgContext; aesctr: ptr BlockCtrClass;
-                    seed: pointer; seedLen: uint) {.importcFunc,
-    importc: "br_aesctr_drbg_init", header: "bearssl_rand.h".}
+# proc aesctrDrbgInit*(ctx: var AesctrDrbgContext; aesctr: ptr BlockCtrClass;
+#                     seed: pointer; seedLen: uint) {.importcFunc,
+#     importc: "br_aesctr_drbg_init", header: "bearssl_rand.h".}
 
-proc aesctrDrbgGenerate*(ctx: var AesctrDrbgContext; `out`: pointer; len: uint) {.
-    importcFunc, importc: "br_aesctr_drbg_generate", header: "bearssl_rand.h".}
+# proc aesctrDrbgGenerate*(ctx: var AesctrDrbgContext; `out`: pointer; len: uint) {.
+#     importcFunc, importc: "br_aesctr_drbg_generate", header: "bearssl_rand.h".}
 
-proc aesctrDrbgUpdate*(ctx: var AesctrDrbgContext; seed: pointer; seedLen: uint) {.
-    importcFunc, importc: "br_aesctr_drbg_update", header: "bearssl_rand.h".}
+# proc aesctrDrbgUpdate*(ctx: var AesctrDrbgContext; seed: pointer; seedLen: uint) {.
+#     importcFunc, importc: "br_aesctr_drbg_update", header: "bearssl_rand.h".}

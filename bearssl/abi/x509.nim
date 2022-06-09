@@ -295,7 +295,7 @@ proc x509MinimalInit*(ctx: var X509MinimalContext; dnHashImpl: ptr HashClass;
 
 proc x509MinimalSetHash*(ctx: var X509MinimalContext; id: cint; impl: ptr HashClass) {.
     inline.} =
-  multihashSetimpl(addr(ctx.mhash), id, impl)
+  multihashSetimpl(ctx.mhash, id, impl)
 
 
 proc x509MinimalSetRsa*(ctx: var X509MinimalContext; irsa: RsaPkcs1Vrfy) {.inline.} =
@@ -436,7 +436,7 @@ proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: pointer; len: uint) {.i
 proc skeyDecoderLastError*(ctx: var SkeyDecoderContext): cint {.inline.} =
   if ctx.err != 0:
     return ctx.err
-  if ctx.keyType == '\0'.cuchar:
+  if ctx.keyType == '\0'.byte:
     return ERR_X509_TRUNCATED
   return 0
 
@@ -449,14 +449,14 @@ proc skeyDecoderKeyType*(ctx: var SkeyDecoderContext): cint {.inline.} =
 
 
 proc skeyDecoderGetRsa*(ctx: var SkeyDecoderContext): ptr RsaPrivateKey {.inline.} =
-  if ctx.err == 0 and ctx.keyType == keytype_Rsa:
+  if ctx.err == 0 and ctx.keyType == KEYTYPE_RSA:
     return addr(ctx.key.rsa)
   else:
     return nil
 
 
 proc skeyDecoderGetEc*(ctx: var SkeyDecoderContext): ptr EcPrivateKey {.inline.} =
-  if ctx.err == 0 and ctx.keyType == keytype_Ec:
+  if ctx.err == 0 and ctx.keyType == KEYTYPE_EC:
     return addr(ctx.key.ec)
   else:
     return nil
