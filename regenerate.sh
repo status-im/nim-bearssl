@@ -15,3 +15,12 @@ rm gen/*.h
 # Fix cosmetic and ease-of-use issues
 sed -i -e "s/int16T/int16/g" -e "s/int32T/int32/g" -e "s/int64T/int64/g" -e "s/cuchar/byte/g" -e "s/cdecl/importcFunc/g" -e "s/csize_t/uint/g" gen/*.nim
 
+# `ctx: ptr Xxx` does not allow nil - `ctx: var Xxx` makes it more ergonomic
+sed -i \
+  -e 's/ctx: ptr \(.*\)Context/ctx: var \1Context/g' \
+  -e 's/ctx: ptr \(.*\)Keys/ctx: var \1Keys/g' \
+  -e 's/hc: ptr \(.*\)Context/hc: var \1Context/g' \
+  -e 's/sc: ptr \(.*\)Context/sc: var \1Context/g' \
+  -e 's/cc: ptr \(.*\)Context/cc: var \1Context/g' \
+  -e 's/len: ptr uint/len: var uint/g' \
+  gen/*.nim

@@ -36,17 +36,17 @@ type
 var hmacDrbgVtable* {.importc: "br_hmac_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
 
 
-proc hmacDrbgInit*(ctx: ptr HmacDrbgContext; digestClass: ptr HashClass; seed: pointer;
+proc hmacDrbgInit*(ctx: var HmacDrbgContext; digestClass: ptr HashClass; seed: pointer;
                   seedLen: uint) {.importcFunc, importc: "br_hmac_drbg_init",
                                     header: "bearssl_rand.h".}
 
-proc hmacDrbgGenerate*(ctx: ptr HmacDrbgContext; `out`: pointer; len: uint) {.importcFunc,
+proc hmacDrbgGenerate*(ctx: var HmacDrbgContext; `out`: pointer; len: uint) {.importcFunc,
     importc: "br_hmac_drbg_generate", header: "bearssl_rand.h".}
 
-proc hmacDrbgUpdate*(ctx: ptr HmacDrbgContext; seed: pointer; seedLen: uint) {.importcFunc,
+proc hmacDrbgUpdate*(ctx: var HmacDrbgContext; seed: pointer; seedLen: uint) {.importcFunc,
     importc: "br_hmac_drbg_update", header: "bearssl_rand.h".}
 
-proc hmacDrbgGetHash*(ctx: ptr HmacDrbgContext): ptr HashClass {.inline.} =
+proc hmacDrbgGetHash*(ctx: var HmacDrbgContext): ptr HashClass {.inline.} =
   return ctx.digestClass
 
 
@@ -69,12 +69,12 @@ type
 var aesctrDrbgVtable* {.importc: "br_aesctr_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
 
 
-proc aesctrDrbgInit*(ctx: ptr AesctrDrbgContext; aesctr: ptr BlockCtrClass;
+proc aesctrDrbgInit*(ctx: var AesctrDrbgContext; aesctr: ptr BlockCtrClass;
                     seed: pointer; seedLen: uint) {.importcFunc,
     importc: "br_aesctr_drbg_init", header: "bearssl_rand.h".}
 
-proc aesctrDrbgGenerate*(ctx: ptr AesctrDrbgContext; `out`: pointer; len: uint) {.
+proc aesctrDrbgGenerate*(ctx: var AesctrDrbgContext; `out`: pointer; len: uint) {.
     importcFunc, importc: "br_aesctr_drbg_generate", header: "bearssl_rand.h".}
 
-proc aesctrDrbgUpdate*(ctx: ptr AesctrDrbgContext; seed: pointer; seedLen: uint) {.
+proc aesctrDrbgUpdate*(ctx: var AesctrDrbgContext; seed: pointer; seedLen: uint) {.
     importcFunc, importc: "br_aesctr_drbg_update", header: "bearssl_rand.h".}

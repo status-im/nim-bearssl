@@ -188,7 +188,7 @@ const
 
 type
   X509Class* {.importc: "br_x509_class", header: "bearssl_x509.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: int
+    contextSize* {.importc: "context_size".}: uint
     startChain* {.importc: "start_chain".}: proc (ctx: ptr ptr X509Class;
         serverName: cstring) {.importcFunc.}
     startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
@@ -213,12 +213,12 @@ type
 var x509KnownkeyVtable* {.importc: "br_x509_knownkey_vtable",
                         header: "bearssl_x509.h".}: X509Class
 
-proc x509KnownkeyInitRsa*(ctx: ptr X509KnownkeyContext; pk: ptr RsaPublicKey;
+proc x509KnownkeyInitRsa*(ctx: var X509KnownkeyContext; pk: ptr RsaPublicKey;
                          usages: cuint) {.importcFunc,
                                         importc: "br_x509_knownkey_init_rsa",
                                         header: "bearssl_x509.h".}
 
-proc x509KnownkeyInitEc*(ctx: ptr X509KnownkeyContext; pk: ptr EcPublicKey;
+proc x509KnownkeyInitEc*(ctx: var X509KnownkeyContext; pk: ptr EcPublicKey;
                         usages: cuint) {.importcFunc,
                                        importc: "br_x509_knownkey_init_ec",
                                        header: "bearssl_x509.h".}
@@ -289,44 +289,43 @@ type
 
 var x509MinimalVtable* {.importc: "br_x509_minimal_vtable", header: "bearssl_x509.h".}: X509Class
 
-proc x509MinimalInit*(ctx: ptr X509MinimalContext; dnHashImpl: ptr HashClass;
+proc x509MinimalInit*(ctx: var X509MinimalContext; dnHashImpl: ptr HashClass;
                      trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: uint) {.
     importcFunc, importc: "br_x509_minimal_init", header: "bearssl_x509.h".}
 
-proc x509MinimalSetHash*(ctx: ptr X509MinimalContext; id: cint; impl: ptr HashClass) {.
+proc x509MinimalSetHash*(ctx: var X509MinimalContext; id: cint; impl: ptr HashClass) {.
     inline.} =
   multihashSetimpl(addr(ctx.mhash), id, impl)
 
 
-proc x509MinimalSetRsa*(ctx: ptr X509MinimalContext; irsa: RsaPkcs1Vrfy) {.inline,
-    importcFunc.} =
+proc x509MinimalSetRsa*(ctx: var X509MinimalContext; irsa: RsaPkcs1Vrfy) {.inline.} =
   ctx.irsa = irsa
 
 
-proc x509MinimalSetEcdsa*(ctx: ptr X509MinimalContext; iec: ptr EcImpl;
+proc x509MinimalSetEcdsa*(ctx: var X509MinimalContext; iec: ptr EcImpl;
                          iecdsa: EcdsaVrfy) {.inline.} =
   ctx.iecdsa = iecdsa
   ctx.iec = iec
 
 
-proc x509MinimalInitFull*(ctx: ptr X509MinimalContext;
+proc x509MinimalInitFull*(ctx: var X509MinimalContext;
                          trustAnchors: ptr X509TrustAnchor;
                          trustAnchorsNum: uint) {.importcFunc,
     importc: "br_x509_minimal_init_full", header: "bearssl_x509.h".}
 
-proc x509MinimalSetTime*(ctx: ptr X509MinimalContext; days: uint32; seconds: uint32) {.
+proc x509MinimalSetTime*(ctx: var X509MinimalContext; days: uint32; seconds: uint32) {.
     inline.} =
   ctx.days = days
   ctx.seconds = seconds
 
 
-proc x509MinimalSetMinrsa*(ctx: ptr X509MinimalContext; byteLength: cint) {.inline,
+proc x509MinimalSetMinrsa*(ctx: var X509MinimalContext; byteLength: cint) {.inline,
     importcFunc.} =
   ctx.minRsaSize = (int16)(byteLength - 128)
 
 
-proc x509MinimalSetNameElements*(ctx: ptr X509MinimalContext; elts: ptr NameElement;
-                                numElts: int) {.inline.} =
+proc x509MinimalSetNameElements*(ctx: var X509MinimalContext; elts: ptr NameElement;
+                                numElts: uint) {.inline.} =
   ctx.nameElts = elts
   ctx.numNameElts = numElts
 
@@ -364,34 +363,34 @@ type
 
 
 
-proc x509DecoderInit*(ctx: ptr X509DecoderContext; appendDn: proc (ctx: pointer;
+proc x509DecoderInit*(ctx: var X509DecoderContext; appendDn: proc (ctx: pointer;
     buf: pointer; len: uint) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
     importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
-proc x509DecoderPush*(ctx: ptr X509DecoderContext; data: pointer; len: uint) {.importcFunc,
+proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: uint) {.importcFunc,
     importc: "br_x509_decoder_push", header: "bearssl_x509.h".}
 
-proc x509DecoderGetPkey*(ctx: ptr X509DecoderContext): ptr X509Pkey {.inline.} =
+proc x509DecoderGetPkey*(ctx: var X509DecoderContext): ptr X509Pkey {.inline.} =
   if ctx.decoded and ctx.err == 0:
     return addr(ctx.pkey)
   else:
     return nil
 
 
-proc x509DecoderLastError*(ctx: ptr X509DecoderContext): cint {.inline.} =
+proc x509DecoderLastError*(ctx: var X509DecoderContext): cint {.inline.} =
   if ctx.err != 0:
     return ctx.err
   if not ctx.decoded:
     return ERR_X509_TRUNCATED
   return 0
 
-proc x509DecoderIsCA*(ctx: ptr X509DecoderContext): cint {.inline.} =
+proc x509DecoderIsCA*(ctx: var X509DecoderContext): cint {.inline.} =
   return cint ctx.isCA
 
-proc x509DecoderGetSignerKeyType*(ctx: ptr X509DecoderContext): cint {.inline.} =
+proc x509DecoderGetSignerKeyType*(ctx: var X509DecoderContext): cint {.inline.} =
   return cint ctx.signerKeyType
 
-proc x509DecoderGetSignerHashId*(ctx: ptr X509DecoderContext): cint {.inline.} =
+proc x509DecoderGetSignerHashId*(ctx: var X509DecoderContext): cint {.inline.} =
   return cint ctx.signerHashId
 
 type
@@ -428,13 +427,13 @@ type
 
 
 
-proc skeyDecoderInit*(ctx: ptr SkeyDecoderContext) {.importcFunc,
+proc skeyDecoderInit*(ctx: var SkeyDecoderContext) {.importcFunc,
     importc: "br_skey_decoder_init", header: "bearssl_x509.h".}
 
-proc skeyDecoderPush*(ctx: ptr SkeyDecoderContext; data: pointer; len: uint) {.importcFunc,
+proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: pointer; len: uint) {.importcFunc,
     importc: "br_skey_decoder_push", header: "bearssl_x509.h".}
 
-proc skeyDecoderLastError*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
+proc skeyDecoderLastError*(ctx: var SkeyDecoderContext): cint {.inline.} =
   if ctx.err != 0:
     return ctx.err
   if ctx.keyType == '\0'.cuchar:
@@ -442,21 +441,21 @@ proc skeyDecoderLastError*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
   return 0
 
 
-proc skeyDecoderKeyType*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
+proc skeyDecoderKeyType*(ctx: var SkeyDecoderContext): cint {.inline.} =
   if ctx.err == 0:
     return cint ctx.keyType
   else:
     return 0
 
 
-proc skeyDecoderGetRsa*(ctx: ptr SkeyDecoderContext): ptr RsaPrivateKey {.inline.} =
+proc skeyDecoderGetRsa*(ctx: var SkeyDecoderContext): ptr RsaPrivateKey {.inline.} =
   if ctx.err == 0 and ctx.keyType == keytype_Rsa:
     return addr(ctx.key.rsa)
   else:
     return nil
 
 
-proc skeyDecoderGetEc*(ctx: ptr SkeyDecoderContext): ptr EcPrivateKey {.inline.} =
+proc skeyDecoderGetEc*(ctx: var SkeyDecoderContext): ptr EcPrivateKey {.inline.} =
   if ctx.err == 0 and ctx.keyType == keytype_Ec:
     return addr(ctx.key.ec)
   else:

@@ -34,23 +34,23 @@ type
 
 
 
-proc hmacInit*(ctx: ptr HmacContext; kc: ptr HmacKeyContext; outLen: uint) {.importcFunc,
+proc hmacInit*(ctx: var HmacContext; kc: ptr HmacKeyContext; outLen: uint) {.importcFunc,
     importc: "br_hmac_init", header: "bearssl_hmac.h".}
 
-proc hmacSize*(ctx: ptr HmacContext): uint {.inline, importcFunc, importc: "br_hmac_size".} =
+proc hmacSize*(ctx: var HmacContext): uint {.inline, importcFunc, importc: "br_hmac_size".} =
   return ctx.outLen
 
 
-proc hmacGetDigest*(hc: ptr HmacContext): ptr HashClass {.inline.} =
+proc hmacGetDigest*(hc: var HmacContext): ptr HashClass {.inline.} =
   return hc.dig.vtable
 
 
-proc hmacUpdate*(ctx: ptr HmacContext; data: pointer; len: uint) {.importcFunc,
+proc hmacUpdate*(ctx: var HmacContext; data: pointer; len: uint) {.importcFunc,
     importc: "br_hmac_update", header: "bearssl_hmac.h".}
 
-proc hmacOut*(ctx: ptr HmacContext; `out`: pointer): uint {.importcFunc,
+proc hmacOut*(ctx: var HmacContext; `out`: pointer): uint {.importcFunc,
     importc: "br_hmac_out", header: "bearssl_hmac.h".}
 
-proc hmacOutCT*(ctx: ptr HmacContext; data: pointer; len: uint; minLen: uint;
+proc hmacOutCT*(ctx: var HmacContext; data: pointer; len: uint; minLen: uint;
                maxLen: uint; `out`: pointer): uint {.importcFunc,
     importc: "br_hmac_outCT", header: "bearssl_hmac.h".}

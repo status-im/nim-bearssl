@@ -34,20 +34,20 @@ type
 
 
 
-proc pemDecoderInit*(ctx: ptr PemDecoderContext) {.importcFunc,
+proc pemDecoderInit*(ctx: var PemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: ptr PemDecoderContext; data: pointer; len: uint): uint {.
+proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: uint): uint {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
-proc pemDecoderSetdest*(ctx: ptr PemDecoderContext; dest: proc (destCtx: pointer;
+proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
     src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline, importcFunc,
     importc: "br_pem_decoder_setdest".} =
   ctx.dest = dest
   ctx.destCtx = destCtx
 
 
-proc pemDecoderEvent*(ctx: ptr PemDecoderContext): cint {.importcFunc,
+proc pemDecoderEvent*(ctx: var PemDecoderContext): cint {.importcFunc,
     importc: "br_pem_decoder_event", header: "bearssl_pem.h".}
 
 const
@@ -62,7 +62,7 @@ const
   PEM_ERROR* = 3
 
 
-proc pemDecoderName*(ctx: ptr PemDecoderContext): cstring {.inline.} =
+proc pemDecoderName*(ctx: var PemDecoderContext): cstring {.inline.} =
   return addr ctx.name
 
 
