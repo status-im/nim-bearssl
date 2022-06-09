@@ -15,7 +15,7 @@ type
                                  header: "bearssl_pem.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr cuchar
+    ip* {.importc: "ip".}: ptr byte
 
   PemDecoderContext* {.importc: "br_pem_decoder_context", header: "bearssl_pem.h",
                       bycopy.} = object
@@ -23,25 +23,25 @@ type
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
-    hbuf* {.importc: "hbuf".}: ptr cuchar
-    hlen* {.importc: "hlen".}: int
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: int) {.importcFunc.}
+    hbuf* {.importc: "hbuf".}: ptr byte
+    hlen* {.importc: "hlen".}: uint
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: uint) {.importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
-    event* {.importc: "event".}: cuchar
+    event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
-    buf* {.importc: "buf".}: array[255, cuchar]
-    `ptr`* {.importc: "ptr".}: int
+    buf* {.importc: "buf".}: array[255, byte]
+    `ptr`* {.importc: "ptr".}: uint
 
 
 
 proc pemDecoderInit*(ctx: ptr PemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: ptr PemDecoderContext; data: pointer; len: int): int {.
+proc pemDecoderPush*(ctx: ptr PemDecoderContext; data: pointer; len: uint): uint {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: ptr PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: int) {.importcFunc.}; destCtx: pointer) {.inline, importcFunc,
+    src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline, importcFunc,
     importc: "br_pem_decoder_setdest".} =
   ctx.dest = dest
   ctx.destCtx = destCtx
@@ -49,7 +49,6 @@ proc pemDecoderSetdest*(ctx: ptr PemDecoderContext; dest: proc (destCtx: pointer
 
 proc pemDecoderEvent*(ctx: ptr PemDecoderContext): cint {.importcFunc,
     importc: "br_pem_decoder_event", header: "bearssl_pem.h".}
-
 
 const
   PEM_BEGIN_OBJ* = 1
@@ -62,10 +61,12 @@ const
 const
   PEM_ERROR* = 3
 
+
 proc pemDecoderName*(ctx: ptr PemDecoderContext): cstring {.inline.} =
   return addr ctx.name
 
-proc pemEncode*(dest: pointer; data: pointer; len: int; banner: cstring; flags: cuint): int {.
+
+proc pemEncode*(dest: pointer; data: pointer; len: uint; banner: cstring; flags: cuint): uint {.
     importcFunc, importc: "br_pem_encode", header: "bearssl_pem.h".}
 
 const

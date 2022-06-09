@@ -71,65 +71,65 @@ const
 
 type
   RsaPublicKey* {.importc: "br_rsa_public_key", header: "bearssl_rsa.h", bycopy.} = object
-    n* {.importc: "n".}: ptr cuchar
-    nlen* {.importc: "nlen".}: int
-    e* {.importc: "e".}: ptr cuchar
-    elen* {.importc: "elen".}: int
+    n* {.importc: "n".}: ptr byte
+    nlen* {.importc: "nlen".}: uint
+    e* {.importc: "e".}: ptr byte
+    elen* {.importc: "elen".}: uint
 
 
 
 type
   RsaPrivateKey* {.importc: "br_rsa_private_key", header: "bearssl_rsa.h", bycopy.} = object
     nBitlen* {.importc: "n_bitlen".}: uint32
-    p* {.importc: "p".}: ptr cuchar
-    plen* {.importc: "plen".}: int
-    q* {.importc: "q".}: ptr cuchar
-    qlen* {.importc: "qlen".}: int
-    dp* {.importc: "dp".}: ptr cuchar
-    dplen* {.importc: "dplen".}: int
-    dq* {.importc: "dq".}: ptr cuchar
-    dqlen* {.importc: "dqlen".}: int
-    iq* {.importc: "iq".}: ptr cuchar
-    iqlen* {.importc: "iqlen".}: int
+    p* {.importc: "p".}: ptr byte
+    plen* {.importc: "plen".}: uint
+    q* {.importc: "q".}: ptr byte
+    qlen* {.importc: "qlen".}: uint
+    dp* {.importc: "dp".}: ptr byte
+    dplen* {.importc: "dplen".}: uint
+    dq* {.importc: "dq".}: ptr byte
+    dqlen* {.importc: "dqlen".}: uint
+    iq* {.importc: "iq".}: ptr byte
+    iqlen* {.importc: "iqlen".}: uint
 
 
 
 type
-  RsaPublic* {.importc: "br_rsa_public".} = proc (x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc.}
+  RsaPublic* {.importc: "br_rsa_public".} = proc (x: ptr byte; xlen: uint; pk: ptr RsaPublicKey): uint32 {.importcFunc.}
 
 
 type
-  RsaPkcs1Vrfy* {.importc: "br_rsa_pkcs1_vrfy".} = proc (x: ptr cuchar; xlen: int; hashOid: ptr cuchar;
-                     hashLen: int; pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.
+  RsaPkcs1Vrfy* {.importc: "br_rsa_pkcs1_vrfy".} = proc (x: ptr byte; xlen: uint; hashOid: ptr byte;
+                     hashLen: uint; pk: ptr RsaPublicKey; hashOut: ptr byte): uint32 {.
       importcFunc.}
 
 
 type
-  RsaPssVrfy* {.importc: "br_rsa_pss_vrfy".} = proc (x: ptr cuchar; xlen: int; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hash: pointer; saltLen: int;
+  RsaPssVrfy* {.importc: "br_rsa_pss_vrfy".} = proc (x: ptr byte; xlen: uint; hfData: ptr HashClass;
+                   hfMgf1: ptr HashClass; hash: pointer; saltLen: uint;
                    pk: ptr RsaPublicKey): uint32 {.importcFunc.}
 
 
 type
   RsaOaepEncrypt* {.importc: "br_rsa_oaep_encrypt".} = proc (rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
-                       labelLen: int; pk: ptr RsaPublicKey; dst: pointer;
-                       dstMaxLen: int; src: pointer; srcLen: int): int {.
+                       labelLen: uint; pk: ptr RsaPublicKey; dst: pointer;
+                       dstMaxLen: uint; src: pointer; srcLen: uint): uint {.
       importcFunc.}
 
 
 type
-  RsaPrivate* {.importc: "br_rsa_private".} = proc (x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc.}
+  RsaPrivate* {.importc: "br_rsa_private".} = proc (x: ptr byte; sk: ptr RsaPrivateKey): uint32 {.importcFunc.}
 
 
 type
-  RsaPkcs1Sign* {.importc: "br_rsa_pkcs1_sign".} = proc (hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc.}
+  RsaPkcs1Sign* {.importc: "br_rsa_pkcs1_sign".} = proc (hashOid: ptr byte; hash: ptr byte; hashLen: uint;
+                     sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc.}
 
 
 type
   RsaPssSign* {.importc: "br_rsa_pss_sign".} = proc (rng: ptr ptr PrngClass; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hashValue: ptr cuchar; saltLen: int;
-                   sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc.}
+                   hfMgf1: ptr HashClass; hashValue: ptr byte; saltLen: uint;
+                   sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc.}
 
 
 const
@@ -153,81 +153,81 @@ const
 
 
 type
-  RsaOaepDecrypt* {.importc: "br_rsa_oaep_decrypt".} = proc (dig: ptr HashClass; label: pointer; labelLen: int;
-                       sk: ptr RsaPrivateKey; data: pointer; len: ptr int): uint32 {.
+  RsaOaepDecrypt* {.importc: "br_rsa_oaep_decrypt".} = proc (dig: ptr HashClass; label: pointer; labelLen: uint;
+                       sk: ptr RsaPrivateKey; data: pointer; len: ptr uint): uint32 {.
       importcFunc.}
 
 
-proc rsaI32Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc,
+proc rsaI32Public*(x: ptr byte; xlen: uint; pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i32_public", header: "bearssl_rsa.h".}
 
-proc rsaI32Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar;
-                     hashLen: int; pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.
+proc rsaI32Pkcs1Vrfy*(x: ptr byte; xlen: uint; hashOid: ptr byte;
+                     hashLen: uint; pk: ptr RsaPublicKey; hashOut: ptr byte): uint32 {.
     importcFunc, importc: "br_rsa_i32_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI32PssVrfy*(x: ptr cuchar; xlen: int; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hash: pointer; saltLen: int;
+proc rsaI32PssVrfy*(x: ptr byte; xlen: uint; hfData: ptr HashClass;
+                   hfMgf1: ptr HashClass; hash: pointer; saltLen: uint;
                    pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i32_pss_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI32Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
+proc rsaI32Private*(x: ptr byte; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
     importc: "br_rsa_i32_private", header: "bearssl_rsa.h".}
 
-proc rsaI32Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+proc rsaI32Pkcs1Sign*(hashOid: ptr byte; hash: ptr byte; hashLen: uint;
+                     sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i32_pkcs1_sign", header: "bearssl_rsa.h".}
 
 proc rsaI32PssSign*(rng: ptr ptr PrngClass; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hashValue: ptr cuchar; saltLen: int;
-                   sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+                   hfMgf1: ptr HashClass; hashValue: ptr byte; saltLen: uint;
+                   sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i32_pss_sign", header: "bearssl_rsa.h".}
 
-proc rsaI31Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc,
+proc rsaI31Public*(x: ptr byte; xlen: uint; pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i31_public", header: "bearssl_rsa.h".}
 
-proc rsaI31Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar;
-                     hashLen: int; pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.
+proc rsaI31Pkcs1Vrfy*(x: ptr byte; xlen: uint; hashOid: ptr byte;
+                     hashLen: uint; pk: ptr RsaPublicKey; hashOut: ptr byte): uint32 {.
     importcFunc, importc: "br_rsa_i31_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI31PssVrfy*(x: ptr cuchar; xlen: int; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hash: pointer; saltLen: int;
+proc rsaI31PssVrfy*(x: ptr byte; xlen: uint; hfData: ptr HashClass;
+                   hfMgf1: ptr HashClass; hash: pointer; saltLen: uint;
                    pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i31_pss_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI31Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
+proc rsaI31Private*(x: ptr byte; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
     importc: "br_rsa_i31_private", header: "bearssl_rsa.h".}
 
-proc rsaI31Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+proc rsaI31Pkcs1Sign*(hashOid: ptr byte; hash: ptr byte; hashLen: uint;
+                     sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i31_pkcs1_sign", header: "bearssl_rsa.h".}
 
 proc rsaI31PssSign*(rng: ptr ptr PrngClass; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hashValue: ptr cuchar; saltLen: int;
-                   sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+                   hfMgf1: ptr HashClass; hashValue: ptr byte; saltLen: uint;
+                   sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i31_pss_sign", header: "bearssl_rsa.h".}
 
-proc rsaI62Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc,
+proc rsaI62Public*(x: ptr byte; xlen: uint; pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i62_public", header: "bearssl_rsa.h".}
 
-proc rsaI62Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar;
-                     hashLen: int; pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.
+proc rsaI62Pkcs1Vrfy*(x: ptr byte; xlen: uint; hashOid: ptr byte;
+                     hashLen: uint; pk: ptr RsaPublicKey; hashOut: ptr byte): uint32 {.
     importcFunc, importc: "br_rsa_i62_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI62PssVrfy*(x: ptr cuchar; xlen: int; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hash: pointer; saltLen: int;
+proc rsaI62PssVrfy*(x: ptr byte; xlen: uint; hfData: ptr HashClass;
+                   hfMgf1: ptr HashClass; hash: pointer; saltLen: uint;
                    pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i62_pss_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI62Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
+proc rsaI62Private*(x: ptr byte; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
     importc: "br_rsa_i62_private", header: "bearssl_rsa.h".}
 
-proc rsaI62Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+proc rsaI62Pkcs1Sign*(hashOid: ptr byte; hash: ptr byte; hashLen: uint;
+                     sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i62_pkcs1_sign", header: "bearssl_rsa.h".}
 
 proc rsaI62PssSign*(rng: ptr ptr PrngClass; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hashValue: ptr cuchar; saltLen: int;
-                   sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+                   hfMgf1: ptr HashClass; hashValue: ptr byte; saltLen: uint;
+                   sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i62_pss_sign", header: "bearssl_rsa.h".}
 
 proc rsaI62PublicGet*(): RsaPublic {.importcFunc, importc: "br_rsa_i62_public_get",
@@ -256,28 +256,28 @@ proc rsaI62OaepEncryptGet*(): RsaOaepEncrypt {.importcFunc,
 proc rsaI62OaepDecryptGet*(): RsaOaepDecrypt {.importcFunc,
     importc: "br_rsa_i62_oaep_decrypt_get", header: "bearssl_rsa.h".}
 
-proc rsaI15Public*(x: ptr cuchar; xlen: int; pk: ptr RsaPublicKey): uint32 {.importcFunc,
+proc rsaI15Public*(x: ptr byte; xlen: uint; pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i15_public", header: "bearssl_rsa.h".}
 
-proc rsaI15Pkcs1Vrfy*(x: ptr cuchar; xlen: int; hashOid: ptr cuchar;
-                     hashLen: int; pk: ptr RsaPublicKey; hashOut: ptr cuchar): uint32 {.
+proc rsaI15Pkcs1Vrfy*(x: ptr byte; xlen: uint; hashOid: ptr byte;
+                     hashLen: uint; pk: ptr RsaPublicKey; hashOut: ptr byte): uint32 {.
     importcFunc, importc: "br_rsa_i15_pkcs1_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI15PssVrfy*(x: ptr cuchar; xlen: int; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hash: pointer; saltLen: int;
+proc rsaI15PssVrfy*(x: ptr byte; xlen: uint; hfData: ptr HashClass;
+                   hfMgf1: ptr HashClass; hash: pointer; saltLen: uint;
                    pk: ptr RsaPublicKey): uint32 {.importcFunc,
     importc: "br_rsa_i15_pss_vrfy", header: "bearssl_rsa.h".}
 
-proc rsaI15Private*(x: ptr cuchar; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
+proc rsaI15Private*(x: ptr byte; sk: ptr RsaPrivateKey): uint32 {.importcFunc,
     importc: "br_rsa_i15_private", header: "bearssl_rsa.h".}
 
-proc rsaI15Pkcs1Sign*(hashOid: ptr cuchar; hash: ptr cuchar; hashLen: int;
-                     sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+proc rsaI15Pkcs1Sign*(hashOid: ptr byte; hash: ptr byte; hashLen: uint;
+                     sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i15_pkcs1_sign", header: "bearssl_rsa.h".}
 
 proc rsaI15PssSign*(rng: ptr ptr PrngClass; hfData: ptr HashClass;
-                   hfMgf1: ptr HashClass; hashValue: ptr cuchar; saltLen: int;
-                   sk: ptr RsaPrivateKey; x: ptr cuchar): uint32 {.importcFunc,
+                   hfMgf1: ptr HashClass; hashValue: ptr byte; saltLen: uint;
+                   sk: ptr RsaPrivateKey; x: ptr byte): uint32 {.importcFunc,
     importc: "br_rsa_i15_pss_sign", header: "bearssl_rsa.h".}
 
 proc rsaPublicGetDefault*(): RsaPublic {.importcFunc,
@@ -308,51 +308,51 @@ proc rsaOaepEncryptGetDefault*(): RsaOaepEncrypt {.importcFunc,
 proc rsaOaepDecryptGetDefault*(): RsaOaepDecrypt {.importcFunc,
     importc: "br_rsa_oaep_decrypt_get_default", header: "bearssl_rsa.h".}
 
-proc rsaSslDecrypt*(core: RsaPrivate; sk: ptr RsaPrivateKey; data: ptr cuchar;
-                   len: int): uint32 {.importcFunc, importc: "br_rsa_ssl_decrypt",
+proc rsaSslDecrypt*(core: RsaPrivate; sk: ptr RsaPrivateKey; data: ptr byte;
+                   len: uint): uint32 {.importcFunc, importc: "br_rsa_ssl_decrypt",
     header: "bearssl_rsa.h".}
 
 proc rsaI15OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
-                       labelLen: int; pk: ptr RsaPublicKey; dst: pointer;
-                       dstMaxLen: int; src: pointer; srcLen: int): int {.
+                       labelLen: uint; pk: ptr RsaPublicKey; dst: pointer;
+                       dstMaxLen: uint; src: pointer; srcLen: uint): uint {.
     importcFunc, importc: "br_rsa_i15_oaep_encrypt", header: "bearssl_rsa.h".}
 
-proc rsaI15OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: int;
-                       sk: ptr RsaPrivateKey; data: pointer; len: ptr int): uint32 {.
+proc rsaI15OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: uint;
+                       sk: ptr RsaPrivateKey; data: pointer; len: ptr uint): uint32 {.
     importcFunc, importc: "br_rsa_i15_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI31OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
-                       labelLen: int; pk: ptr RsaPublicKey; dst: pointer;
-                       dstMaxLen: int; src: pointer; srcLen: int): int {.
+                       labelLen: uint; pk: ptr RsaPublicKey; dst: pointer;
+                       dstMaxLen: uint; src: pointer; srcLen: uint): uint {.
     importcFunc, importc: "br_rsa_i31_oaep_encrypt", header: "bearssl_rsa.h".}
 
-proc rsaI31OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: int;
-                       sk: ptr RsaPrivateKey; data: pointer; len: ptr int): uint32 {.
+proc rsaI31OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: uint;
+                       sk: ptr RsaPrivateKey; data: pointer; len: ptr uint): uint32 {.
     importcFunc, importc: "br_rsa_i31_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI32OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
-                       labelLen: int; pk: ptr RsaPublicKey; dst: pointer;
-                       dstMaxLen: int; src: pointer; srcLen: int): int {.
+                       labelLen: uint; pk: ptr RsaPublicKey; dst: pointer;
+                       dstMaxLen: uint; src: pointer; srcLen: uint): uint {.
     importcFunc, importc: "br_rsa_i32_oaep_encrypt", header: "bearssl_rsa.h".}
 
-proc rsaI32OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: int;
-                       sk: ptr RsaPrivateKey; data: pointer; len: ptr int): uint32 {.
+proc rsaI32OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: uint;
+                       sk: ptr RsaPrivateKey; data: pointer; len: ptr uint): uint32 {.
     importcFunc, importc: "br_rsa_i32_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI62OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
-                       labelLen: int; pk: ptr RsaPublicKey; dst: pointer;
-                       dstMaxLen: int; src: pointer; srcLen: int): int {.
+                       labelLen: uint; pk: ptr RsaPublicKey; dst: pointer;
+                       dstMaxLen: uint; src: pointer; srcLen: uint): uint {.
     importcFunc, importc: "br_rsa_i62_oaep_encrypt", header: "bearssl_rsa.h".}
 
-proc rsaI62OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: int;
-                       sk: ptr RsaPrivateKey; data: pointer; len: ptr int): uint32 {.
+proc rsaI62OaepDecrypt*(dig: ptr HashClass; label: pointer; labelLen: uint;
+                       sk: ptr RsaPrivateKey; data: pointer; len: ptr uint): uint32 {.
     importcFunc, importc: "br_rsa_i62_oaep_decrypt", header: "bearssl_rsa.h".}
 
-template rsa_Kbuf_Priv_Size*(size: untyped): untyped =
+template rsaKbufPrivSize*(size: untyped): untyped =
   (5 * (((size) + 15) shr 4))
 
 
-template rsa_Kbuf_Pub_Size*(size: untyped): untyped =
+template rsaKbufPubSize*(size: untyped): untyped =
   (4 + (((size) + 7) shr 3))
 
 
@@ -382,13 +382,13 @@ proc rsaKeygenGetDefault*(): RsaKeygen {.importcFunc,
                                       header: "bearssl_rsa.h".}
 
 type
-  RsaComputeModulus* {.importc: "br_rsa_compute_modulus".} = proc (n: pointer; sk: ptr RsaPrivateKey): int {.importcFunc.}
+  RsaComputeModulus* {.importc: "br_rsa_compute_modulus".} = proc (n: pointer; sk: ptr RsaPrivateKey): uint {.importcFunc.}
 
 
-proc rsaI15ComputeModulus*(n: pointer; sk: ptr RsaPrivateKey): int {.importcFunc,
+proc rsaI15ComputeModulus*(n: pointer; sk: ptr RsaPrivateKey): uint {.importcFunc,
     importc: "br_rsa_i15_compute_modulus", header: "bearssl_rsa.h".}
 
-proc rsaI31ComputeModulus*(n: pointer; sk: ptr RsaPrivateKey): int {.importcFunc,
+proc rsaI31ComputeModulus*(n: pointer; sk: ptr RsaPrivateKey): uint {.importcFunc,
     importc: "br_rsa_i31_compute_modulus", header: "bearssl_rsa.h".}
 
 proc rsaComputeModulusGetDefault*(): RsaComputeModulus {.importcFunc,
@@ -408,14 +408,14 @@ proc rsaComputePubexpGetDefault*(): RsaComputePubexp {.importcFunc,
     importc: "br_rsa_compute_pubexp_get_default", header: "bearssl_rsa.h".}
 
 type
-  RsaComputePrivexp* {.importc: "br_rsa_compute_privexp".} = proc (d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): int {.
+  RsaComputePrivexp* {.importc: "br_rsa_compute_privexp".} = proc (d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): uint {.
       importcFunc.}
 
 
-proc rsaI15ComputePrivexp*(d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): int {.
+proc rsaI15ComputePrivexp*(d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): uint {.
     importcFunc, importc: "br_rsa_i15_compute_privexp", header: "bearssl_rsa.h".}
 
-proc rsaI31ComputePrivexp*(d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): int {.
+proc rsaI31ComputePrivexp*(d: pointer; sk: ptr RsaPrivateKey; pubexp: uint32): uint {.
     importcFunc, importc: "br_rsa_i31_compute_privexp", header: "bearssl_rsa.h".}
 
 proc rsaComputePrivexpGetDefault*(): RsaComputePrivexp {.importcFunc,
