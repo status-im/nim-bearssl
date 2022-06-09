@@ -1,8 +1,6 @@
 import
   "."/[csources]
 
-{.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_inner.h".}
 {.used.}
 
 const

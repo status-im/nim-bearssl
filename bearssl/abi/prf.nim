@@ -2,7 +2,6 @@ import
   "."/[csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_prf.h".}
 {.used.}
 
 const
@@ -19,17 +18,19 @@ type
     data* {.importc: "data".}: pointer
     len* {.importc: "len".}: int
 
+
+
 proc tls10Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
-              label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.
-    importc: "br_tls10_prf", headerFunc.}
+              label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.importcFunc,
+    importc: "br_tls10_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha256Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
                     label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.
-    importc: "br_tls12_sha256_prf", headerFunc.}
+    importcFunc, importc: "br_tls12_sha256_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha384Prf*(dst: pointer; len: int; secret: pointer; secretLen: int;
                     label: cstring; seedNum: int; seed: ptr TlsPrfSeedChunk) {.
-    importc: "br_tls12_sha384_prf", headerFunc.}
+    importcFunc, importc: "br_tls12_sha384_prf", header: "bearssl_prf.h".}
 
 type
   TlsPrfImpl* {.importc: "br_tls_prf_impl".} = proc (dst: pointer; len: int; secret: pointer; secretLen: int;

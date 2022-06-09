@@ -2,7 +2,6 @@ import
   "."/[csources, hash, hmac]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_rand.h".}
 {.used.}
 
 const
@@ -21,6 +20,9 @@ type
     update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
                                      seedLen: csize_t) {.importcFunc.}
 
+
+
+type
   HmacDrbgContext* {.importc: "br_hmac_drbg_context", header: "bearssl_rand.h",
                     bycopy.} = object
     vtable* {.importc: "vtable".}: ptr PrngClass
@@ -32,21 +34,22 @@ type
 var hmacDrbgVtable* {.importc: "br_hmac_drbg_vtable", header: "bearssl_rand.h".}: PrngClass
 
 proc hmacDrbgInit*(ctx: ptr HmacDrbgContext; digestClass: ptr HashClass; seed: pointer;
-                  seedLen: int) {.importc: "br_hmac_drbg_init",
-                                  headerFunc.}
+                  seedLen: int) {.importcFunc, importc: "br_hmac_drbg_init",
+                                    header: "bearssl_rand.h".}
 
-proc hmacDrbgGenerate*(ctx: ptr HmacDrbgContext; `out`: pointer; len: csize_t) {.
-    importc: "br_hmac_drbg_generate", headerFunc.}
+proc hmacDrbgGenerate*(ctx: ptr HmacDrbgContext; `out`: pointer; len: csize_t) {.importcFunc,
+    importc: "br_hmac_drbg_generate", header: "bearssl_rand.h".}
 
-proc hmacDrbgUpdate*(ctx: ptr HmacDrbgContext; seed: pointer; seedLen: csize_t) {.
-    importc: "br_hmac_drbg_update", headerFunc.}
+proc hmacDrbgUpdate*(ctx: ptr HmacDrbgContext; seed: pointer; seedLen: csize_t) {.importcFunc,
+    importc: "br_hmac_drbg_update", header: "bearssl_rand.h".}
 
 proc hmacDrbgGetHash*(ctx: ptr HmacDrbgContext): ptr HashClass {.inline.} =
   return ctx.digestClass
 
-type
-  PrngSeeder* {.importc: "br_prng_seeder", header: "bearssl_rand.h".} =
-    proc (ctx: ptr ptr PrngClass): cint {.importcFunc.}
 
-proc prngSeederSystem*(name: cstringArray): PrngSeeder {.
-     importc: "br_prng_seeder_system", headerFunc.}
+type
+  PrngSeeder* {.importc: "br_prng_seeder".} = proc (ctx: ptr ptr PrngClass): cint {.importcFunc.}
+
+
+proc prngSeederSystem*(name: cstringArray): PrngSeeder {.importcFunc,
+    importc: "br_prng_seeder_system", header: "bearssl_rand.h".}

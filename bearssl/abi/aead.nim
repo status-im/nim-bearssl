@@ -2,7 +2,6 @@ import
   "."/[blockx, csources, hash]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_aead.h".}
 {.used.}
 
 const
@@ -30,6 +29,8 @@ type
     checkTagTrunc* {.importc: "check_tag_trunc".}: proc (cc: ptr ptr AeadClass;
         tag: pointer; len: int): uint32 {.importcFunc.}
 
+
+
 type
   GcmContext* {.importc: "br_gcm_context", header: "bearssl_aead.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr AeadClass
@@ -45,32 +46,33 @@ type
     countCtr* {.importc: "count_ctr".}: uint64
 
 
-proc gcmInit*(ctx: ptr GcmContext; bctx: ptr ptr BlockCtrClass; gh: Ghash) {.
-    importc: "br_gcm_init", headerFunc.}
 
-proc gcmReset*(ctx: ptr GcmContext; iv: pointer; len: int) {.
-    importc: "br_gcm_reset", headerFunc.}
+proc gcmInit*(ctx: ptr GcmContext; bctx: ptr ptr BlockCtrClass; gh: Ghash) {.importcFunc,
+    importc: "br_gcm_init", header: "bearssl_aead.h".}
 
-proc gcmAadInject*(ctx: ptr GcmContext; data: pointer; len: int) {.
-    importc: "br_gcm_aad_inject", headerFunc.}
+proc gcmReset*(ctx: ptr GcmContext; iv: pointer; len: int) {.importcFunc,
+    importc: "br_gcm_reset", header: "bearssl_aead.h".}
 
-proc gcmFlip*(ctx: ptr GcmContext) {.importc: "br_gcm_flip",
-                                 headerFunc.}
+proc gcmAadInject*(ctx: ptr GcmContext; data: pointer; len: int) {.importcFunc,
+    importc: "br_gcm_aad_inject", header: "bearssl_aead.h".}
 
-proc gcmRun*(ctx: ptr GcmContext; encrypt: cint; data: pointer; len: int) {.
+proc gcmFlip*(ctx: ptr GcmContext) {.importcFunc, importc: "br_gcm_flip",
+                                 header: "bearssl_aead.h".}
+
+proc gcmRun*(ctx: ptr GcmContext; encrypt: cint; data: pointer; len: int) {.importcFunc,
     importc: "br_gcm_run", header: "bearssl_aead.h".}
 
-proc gcmGetTag*(ctx: ptr GcmContext; tag: pointer) {.importc: "br_gcm_get_tag",
-    headerFunc.}
+proc gcmGetTag*(ctx: ptr GcmContext; tag: pointer) {.importcFunc, importc: "br_gcm_get_tag",
+    header: "bearssl_aead.h".}
 
-proc gcmCheckTag*(ctx: ptr GcmContext; tag: pointer): uint32 {.
-    importc: "br_gcm_check_tag", headerFunc.}
+proc gcmCheckTag*(ctx: ptr GcmContext; tag: pointer): uint32 {.importcFunc,
+    importc: "br_gcm_check_tag", header: "bearssl_aead.h".}
 
-proc gcmGetTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int) {.
-    importc: "br_gcm_get_tag_trunc", headerFunc.}
+proc gcmGetTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int) {.importcFunc,
+    importc: "br_gcm_get_tag_trunc", header: "bearssl_aead.h".}
 
-proc gcmCheckTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int): uint32 {.
-    importc: "br_gcm_check_tag_trunc", headerFunc.}
+proc gcmCheckTagTrunc*(ctx: ptr GcmContext; tag: pointer; len: int): uint32 {.importcFunc,
+    importc: "br_gcm_check_tag_trunc", header: "bearssl_aead.h".}
 
 var gcmVtable* {.importc: "br_gcm_vtable", header: "bearssl_aead.h".}: AeadClass
 
@@ -88,9 +90,11 @@ type
     `ptr`* {.importc: "ptr".}: int
 
 
+
 type
   EaxState* {.importc: "br_eax_state", header: "bearssl_aead.h", bycopy.} = object
     st* {.importc: "st".}: array[3, array[16, cuchar]]
+
 
 
 proc eaxInit*(ctx: ptr EaxContext; bctx: ptr ptr BlockCtrcbcClass) {.importcFunc,
@@ -145,12 +149,13 @@ type
     tagLen* {.importc: "tag_len".}: int
 
 
+
 proc ccmInit*(ctx: ptr CcmContext; bctx: ptr ptr BlockCtrcbcClass) {.importcFunc,
     importc: "br_ccm_init", header: "bearssl_aead.h".}
 
 proc ccmReset*(ctx: ptr CcmContext; nonce: pointer; nonceLen: int; aadLen: uint64;
-              dataLen: uint64; tagLen: int): cint {.importcFunc, importc: "br_ccm_reset",
-    header: "bearssl_aead.h".}
+              dataLen: uint64; tagLen: int): cint {.importcFunc,
+    importc: "br_ccm_reset", header: "bearssl_aead.h".}
 
 proc ccmAadInject*(ctx: ptr CcmContext; data: pointer; len: int) {.importcFunc,
     importc: "br_ccm_aad_inject", header: "bearssl_aead.h".}
@@ -166,4 +171,3 @@ proc ccmGetTag*(ctx: ptr CcmContext; tag: pointer): int {.importcFunc,
 
 proc ccmCheckTag*(ctx: ptr CcmContext; tag: pointer): uint32 {.importcFunc,
     importc: "br_ccm_check_tag", header: "bearssl_aead.h".}
-

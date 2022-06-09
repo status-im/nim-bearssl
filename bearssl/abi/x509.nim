@@ -2,7 +2,6 @@ import
   "."/[csources, ec, hash, rsa]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_x509.h".}
 {.used.}
 
 const
@@ -110,14 +109,15 @@ const
   ERR_X509_NOT_TRUSTED* = 62
 
 type
-  INNER_C_UNION_2211491720* {.importc: "no_name", header: "bearssl_x509.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_x509_1* {.importc: "br_x509_pkey::no_name",
+                                 header: "bearssl_x509.h", bycopy, union.} = object
     rsa* {.importc: "rsa".}: RsaPublicKey
     ec* {.importc: "ec".}: EcPublicKey
 
   X509Pkey* {.importc: "br_x509_pkey", header: "bearssl_x509.h", bycopy.} = object
     keyType* {.importc: "key_type".}: cuchar
-    key* {.importc: "key".}: INNER_C_UNION_2211491720
+    key* {.importc: "key".}: INNER_C_UNION_bearssl_x509_1
+
 
 
 type
@@ -197,7 +197,8 @@ type
 
 
 type
-  INNER_C_STRUCT_573696436* {.importc: "no_name", header: "bearssl_x509.h", bycopy.} = object
+  INNER_C_STRUCT_bearssl_x509_3* {.importc: "br_x509_minimal_context::no_name",
+                                  header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr cuchar
@@ -206,7 +207,7 @@ type
                        header: "bearssl_x509.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr X509Class
     pkey* {.importc: "pkey".}: X509Pkey
-    cpu* {.importc: "cpu".}: INNER_C_STRUCT_573696436
+    cpu* {.importc: "cpu".}: INNER_C_STRUCT_bearssl_x509_3
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
@@ -283,7 +284,8 @@ proc x509MinimalSetNameElements*(ctx: ptr X509MinimalContext; elts: ptr NameElem
   ctx.numNameElts = numElts
 
 type
-  INNER_C_STRUCT_161597942* {.importc: "no_name", header: "bearssl_x509.h", bycopy.} = object
+  INNER_C_STRUCT_bearssl_x509_5* {.importc: "br_x509_decoder_context::no_name",
+                                  header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr cuchar
@@ -291,7 +293,7 @@ type
   X509DecoderContext* {.importc: "br_x509_decoder_context",
                        header: "bearssl_x509.h", bycopy.} = object
     pkey* {.importc: "pkey".}: X509Pkey
-    cpu* {.importc: "cpu".}: INNER_C_STRUCT_161597942
+    cpu* {.importc: "cpu".}: INNER_C_STRUCT_bearssl_x509_5
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
@@ -349,21 +351,21 @@ type
 
 
 type
-  INNER_C_UNION_3754611343* {.importc: "no_name", header: "bearssl_x509.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_x509_8* {.importc: "br_skey_decoder_context::no_name",
+                                 header: "bearssl_x509.h", bycopy, union.} = object
     rsa* {.importc: "rsa".}: RsaPrivateKey
     ec* {.importc: "ec".}: EcPrivateKey
 
-  INNER_C_STRUCT_3633027466* {.importc: "no_name", header: "bearssl_x509.h",
-                               bycopy.} = object
+  INNER_C_STRUCT_bearssl_x509_9* {.importc: "br_skey_decoder_context::no_name",
+                                  header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr cuchar
 
   SkeyDecoderContext* {.importc: "br_skey_decoder_context",
                        header: "bearssl_x509.h", bycopy.} = object
-    key* {.importc: "key".}: INNER_C_UNION_3754611343
-    cpu* {.importc: "cpu".}: INNER_C_STRUCT_3633027466
+    key* {.importc: "key".}: INNER_C_UNION_bearssl_x509_8
+    cpu* {.importc: "cpu".}: INNER_C_STRUCT_bearssl_x509_9
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
@@ -392,3 +394,27 @@ proc skeyDecoderKeyType*(ctx: ptr SkeyDecoderContext): cint {.inline.} =
     return cint ctx.keyType
   else:
     return 0
+proc encodeRsaRawDer*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
+                     d: pointer; dlen: int): int {.importcFunc,
+    importc: "br_encode_rsa_raw_der", header: "bearssl_x509.h".}
+
+proc encodeRsaPkcs8Der*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
+                       d: pointer; dlen: int): int {.importcFunc,
+    importc: "br_encode_rsa_pkcs8_der", header: "bearssl_x509.h".}
+
+proc encodeEcRawDer*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): int {.
+    importcFunc, importc: "br_encode_ec_raw_der", header: "bearssl_x509.h".}
+
+proc encodeEcPkcs8Der*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): int {.
+    importcFunc, importc: "br_encode_ec_pkcs8_der", header: "bearssl_x509.h".}
+
+const
+  ENCODE_PEM_RSA_RAW* = "RSA PRIVATE KEY"
+
+
+const
+  ENCODE_PEM_EC_RAW* = "EC PRIVATE KEY"
+
+
+const
+  ENCODE_PEM_PKCS8* = "PRIVATE KEY"

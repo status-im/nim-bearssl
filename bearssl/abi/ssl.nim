@@ -2,7 +2,6 @@ import
   "."/[blockx, csources, ec, hash, hmac, prf, rand, rsa, x509]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "bearssl_ssl.h".}
 {.used.}
 
 const
@@ -48,8 +47,10 @@ const
 const
   SSL_BUFSIZE_INPUT* = (16384 + 325)
 
+
 const
   SSL_BUFSIZE_OUTPUT* = (16384 + 85)
+
 
 const
   SSL_BUFSIZE_MONO* = SSL_BUFSIZE_INPUT
@@ -214,8 +215,8 @@ type
                                  macOutLen: int; iv: pointer) {.importcFunc.}
 
 type
-  INNER_C_UNION_2105460304* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_1* {.importc: "br_sslrec_in_cbc_context::no_name",
+                                header: "bearssl_ssl.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
     aes* {.importc: "aes".}: AesGenCbcdecKeys
     des* {.importc: "des".}: DesGenCbcdecKeys
@@ -224,7 +225,7 @@ type
                        header: "bearssl_ssl.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr SslrecInCbcClass
     seq* {.importc: "seq".}: uint64
-    bc* {.importc: "bc".}: INNER_C_UNION_2105460304
+    bc* {.importc: "bc".}: INNER_C_UNION_bearssl_ssl_1
     mac* {.importc: "mac".}: HmacKeyContext
     macLen* {.importc: "mac_len".}: int
     iv* {.importc: "iv".}: array[16, cuchar]
@@ -234,8 +235,8 @@ type
 var sslrecInCbcVtable* {.importc: "br_sslrec_in_cbc_vtable", header: "bearssl_ssl.h".}: SslrecInCbcClass
 
 type
-  INNER_C_UNION_3724465237* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_3* {.importc: "br_sslrec_out_cbc_context::no_name",
+                                header: "bearssl_ssl.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcencClass
     aes* {.importc: "aes".}: AesGenCbcencKeys
     des* {.importc: "des".}: DesGenCbcencKeys
@@ -244,7 +245,7 @@ type
                         header: "bearssl_ssl.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr SslrecOutCbcClass
     seq* {.importc: "seq".}: uint64
-    bc* {.importc: "bc".}: INNER_C_UNION_3724465237
+    bc* {.importc: "bc".}: INNER_C_UNION_bearssl_ssl_3
     mac* {.importc: "mac".}: HmacKeyContext
     macLen* {.importc: "mac_len".}: int
     iv* {.importc: "iv".}: array[16, cuchar]
@@ -271,22 +272,22 @@ type
                                  keyLen: int; ghImpl: Ghash; iv: pointer) {.importcFunc.}
 
 type
-  INNER_C_UNION_536016210* {.importc: "no_name", header: "bearssl_ssl.h",
-                             bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_6* {.importc: "br_sslrec_gcm_context::no_name",
+                                header: "bearssl_ssl.h", bycopy, union.} = object
     gen* {.importc: "gen".}: pointer
     `in`* {.importc: "in".}: ptr SslrecInGcmClass
     `out`* {.importc: "out".}: ptr SslrecOutGcmClass
 
-  INNER_C_UNION_1283557389* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_7* {.importc: "br_sslrec_gcm_context::no_name",
+                                header: "bearssl_ssl.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrClass
     aes* {.importc: "aes".}: AesGenCtrKeys
 
   SslrecGcmContext* {.importc: "br_sslrec_gcm_context", header: "bearssl_ssl.h",
                      bycopy.} = object
-    vtable* {.importc: "vtable".}: INNER_C_UNION_536016210
+    vtable* {.importc: "vtable".}: INNER_C_UNION_bearssl_ssl_6
     seq* {.importc: "seq".}: uint64
-    bc* {.importc: "bc".}: INNER_C_UNION_1283557389
+    bc* {.importc: "bc".}: INNER_C_UNION_bearssl_ssl_7
     gh* {.importc: "gh".}: Ghash
     iv* {.importc: "iv".}: array[4, cuchar]
     h* {.importc: "h".}: array[16, cuchar]
@@ -314,15 +315,15 @@ type
                                  key: pointer; iv: pointer) {.importcFunc.}
 
 type
-  INNER_C_UNION_1683842004* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_9* {.importc: "br_sslrec_chapol_context::no_name",
+                                header: "bearssl_ssl.h", bycopy, union.} = object
     gen* {.importc: "gen".}: pointer
     `in`* {.importc: "in".}: ptr SslrecInChapolClass
     `out`* {.importc: "out".}: ptr SslrecOutChapolClass
 
   SslrecChapolContext* {.importc: "br_sslrec_chapol_context",
                         header: "bearssl_ssl.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: INNER_C_UNION_1683842004
+    vtable* {.importc: "vtable".}: INNER_C_UNION_bearssl_ssl_9
     seq* {.importc: "seq".}: uint64
     key* {.importc: "key".}: array[32, cuchar]
     iv* {.importc: "iv".}: array[12, cuchar]
@@ -335,37 +336,80 @@ var sslrecInChapolVtable* {.importc: "br_sslrec_in_chapol_vtable",
 
 var sslrecOutChapolVtable* {.importc: "br_sslrec_out_chapol_vtable",
                            header: "bearssl_ssl.h".}: SslrecOutChapolClass
+type
+  SslrecInCcmClass* {.importc: "br_sslrec_in_ccm_class", header: "bearssl_ssl.h",
+                     bycopy.} = object
+    inner* {.importc: "inner".}: SslrecInClass
+    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInCcmClass;
+                                 bcImpl: ptr BlockCtrcbcClass; key: pointer;
+                                 keyLen: int; iv: pointer; tagLen: int) {.
+        importcFunc.}
 
+
+
+type
+  SslrecOutCcmClass* {.importc: "br_sslrec_out_ccm_class",
+                      header: "bearssl_ssl.h", bycopy.} = object
+    inner* {.importc: "inner".}: SslrecOutClass
+    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutCcmClass;
+                                 bcImpl: ptr BlockCtrcbcClass; key: pointer;
+                                 keyLen: int; iv: pointer; tagLen: int) {.
+        importcFunc.}
+
+
+
+type
+  INNER_C_UNION_bearssl_ssl_12* {.importc: "br_sslrec_ccm_context::no_name",
+                                 header: "bearssl_ssl.h", bycopy, union.} = object
+    gen* {.importc: "gen".}: pointer
+    `in`* {.importc: "in".}: ptr SslrecInCcmClass
+    `out`* {.importc: "out".}: ptr SslrecOutCcmClass
+
+  INNER_C_UNION_bearssl_ssl_13* {.importc: "br_sslrec_ccm_context::no_name",
+                                 header: "bearssl_ssl.h", bycopy, union.} = object
+    vtable* {.importc: "vtable".}: ptr BlockCtrcbcClass
+    aes* {.importc: "aes".}: AesGenCtrcbcKeys
+
+  SslrecCcmContext* {.importc: "br_sslrec_ccm_context", header: "bearssl_ssl.h",
+                     bycopy.} = object
+    vtable* {.importc: "vtable".}: INNER_C_UNION_bearssl_ssl_12
+    seq* {.importc: "seq".}: uint64
+    bc* {.importc: "bc".}: INNER_C_UNION_bearssl_ssl_13
+    iv* {.importc: "iv".}: array[4, cuchar]
+    tagLen* {.importc: "tag_len".}: int
 type
   SslSessionParameters* {.importc: "br_ssl_session_parameters",
                          header: "bearssl_ssl.h", bycopy.} = object
     sessionId* {.importc: "session_id".}: array[32, cuchar]
-    sessionIdLen* {.importc: "session_id_len".}: byte
+    sessionIdLen* {.importc: "session_id_len".}: cuchar
     version* {.importc: "version".}: uint16
     cipherSuite* {.importc: "cipher_suite".}: uint16
     masterSecret* {.importc: "master_secret".}: array[48, cuchar]
 
 
 const
-  MAX_CIPHER_SUITES* = 40
+  MAX_CIPHER_SUITES* = 48
 
 type
-  INNER_C_UNION_861939089* {.importc: "no_name", header: "bearssl_ssl.h",
-                             bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_17* {.importc: "br_ssl_engine_context::no_name",
+                                 header: "bearssl_ssl.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslrecInClass
     cbc* {.importc: "cbc".}: SslrecInCbcContext
     gcm* {.importc: "gcm".}: SslrecGcmContext
     chapol* {.importc: "chapol".}: SslrecChapolContext
+    ccm* {.importc: "ccm".}: SslrecCcmContext
 
-  INNER_C_UNION_1609480268* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
+  INNER_C_UNION_bearssl_ssl_18* {.importc: "br_ssl_engine_context::no_name",
+                                 header: "bearssl_ssl.h", bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslrecOutClass
     clear* {.importc: "clear".}: SslrecOutClearContext
     cbc* {.importc: "cbc".}: SslrecOutCbcContext
     gcm* {.importc: "gcm".}: SslrecGcmContext
     chapol* {.importc: "chapol".}: SslrecChapolContext
+    ccm* {.importc: "ccm".}: SslrecCcmContext
 
-  INNER_C_STRUCT_671658464* {.importc: "no_name", header: "bearssl_ssl.h", bycopy.} = object
+  INNER_C_STRUCT_bearssl_ssl_19* {.importc: "br_ssl_engine_context::no_name",
+                                  header: "bearssl_ssl.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr cuchar
@@ -393,8 +437,8 @@ type
     recordTypeOut* {.importc: "record_type_out".}: cuchar
     versionIn* {.importc: "version_in".}: uint16
     versionOut* {.importc: "version_out".}: uint16
-    `in`* {.importc: "in".}: INNER_C_UNION_861939089
-    `out`* {.importc: "out".}: INNER_C_UNION_1609480268
+    `in`* {.importc: "in".}: INNER_C_UNION_bearssl_ssl_17
+    `out`* {.importc: "out".}: INNER_C_UNION_bearssl_ssl_18
     applicationData* {.importc: "application_data".}: cuchar
     rng* {.importc: "rng".}: HmacDrbgContext
     rngInitDone* {.importc: "rng_init_done".}: cint
@@ -413,7 +457,7 @@ type
     reneg* {.importc: "reneg".}: cuchar
     savedFinished* {.importc: "saved_finished".}: array[24, cuchar]
     flags* {.importc: "flags".}: uint32
-    cpu* {.importc: "cpu".}: INNER_C_STRUCT_671658464
+    cpu* {.importc: "cpu".}: INNER_C_STRUCT_bearssl_ssl_19
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     pad* {.importc: "pad".}: array[512, cuchar]
@@ -441,6 +485,7 @@ type
     iaesCbcenc* {.importc: "iaes_cbcenc".}: ptr BlockCbcencClass
     iaesCbcdec* {.importc: "iaes_cbcdec".}: ptr BlockCbcdecClass
     iaesCtr* {.importc: "iaes_ctr".}: ptr BlockCtrClass
+    iaesCtrcbc* {.importc: "iaes_ctrcbc".}: ptr BlockCtrcbcClass
     idesCbcenc* {.importc: "ides_cbcenc".}: ptr BlockCbcencClass
     idesCbcdec* {.importc: "ides_cbcdec".}: ptr BlockCbcdecClass
     ighash* {.importc: "ighash".}: Ghash
@@ -452,6 +497,8 @@ type
     igcmOut* {.importc: "igcm_out".}: ptr SslrecOutGcmClass
     ichapolIn* {.importc: "ichapol_in".}: ptr SslrecInChapolClass
     ichapolOut* {.importc: "ichapol_out".}: ptr SslrecOutChapolClass
+    iccmIn* {.importc: "iccm_in".}: ptr SslrecInCcmClass
+    iccmOut* {.importc: "iccm_out".}: ptr SslrecOutCcmClass
     iec* {.importc: "iec".}: ptr EcImpl
     irsavrfy* {.importc: "irsavrfy".}: RsaPkcs1Vrfy
     iecdsa* {.importc: "iecdsa".}: EcdsaVrfy
@@ -601,15 +648,15 @@ proc sslEngineSetDefaultEcdsa*(cc: ptr SslEngineContext) {.importcFunc,
 proc sslEngineGetEcdsa*(cc: ptr SslEngineContext): EcdsaVrfy {.inline.} =
   return cc.iecdsa
 
-proc sslEngineSetBuffer*(cc: ptr SslEngineContext, iobuf: ptr byte,
-                         iobufLen: uint, bidi: cint) {.
-     importcFunc, importc: "br_ssl_engine_set_buffer", header: "bearssl_ssl.h".}
+proc sslEngineSetBuffer*(cc: ptr SslEngineContext; iobuf: pointer; iobufLen: uint;
+                        bidi: cint) {.importcFunc, importc: "br_ssl_engine_set_buffer",
+                                    header: "bearssl_ssl.h".}
 
-proc sslEngineSetBuffersBidi*(cc: ptr SslEngineContext, ibuf: ptr byte,
-                              ibufLen: uint, obuf: ptr byte, obufLen: uint) {.
+proc sslEngineSetBuffersBidi*(cc: ptr SslEngineContext; ibuf: pointer;
+                             ibufLen: int; obuf: pointer; obufLen: uint) {.
     importcFunc, importc: "br_ssl_engine_set_buffers_bidi", header: "bearssl_ssl.h".}
 
-proc sslEngineInjectEntropy*(cc: ptr SslEngineContext; data: pointer; len: int) {.
+proc sslEngineInjectEntropy*(cc: ptr SslEngineContext; data: pointer; len: uint) {.
     importcFunc, importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
 
 proc sslEngineGetServerName*(cc: ptr SslEngineContext): cstring {.inline.} =
@@ -650,45 +697,39 @@ const
 proc sslEngineLastError*(cc: ptr SslEngineContext): cint {.inline.} =
   return cc.err
 
-proc sslEngineSendappBuf*(cc: ptr SslEngineContext,
-                          length: var uint): ptr byte {.
-     importcFunc, importc: "br_ssl_engine_sendapp_buf", header: "bearssl_ssl.h".}
 
-proc sslEngineSendappAck*(cc: ptr SslEngineContext,
-                          length: uint) {.
-     importcFunc, importc: "br_ssl_engine_sendapp_ack", header: "bearssl_ssl.h".}
+proc sslEngineSendappBuf*(cc: ptr SslEngineContext; len: var uint): ptr byte {.
+    importcFunc, importc: "br_ssl_engine_sendapp_buf", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvappBuf*(cc: ptr SslEngineContext,
-                          length: var uint): ptr byte {.
-     importcFunc, importc: "br_ssl_engine_recvapp_buf", header: "bearssl_ssl.h".}
+proc sslEngineSendappAck*(cc: ptr SslEngineContext; len: uint) {.importcFunc,
+    importc: "br_ssl_engine_sendapp_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvappAck*(cc: ptr SslEngineContext,
-                          length: uint) {.
-     importcFunc, importc: "br_ssl_engine_recvapp_ack", header: "bearssl_ssl.h".}
+proc sslEngineRecvappBuf*(cc: ptr SslEngineContext; len: var uint): ptr byte {.
+    importcFunc, importc: "br_ssl_engine_recvapp_buf", header: "bearssl_ssl.h".}
 
-proc sslEngineSendrecBuf*(cc: ptr SslEngineContext,
-                          length: var uint): ptr byte {.
-     importcFunc, importc: "br_ssl_engine_sendrec_buf", header: "bearssl_ssl.h".}
+proc sslEngineRecvappAck*(cc: ptr SslEngineContext; len: uint) {.importcFunc,
+    importc: "br_ssl_engine_recvapp_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineSendrecAck*(cc: ptr SslEngineContext,
-                          length: uint) {.
-     importcFunc, importc: "br_ssl_engine_sendrec_ack", header: "bearssl_ssl.h".}
+proc sslEngineSendrecBuf*(cc: ptr SslEngineContext; len: var uint): ptr byte {.
+    importcFunc, importc: "br_ssl_engine_sendrec_buf", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvrecBuf*(cc: ptr SslEngineContext,
-                          length: var uint): ptr byte {.
-     importcFunc, importc: "br_ssl_engine_recvrec_buf", header: "bearssl_ssl.h".}
+proc sslEngineSendrecAck*(cc: ptr SslEngineContext; len: uint) {.importcFunc,
+    importc: "br_ssl_engine_sendrec_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvrecAck*(cc: ptr SslEngineContext; length: uint) {.
-     importcFunc, importc: "br_ssl_engine_recvrec_ack", header: "bearssl_ssl.h".}
+proc sslEngineRecvrecBuf*(cc: ptr SslEngineContext; len: var uint): ptr byte {.
+    importcFunc, importc: "br_ssl_engine_recvrec_buf", header: "bearssl_ssl.h".}
 
-proc sslEngineFlush*(cc: ptr SslEngineContext; force: cint) {.
-     importcFunc, importc: "br_ssl_engine_flush", header: "bearssl_ssl.h".}
+proc sslEngineRecvrecAck*(cc: ptr SslEngineContext; len: uint) {.importcFunc,
+    importc: "br_ssl_engine_recvrec_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineClose*(cc: ptr SslEngineContext) {.
-     importcFunc, importc: "br_ssl_engine_close", header: "bearssl_ssl.h".}
+proc sslEngineFlush*(cc: ptr SslEngineContext; force: cint) {.importcFunc,
+    importc: "br_ssl_engine_flush", header: "bearssl_ssl.h".}
 
-proc sslEngineRenegotiate*(cc: ptr SslEngineContext): cint {.
-    importcFunc, importc: "br_ssl_engine_renegotiate", header: "bearssl_ssl.h".}
+proc sslEngineClose*(cc: ptr SslEngineContext) {.importcFunc,
+    importc: "br_ssl_engine_close", header: "bearssl_ssl.h".}
+
+proc sslEngineRenegotiate*(cc: ptr SslEngineContext): cint {.importcFunc,
+    importc: "br_ssl_engine_renegotiate", header: "bearssl_ssl.h".}
 
 proc sslKeyExport*(cc: ptr SslEngineContext; dst: pointer; len: int; label: cstring;
                    context: pointer; contextLen: int): cint {.importcFunc,
@@ -713,24 +754,6 @@ const
   AUTH_ECDSA* = 3
 
 type
-  INNER_C_UNION_2478042450* {.importc: "no_name", header: "bearssl_ssl.h",
-                              bycopy, union.} = object
-    vtable* {.importc: "vtable".}: ptr SslClientCertificateClass
-    singleRsa* {.importc: "single_rsa".}: SslClientCertificateRsaContext
-    singleEc* {.importc: "single_ec".}: SslClientCertificateEcContext
-
-  SslClientContext* {.importc: "br_ssl_client_context", header: "bearssl_ssl.h",
-                     bycopy.} = object
-    eng* {.importc: "eng".}: SslEngineContext
-    minClienthelloLen* {.importc: "min_clienthello_len".}: uint16
-    hashes* {.importc: "hashes".}: uint32
-    serverCurve* {.importc: "server_curve".}: cint
-    clientAuthVtable* {.importc: "client_auth_vtable".}: ptr ptr SslClientCertificateClass
-    authType* {.importc: "auth_type".}: cuchar
-    hashId* {.importc: "hash_id".}: cuchar
-    clientAuth* {.importc: "client_auth".}: INNER_C_UNION_2478042450
-    irsapub* {.importc: "irsapub".}: RsaPublic
-
   SslClientCertificateClass* {.importc: "br_ssl_client_certificate_class",
                               header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
@@ -751,8 +774,10 @@ type
                                       data: ptr cuchar; len: ptr int): uint32 {.
         importcFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslClientCertificateClass;
-                                      hashId: cint; hvLen: int; data: ptr cuchar;
-                                      len: int): int {.importcFunc.}
+                                      hashId: cint; hvLen: int;
+                                      data: ptr cuchar; len: int): int {.importcFunc.}
+
+
 
   SslClientCertificateRsaContext* {.importc: "br_ssl_client_certificate_rsa_context",
                                    header: "bearssl_ssl.h", bycopy.} = object
@@ -761,6 +786,8 @@ type
     chainLen* {.importc: "chain_len".}: int
     sk* {.importc: "sk".}: ptr RsaPrivateKey
     irsasign* {.importc: "irsasign".}: RsaPkcs1Sign
+
+
 
   SslClientCertificateEcContext* {.importc: "br_ssl_client_certificate_ec_context",
                                   header: "bearssl_ssl.h", bycopy.} = object
@@ -773,6 +800,27 @@ type
     mhash* {.importc: "mhash".}: ptr MultihashContext
     iec* {.importc: "iec".}: ptr EcImpl
     iecdsa* {.importc: "iecdsa".}: EcdsaSign
+
+
+
+
+  INNER_C_UNION_bearssl_ssl_20* {.importc: "no_name", header: "bearssl_ssl.h",
+                                 bycopy, union.} = object
+    vtable* {.importc: "vtable".}: ptr SslClientCertificateClass
+    singleRsa* {.importc: "single_rsa".}: SslClientCertificateRsaContext
+    singleEc* {.importc: "single_ec".}: SslClientCertificateEcContext
+
+  SslClientContext* {.importc: "br_ssl_client_context", header: "bearssl_ssl.h",
+                     bycopy.} = object
+    eng* {.importc: "eng".}: SslEngineContext
+    minClienthelloLen* {.importc: "min_clienthello_len".}: uint16
+    hashes* {.importc: "hashes".}: uint32
+    serverCurve* {.importc: "server_curve".}: cint
+    clientAuthVtable* {.importc: "client_auth_vtable".}: ptr ptr SslClientCertificateClass
+    authType* {.importc: "auth_type".}: cuchar
+    hashId* {.importc: "hash_id".}: cuchar
+    clientAuth* {.importc: "client_auth".}: INNER_C_UNION_bearssl_ssl_20
+    irsapub* {.importc: "irsapub".}: RsaPublic
 
 
 
@@ -809,7 +857,7 @@ proc sslClientReset*(cc: ptr SslClientContext; serverName: cstring;
     importc: "br_ssl_client_reset", header: "bearssl_ssl.h".}
 
 proc sslClientForgetSession*(cc: ptr SslClientContext) {.inline.} =
-  cc.eng.session.sessionIdLen = 0
+  cc.eng.session.sessionIdLen = cuchar(0)
 
 proc sslClientSetSingleRsa*(cc: ptr SslClientContext; chain: ptr X509Certificate;
                            chainLen: int; sk: ptr RsaPrivateKey;
@@ -825,25 +873,24 @@ proc sslClientSetSingleEc*(cc: ptr SslClientContext; chain: ptr X509Certificate;
 type
   SuiteTranslated* = array[2, uint16]
 
-when not defined(DOXYGEN_IGNORE):
-  const
-    SSLKEYX_RSA* = 0
-    SSLKEYX_ECDHE_RSA* = 1
-    SSLKEYX_ECDHE_ECDSA* = 2
-    SSLKEYX_ECDH_RSA* = 3
-    SSLKEYX_ECDH_ECDSA* = 4
-    SSLENC_3DES_CBC* = 0
-    SSLENC_AES128_CBC* = 1
-    SSLENC_AES256_CBC* = 2
-    SSLENC_AES128_GCM* = 3
-    SSLENC_AES256_GCM* = 4
-    SSLENC_CHACHA20* = 5
-    SSLMAC_AEAD* = 0
-    SSLMAC_SHA1* = sha1ID
-    SSLMAC_SHA256* = sha256ID
-    SSLMAC_SHA384* = sha384ID
-    SSLPRF_SHA256* = sha256ID
-    SSLPRF_SHA384* = sha384ID
+const
+  SSLKEYX_RSA* = 0
+  SSLKEYX_ECDHE_RSA* = 1
+  SSLKEYX_ECDHE_ECDSA* = 2
+  SSLKEYX_ECDH_RSA* = 3
+  SSLKEYX_ECDH_ECDSA* = 4
+  SSLENC_3DES_CBC* = 0
+  SSLENC_AES128_CBC* = 1
+  SSLENC_AES256_CBC* = 2
+  SSLENC_AES128_GCM* = 3
+  SSLENC_AES256_GCM* = 4
+  SSLENC_CHACHA20* = 5
+  SSLMAC_AEAD* = 0
+  SSLMAC_SHA1* = sha1ID
+  SSLMAC_SHA256* = sha256ID
+  SSLMAC_SHA384* = sha384ID
+  SSLPRF_SHA256* = sha256ID
+  SSLPRF_SHA384* = sha384ID
 
 type
   SslServerChoices* {.importc: "br_ssl_server_choices", header: "bearssl_ssl.h",
@@ -853,6 +900,9 @@ type
     chain* {.importc: "chain".}: ptr X509Certificate
     chainLen* {.importc: "chain_len".}: int
 
+
+
+type
   SslServerPolicyClass* {.importc: "br_ssl_server_policy_class",
                          header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: int
@@ -863,8 +913,11 @@ type
                                       data: ptr cuchar; len: ptr int): uint32 {.
         importcFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslServerPolicyClass;
-                                      algoId: cuint; data: ptr cuchar; hvLen: int;
-                                      len: int): int {.importcFunc.}
+                                      algoId: cuint; data: ptr cuchar;
+                                      hvLen: int; len: int): int {.importcFunc.}
+
+
+
 
   SslServerPolicyRsaContext* {.importc: "br_ssl_server_policy_rsa_context",
                               header: "bearssl_ssl.h", bycopy.} = object
@@ -875,6 +928,9 @@ type
     allowedUsages* {.importc: "allowed_usages".}: cuint
     irsacore* {.importc: "irsacore".}: RsaPrivate
     irsasign* {.importc: "irsasign".}: RsaPkcs1Sign
+
+
+
 
   SslServerPolicyEcContext* {.importc: "br_ssl_server_policy_ec_context",
                              header: "bearssl_ssl.h", bycopy.} = object
@@ -888,8 +944,37 @@ type
     iec* {.importc: "iec".}: ptr EcImpl
     iecdsa* {.importc: "iecdsa".}: EcdsaSign
 
-  INNER_C_UNION_537875083* {.importc: "no_name", header: "bearssl_ssl.h",
-                             bycopy, union.} = object
+
+  SslSessionCacheClass* {.importc: "br_ssl_session_cache_class",
+                         header: "bearssl_ssl.h", bycopy.} = object
+    contextSize* {.importc: "context_size".}: int
+    save* {.importc: "save".}: proc (ctx: ptr ptr SslSessionCacheClass;
+                                 serverCtx: ptr SslServerContext;
+                                 params: ptr SslSessionParameters) {.importcFunc.}
+    load* {.importc: "load".}: proc (ctx: ptr ptr SslSessionCacheClass;
+                                 serverCtx: ptr SslServerContext;
+                                 params: ptr SslSessionParameters): cint {.importcFunc.}
+
+
+
+
+  SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
+                       header: "bearssl_ssl.h", bycopy.} = object
+    vtable* {.importc: "vtable".}: ptr SslSessionCacheClass
+    store* {.importc: "store".}: ptr cuchar
+    storeLen* {.importc: "store_len".}: int
+    storePtr* {.importc: "store_ptr".}: int
+    indexKey* {.importc: "index_key".}: array[32, cuchar]
+    hash* {.importc: "hash".}: ptr HashClass
+    initDone* {.importc: "init_done".}: cint
+    head* {.importc: "head".}: uint32
+    tail* {.importc: "tail".}: uint32
+    root* {.importc: "root".}: uint32
+
+
+
+  INNER_C_UNION_bearssl_ssl_21* {.importc: "no_name", header: "bearssl_ssl.h",
+                                 bycopy, union.} = object
     vtable* {.importc: "vtable".}: ptr SslServerPolicyClass
     singleRsa* {.importc: "single_rsa".}: SslServerPolicyRsaContext
     singleEc* {.importc: "single_ec".}: SslServerPolicyEcContext
@@ -906,7 +991,7 @@ type
     curves* {.importc: "curves".}: uint32
     policyVtable* {.importc: "policy_vtable".}: ptr ptr SslServerPolicyClass
     signHashId* {.importc: "sign_hash_id".}: uint16
-    chainHandler* {.importc: "chain_handler".}: INNER_C_UNION_537875083
+    chainHandler* {.importc: "chain_handler".}: INNER_C_UNION_bearssl_ssl_21
     ecdheKey* {.importc: "ecdhe_key".}: array[70, cuchar]
     ecdheKeyLen* {.importc: "ecdhe_key_len".}: int
     taNames* {.importc: "ta_names".}: ptr X500Name
@@ -919,37 +1004,14 @@ type
     hashCV_len* {.importc: "hash_CV_len".}: int
     hashCV_id* {.importc: "hash_CV_id".}: cint
 
-
-  SslSessionCacheClass* {.importc: "br_ssl_session_cache_class",
-                         header: "bearssl_ssl.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: int
-    save* {.importc: "save".}: proc (ctx: ptr ptr SslSessionCacheClass;
-                                 serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters) {.importcFunc.}
-    load* {.importc: "load".}: proc (ctx: ptr ptr SslSessionCacheClass;
-                                 serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters): cint {.importcFunc.}
-
-  SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
-                       header: "bearssl_ssl.h", bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr SslSessionCacheClass
-    store* {.importc: "store".}: ptr cuchar
-    storeLen* {.importc: "store_len".}: int
-    storePtr* {.importc: "store_ptr".}: int
-    indexKey* {.importc: "index_key".}: array[32, cuchar]
-    hash* {.importc: "hash".}: ptr HashClass
-    initDone* {.importc: "init_done".}: cint
-    head* {.importc: "head".}: uint32
-    tail* {.importc: "tail".}: uint32
-    root* {.importc: "root".}: uint32
-
-
 proc sslSessionCacheLruInit*(cc: ptr SslSessionCacheLru; store: ptr cuchar;
                             storeLen: int) {.importcFunc,
     importc: "br_ssl_session_cache_lru_init", header: "bearssl_ssl.h".}
 
 proc sslSessionCacheLruForget*(cc: ptr SslSessionCacheLru; id: ptr cuchar) {.importcFunc,
     importc: "br_ssl_session_cache_lru_forget", header: "bearssl_ssl.h".}
+
+
 
 
 proc sslServerInitFullRsa*(cc: ptr SslServerContext; chain: ptr X509Certificate;
@@ -1074,3 +1136,155 @@ proc sslioFlush*(cc: ptr SslioContext): cint {.importcFunc, importc: "br_sslio_f
 
 proc sslioClose*(cc: ptr SslioContext): cint {.importcFunc, importc: "br_sslio_close",
     header: "bearssl_ssl.h".}
+
+const
+  TLS_NULL_WITH_NULL_NULL* = 0x0000
+  TLS_RSA_WITH_NULL_MD5* = 0x0001
+  TLS_RSA_WITH_NULL_SHA* = 0x0002
+  TLS_RSA_WITH_NULL_SHA256* = 0x003B
+  TLS_RSA_WITH_RC4_128_MD5* = 0x0004
+  TLS_RSA_WITH_RC4_128_SHA* = 0x0005
+  TLS_RSA_WITH_3DES_EDE_CBC_SHA* = 0x000A
+  TLS_RSA_WITH_AES_128_CBC_SHA* = 0x002F
+  TLS_RSA_WITH_AES_256_CBC_SHA* = 0x0035
+  TLS_RSA_WITH_AES_128_CBC_SHA256* = 0x003C
+  TLS_RSA_WITH_AES_256_CBC_SHA256* = 0x003D
+  TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA* = 0x000D
+  TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA* = 0x0010
+  TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA* = 0x0013
+  TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA* = 0x0016
+  TLS_DH_DSS_WITH_AES_128_CBC_SHA* = 0x0030
+  TLS_DH_RSA_WITH_AES_128_CBC_SHA* = 0x0031
+  TLS_DHE_DSS_WITH_AES_128_CBC_SHA* = 0x0032
+  TLS_DHE_RSA_WITH_AES_128_CBC_SHA* = 0x0033
+  TLS_DH_DSS_WITH_AES_256_CBC_SHA* = 0x0036
+  TLS_DH_RSA_WITH_AES_256_CBC_SHA* = 0x0037
+  TLS_DHE_DSS_WITH_AES_256_CBC_SHA* = 0x0038
+  TLS_DHE_RSA_WITH_AES_256_CBC_SHA* = 0x0039
+  TLS_DH_DSS_WITH_AES_128_CBC_SHA256* = 0x003E
+  TLS_DH_RSA_WITH_AES_128_CBC_SHA256* = 0x003F
+  TLS_DHE_DSS_WITH_AES_128_CBC_SHA256* = 0x0040
+  TLS_DHE_RSA_WITH_AES_128_CBC_SHA256* = 0x0067
+  TLS_DH_DSS_WITH_AES_256_CBC_SHA256* = 0x0068
+  TLS_DH_RSA_WITH_AES_256_CBC_SHA256* = 0x0069
+  TLS_DHE_DSS_WITH_AES_256_CBC_SHA256* = 0x006A
+  TLS_DHE_RSA_WITH_AES_256_CBC_SHA256* = 0x006B
+  TLS_DH_anonWITH_RC4128MD5* = 0x0018
+  TLS_DH_anonWITH_3DES_EDE_CBC_SHA* = 0x001B
+  TLS_DH_anonWITH_AES_128CBC_SHA* = 0x0034
+  TLS_DH_anonWITH_AES_256CBC_SHA* = 0x003A
+  TLS_DH_anonWITH_AES_128CBC_SHA256* = 0x006C
+  TLS_DH_anonWITH_AES_256CBC_SHA256* = 0x006D
+
+
+const
+  TLS_ECDH_ECDSA_WITH_NULL_SHA* = 0xC001
+  TLS_ECDH_ECDSA_WITH_RC4_128_SHA* = 0xC002
+  TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA* = 0xC003
+  TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA* = 0xC004
+  TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA* = 0xC005
+  TLS_ECDHE_ECDSA_WITH_NULL_SHA* = 0xC006
+  TLS_ECDHE_ECDSA_WITH_RC4_128_SHA* = 0xC007
+  TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA* = 0xC008
+  TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA* = 0xC009
+  TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA* = 0xC00A
+  TLS_ECDH_RSA_WITH_NULL_SHA* = 0xC00B
+  TLS_ECDH_RSA_WITH_RC4_128_SHA* = 0xC00C
+  TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA* = 0xC00D
+  TLS_ECDH_RSA_WITH_AES_128_CBC_SHA* = 0xC00E
+  TLS_ECDH_RSA_WITH_AES_256_CBC_SHA* = 0xC00F
+  TLS_ECDHE_RSA_WITH_NULL_SHA* = 0xC010
+  TLS_ECDHE_RSA_WITH_RC4_128_SHA* = 0xC011
+  TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA* = 0xC012
+  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA* = 0xC013
+  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA* = 0xC014
+  TLS_ECDH_anonWITH_NULL_SHA* = 0xC015
+  TLS_ECDH_anonWITH_RC4128SHA* = 0xC016
+  TLS_ECDH_anonWITH_3DES_EDE_CBC_SHA* = 0xC017
+  TLS_ECDH_anonWITH_AES_128CBC_SHA* = 0xC018
+  TLS_ECDH_anonWITH_AES_256CBC_SHA* = 0xC019
+
+
+const
+  TLS_RSA_WITH_AES_128_GCM_SHA256* = 0x009C
+  TLS_RSA_WITH_AES_256_GCM_SHA384* = 0x009D
+  TLS_DHE_RSA_WITH_AES_128_GCM_SHA256* = 0x009E
+  TLS_DHE_RSA_WITH_AES_256_GCM_SHA384* = 0x009F
+  TLS_DH_RSA_WITH_AES_128_GCM_SHA256* = 0x00A0
+  TLS_DH_RSA_WITH_AES_256_GCM_SHA384* = 0x00A1
+  TLS_DHE_DSS_WITH_AES_128_GCM_SHA256* = 0x00A2
+  TLS_DHE_DSS_WITH_AES_256_GCM_SHA384* = 0x00A3
+  TLS_DH_DSS_WITH_AES_128_GCM_SHA256* = 0x00A4
+  TLS_DH_DSS_WITH_AES_256_GCM_SHA384* = 0x00A5
+  TLS_DH_anonWITH_AES_128GCM_SHA256* = 0x00A6
+  TLS_DH_anonWITH_AES_256GCM_SHA384* = 0x00A7
+
+
+const
+  TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256* = 0xC023
+  TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384* = 0xC024
+  TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256* = 0xC025
+  TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384* = 0xC026
+  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256* = 0xC027
+  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384* = 0xC028
+  TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256* = 0xC029
+  TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384* = 0xC02A
+  TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256* = 0xC02B
+  TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384* = 0xC02C
+  TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256* = 0xC02D
+  TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384* = 0xC02E
+  TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256* = 0xC02F
+  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384* = 0xC030
+  TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256* = 0xC031
+  TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384* = 0xC032
+
+
+const
+  TLS_RSA_WITH_AES_128_CCM* = 0xC09C
+  TLS_RSA_WITH_AES_256_CCM* = 0xC09D
+  TLS_RSA_WITH_AES_128_CCM_8* = 0xC0A0
+  TLS_RSA_WITH_AES_256_CCM_8* = 0xC0A1
+  TLS_ECDHE_ECDSA_WITH_AES_128_CCM* = 0xC0AC
+  TLS_ECDHE_ECDSA_WITH_AES_256_CCM* = 0xC0AD
+  TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8* = 0xC0AE
+  TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8* = 0xC0AF
+
+
+const
+  TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256* = 0xCCA8
+  TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256* = 0xCCA9
+  TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256* = 0xCCAA
+  TLS_PSK_WITH_CHACHA20_POLY1305_SHA256* = 0xCCAB
+  TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256* = 0xCCAC
+  TLS_DHE_PSK_WITH_CHACHA20_POLY1305_SHA256* = 0xCCAD
+  TLS_RSA_PSK_WITH_CHACHA20_POLY1305_SHA256* = 0xCCAE
+
+
+const
+  TLS_FALLBACK_SCSV* = 0x5600
+
+
+const
+  ALERT_CLOSE_NOTIFY* = 0
+  ALERT_UNEXPECTED_MESSAGE* = 10
+  ALERT_BAD_RECORD_MAC* = 20
+  ALERT_RECORD_OVERFLOW* = 22
+  ALERT_DECOMPRESSION_FAILURE* = 30
+  ALERT_HANDSHAKE_FAILURE* = 40
+  ALERT_BAD_CERTIFICATE* = 42
+  ALERT_UNSUPPORTED_CERTIFICATE* = 43
+  ALERT_CERTIFICATE_REVOKED* = 44
+  ALERT_CERTIFICATE_EXPIRED* = 45
+  ALERT_CERTIFICATE_UNKNOWN* = 46
+  ALERT_ILLEGAL_PARAMETER* = 47
+  ALERT_UNKNOWN_CA* = 48
+  ALERT_ACCESS_DENIED* = 49
+  ALERT_DECODE_ERROR* = 50
+  ALERT_DECRYPT_ERROR* = 51
+  ALERT_PROTOCOL_VERSION* = 70
+  ALERT_INSUFFICIENT_SECURITY* = 71
+  ALERT_INTERNAL_ERROR* = 80
+  ALERT_USER_CANCELED* = 90
+  ALERT_NO_RENEGOTIATION* = 100
+  ALERT_UNSUPPORTED_EXTENSION* = 110
+  ALERT_NO_APPLICATION_PROTOCOL* = 120
