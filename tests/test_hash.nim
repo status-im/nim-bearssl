@@ -1,6 +1,6 @@
 import std/[strutils, sequtils],
   unittest2,
-  ../bearssl/abi/hash
+  ../bearssl/hash
 
 {.used.}
 

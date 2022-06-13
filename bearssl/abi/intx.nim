@@ -1,5 +1,8 @@
 import
   "."/[csources]
+
+{.used.}
+
 const
   bearIntPath = bearSrcPath / "int"
 

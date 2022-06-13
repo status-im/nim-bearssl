@@ -15,15 +15,17 @@ Applications using `nim-bearssl` are fully stand-alone, needing no additional DL
 
 The library is organised into two parts:
 
-* `bearssl/abi` exposes the raw C functions of bearssl
 * `bearssl/` (except for `abi`) exposes thin wrappers around the raw ABI making the functions more convenient to use in Nim
+* `bearssl/abi` exposes the raw C functions of bearssl
+
+For each `bearssl` header file, a corresponding Nim file exists - `bearssl_rand.h`~= `bearssl/rand.nim`.
 
 ```nim
 # You can import the whole library
 import bearssl
 
 # ... or simply parts thereof, which can save compilation time
-import bearssl/random
+import bearssl/rand
 ```
 
 ## Installation
@@ -35,6 +37,12 @@ nimble install bearssl
 ```
 
 `BearSSL` itself is compiled as part of your project - there is no need to install any third-party libraries.
+
+## Developer notes
+
+When updating the library, `c2nim` is used via `regenerate.sh` to update the RAW ABI files. Manual editing is then needed to make a few adjustments to the mapping, after which the files can be generated.
+
+When adding new convenience functions, these should be addeed to `bearssl/` instead of the generated files.
 
 ## License
 

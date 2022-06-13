@@ -1,5 +1,5 @@
 import
-  "."/[csources, inner, hash]
+  "."/[bearssl_hash, csources, inner]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -18,11 +18,11 @@ type
 
 
 
-proc hmacKeyInit*(kc: ptr HmacKeyContext; digestVtable: ptr HashClass; key: pointer;
+proc hmacKeyInit*(kc: var HmacKeyContext; digestVtable: ptr HashClass; key: pointer;
                  keyLen: uint) {.importcFunc, importc: "br_hmac_key_init",
                                   header: "bearssl_hmac.h".}
 
-proc hmacKeyGetDigest*(kc: ptr HmacKeyContext): ptr HashClass {.inline.} =
+proc hmacKeyGetDigest*(kc: var HmacKeyContext): ptr HashClass {.inline.} =
   return kc.digVtable
 
 
@@ -34,7 +34,7 @@ type
 
 
 
-proc hmacInit*(ctx: var HmacContext; kc: ptr HmacKeyContext; outLen: uint) {.importcFunc,
+proc hmacInit*(ctx: var HmacContext; kc: var HmacKeyContext; outLen: uint) {.importcFunc,
     importc: "br_hmac_init", header: "bearssl_hmac.h".}
 
 proc hmacSize*(ctx: var HmacContext): uint {.inline, importcFunc, importc: "br_hmac_size".} =

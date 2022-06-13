@@ -1,5 +1,7 @@
 import
-  "."/[blockx, csources, ec, hash, hmac, prf, rand, rsa, x509]
+  "."/[
+    bearssl_block, bearssl_ec, bearssl_hash, bearssl_hmac, bearssl_prf,
+    bearssl_rand, bearssl_rsa, bearssl_x509, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -209,7 +211,7 @@ type
         recordLen: uint): cint {.importcFunc.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr SslrecInClass; recordType: cint;
                                        version: cuint; payload: pointer;
-                                       len: ptr uint): ptr byte {.importcFunc.}
+                                       len: var uint): ptr byte {.importcFunc.}
 
 
 

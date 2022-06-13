@@ -1,5 +1,5 @@
 import
-  "."/[csources, x509]
+  "."/[csources, bearssl_x509]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.pragma: headerFunc, importcFunc, header: "brssl.h".}
@@ -20,5 +20,5 @@ type
                          header: "brssl.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr X509Class
 
-proc initNoAnchor*(xwc: ptr X509NoAnchorContext, inner: ptr ptr X509Class) {.
+proc initNoAnchor*(xwc: var X509NoAnchorContext, inner: ptr ptr X509Class) {.
      importcFunc, importc: "x509_noanchor_init", header: "brssl.h".}

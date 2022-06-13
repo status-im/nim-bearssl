@@ -7,9 +7,6 @@ unifdef -m -UBR_DOXYGEN_IGNORE gen/*.h
 
 c2nim --header --importc --nep1 --prefix:br_ --prefix:BR_ --skipinclude --cdecl --skipcomments gen/*.h
 
-rename bearssl_ '' gen/*.nim
-mv gen/block.nim gen/blockx.nim
-
 rm gen/*.h
 
 # Fix cosmetic and ease-of-use issues
@@ -22,5 +19,7 @@ sed -i \
   -e 's/hc: ptr \(.*\)Context/hc: var \1Context/g' \
   -e 's/sc: ptr \(.*\)Context/sc: var \1Context/g' \
   -e 's/cc: ptr \(.*\)Context/cc: var \1Context/g' \
+  -e 's/kc: ptr \(.*\)Context/kc: var \1Context/g' \
+  -e 's/xwc: ptr \(.*\)Context/xwc: var \1Context/g' \
   -e 's/len: ptr uint/len: var uint/g' \
   gen/*.nim

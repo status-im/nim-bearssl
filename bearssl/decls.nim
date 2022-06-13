@@ -12,12 +12,15 @@
 ## projects (either import `bearssl` or individual abi modules)
 
 import
+  "."/[
+    aead, blockx, ec, hash, hmac, kdf, pem, prf,
+    rand, rsa, ssl, x509],
   ./abi/[
-    aead, blockx, brssl, config, ec, hash, hmac, intx, kdf, pem, prf,
-    rand, rsa, ssl, x509]
+     brssl, config, intx,
+  ]
 
 export
-  aead, blockx, brssl, config, ec, hash, hmac, intx, kdf, pem, prf,
+  aead, blockx, brssl, config, ec, hash, hmac, kdf, pem, prf,
   rand, rsa, ssl, x509
 
 # This modules must be reimplemented using Nim, because it can be changed

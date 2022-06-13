@@ -41,8 +41,7 @@ proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: uint): uint
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline, importcFunc,
-    importc: "br_pem_decoder_setdest".} =
+    src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline.} =
   ctx.dest = dest
   ctx.destCtx = destCtx
 

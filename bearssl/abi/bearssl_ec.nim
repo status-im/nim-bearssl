@@ -1,5 +1,5 @@
 import
-  "."/[csources, hash, rand]
+  "."/[bearssl_hash, bearssl_rand, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -185,10 +185,10 @@ type
 type
   EcImpl* {.importc: "br_ec_impl", header: "bearssl_ec.h", bycopy.} = object
     supportedCurves* {.importc: "supported_curves".}: uint32
-    generator* {.importc: "generator".}: proc (curve: cint; len: ptr uint): ptr byte {.
+    generator* {.importc: "generator".}: proc (curve: cint; len: var uint): ptr byte {.
         importcFunc.}
-    order* {.importc: "order".}: proc (curve: cint; len: ptr uint): ptr byte {.importcFunc.}
-    xoff* {.importc: "xoff".}: proc (curve: cint; len: ptr uint): uint {.importcFunc.}
+    order* {.importc: "order".}: proc (curve: cint; len: var uint): ptr byte {.importcFunc.}
+    xoff* {.importc: "xoff".}: proc (curve: cint; len: var uint): uint {.importcFunc.}
     mul* {.importc: "mul".}: proc (g: ptr byte; glen: uint; x: ptr byte;
                                xlen: uint; curve: cint): uint32 {.importcFunc.}
     mulgen* {.importc: "mulgen".}: proc (r: ptr byte; x: ptr byte; xlen: uint;
