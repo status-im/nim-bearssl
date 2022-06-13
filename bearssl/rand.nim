@@ -4,6 +4,13 @@ import
 
 export bearssl_rand
 
+# About types used in helpers:
+# `bool` types are problematic because because they only use one bit of the
+# entire byte - a similar problem occurs with `object` types with alignment
+# gaps - `supportsCopyMem` is wrong here, we should be using `supportsMemCmp` or
+# something similar that takes into account these issues, but alas, there's no
+# such trait as of now
+
 proc init*[A](T: type HmacDrbgContext, seed: openArray[A]): HmacDrbgContext =
   ## Create a new randomness context with the given seed - typically, a single
   ## instance per thread should be created.
@@ -43,7 +50,7 @@ func generate*(ctx: var HmacDrbgContext, output: var openArray[byte]) =
 
 func update*[T](ctx: var HmacDrbgContext, seed: openArray[T]) =
   ## Update context with additional seed data
-  static: doAssert supportsCopyMem(T) and sizeof(T) > 0
+  static: doAssert supportsCopyMem(T) and sizeof(T) > 0 and T isnot bool
 
   if seed.len > 0:
     hmacDrbgUpdate(ctx, unsafeAddr seed[0], uint sizeof(T) * seed.len)
@@ -52,7 +59,7 @@ func update*[T](ctx: var HmacDrbgContext, seed: openArray[T]) =
 # constant-time properties
 
 func fill*[T](ctx: var HmacDrbgContext, v: openArray[T]) =
-  ## Fill `v` with random data - `v` must be a simple type
+  ## Fill `v` with random data - `T` must be a simple type
   static: doAssert supportsCopyMem(T) and sizeof(T) > 0 and T isnot bool
 
   if v.len > 0:
