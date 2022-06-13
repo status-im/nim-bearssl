@@ -1,7 +1,7 @@
 import
   "."/[
-    bearssl_block, bearssl_ec, bearssl_hash, bearssl_hmac, bearssl_prf,
-    bearssl_rand, bearssl_rsa, bearssl_x509, csources]
+    bearssl_aead, bearssl_block, bearssl_ec, bearssl_hash, bearssl_hmac,
+    bearssl_prf, bearssl_rand, bearssl_rsa, bearssl_x509, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}

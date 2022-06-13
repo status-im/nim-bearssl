@@ -15,7 +15,7 @@ requires "nim >= 1.2.0",
 proc test(env, path: string) =
   # Compilation language is controlled by TEST_LANG
   exec "nim " & getEnv("TEST_LANG", "c") & " " & getEnv("NIMFLAGS") & " " & env &
-    " -rf --hints:off --skipParentCfg --styleCheck:usages --styleCheck:error " & path
+    " -d:bearsslSplitAbi -rf --hints:off --skipParentCfg --styleCheck:usages --styleCheck:error " & path
 
 task test, "Run tests":
   for path in listFiles(thisDir() / "tests"):
