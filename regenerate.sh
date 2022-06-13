@@ -5,11 +5,13 @@ cp bearssl/csources/inc/*.h gen
 # c2nim gets confused by #ifdef inside struct's
 unifdef -m -UBR_DOXYGEN_IGNORE gen/*.h
 
-# TODO:
+# TODO: several things broken in  c2nim 0.9.18
 # https://github.com/nim-lang/c2nim/issues/239
 # https://github.com/nim-lang/c2nim/issues/240
 # https://github.com/nim-lang/c2nim/issues/241
 # https://github.com/nim-lang/c2nim/issues/242
+
+[[ $(c2nim -v) == "0.9.18" ]] || echo "Different c2nim used, check the code"
 c2nim --header --importc --nep1 --prefix:br_ --prefix:BR_ --skipinclude --cdecl --skipcomments gen/*.h
 
 rm gen/*.h
