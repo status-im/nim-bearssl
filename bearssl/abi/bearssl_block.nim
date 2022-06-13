@@ -1,5 +1,5 @@
 import
-  "."/[csources]
+  "."/[csources, intx]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}

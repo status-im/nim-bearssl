@@ -7,16 +7,25 @@
 ## This file may not be copied, modified, or distributed except according to
 ## those terms.
 
-# These modules may be imported independently
-import
-  ./bearssl/[
-    aead, blockx, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa, ssl, x509],
-  ./bearssl/abi/[brssl, config],
-  ./bearssl/[decls] # Deprecated, will be removed in the future
+when defined(bearsslNewAbi):
+  # This will become default in the future - we cannot use it now because there
+  # are duplicate symbols in `decls.nim` - the new ABI can already be accessed
+  # using the more specific imports (`import bearssl/ssl`)
+  import
+    ./bearssl/[
+      aead, blockx, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa, ssl, x509],
+    ./bearssl/abi/[brssl, config]
 
-export
-  aead, blockx, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa, ssl, x509,
-  brssl, config,
-  decls, errors
+  export
+    aead, blockx, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa, ssl, x509,
+    brssl, config,
+    errors
+
+else:
+  import
+    ./bearssl/[errors, decls] # Deprecated, will be removed in the future
+
+  export errors, decls
+
 
 when defined(nimHasUsed): {.used.}
