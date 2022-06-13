@@ -17,9 +17,17 @@ c2nim --header --importc --nep1 --prefix:br_ --prefix:BR_ --skipinclude --cdecl 
 rm gen/*.h
 
 # Fix cosmetic and ease-of-use issues
-sed -i -e "s/int16T/int16/g" -e "s/int32T/int32/g" -e "s/int64T/int64/g" -e "s/cuchar/byte/g" -e "s/cdecl/importcFunc/g" -e "s/csize_t/uint/g" gen/*.nim
+sed -i \
+  -e "s/int16T/int16/g" \
+  -e "s/int32T/int32/g" \
+  -e "s/int64T/int64/g" \
+  -e "s/cuchar/byte/g" \
+  -e "s/cdecl/importcFunc/g" \
+  -e "s/csize_t/uint/g" \
+  gen/*.nim
 
-# `ctx: ptr Xxx` does not allow nil - `ctx: var Xxx` makes it more ergonomic
+# The functions taking a "Context" don't allow `nil` being passed to them - use
+# `var` instead - ditto for "output" parameters like length
 sed -i \
   -e 's/ctx: ptr \(.*\)Context/ctx: var \1Context/g' \
   -e 's/ctx: ptr \(.*\)Keys/ctx: var \1Keys/g' \
