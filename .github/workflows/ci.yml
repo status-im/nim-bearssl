@@ -163,4 +163,3 @@ jobs:
           nimble --version
           nimble install -y --depsOnly
           env TEST_LANG="c" nimble test
-          env TEST_LANG="cpp" nimble test
