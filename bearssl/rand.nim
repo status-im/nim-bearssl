@@ -82,3 +82,9 @@ func update*[S](ctx: var HmacDrbgContext, seed: openArray[S]) =
 
   if seed.len > 0:
     hmacDrbgUpdate(ctx, unsafeAddr seed[0], uint seed.len * sizeof(S))
+
+# Convenience helpers using bearssl naming
+
+template hmacDrbgGenerate*(
+    ctx: var HmacDrbgContext, output: var openArray[byte]) =
+  generate(ctx, output)
