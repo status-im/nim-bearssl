@@ -3455,10 +3455,10 @@ proc brEcdsaVerifyAsn1*(impl: ptr BrEcImplementation, hash: pointer,
                         siglen: int): uint32 {.
      bearSslFunc, deprecated, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
 
-template brRsaPrivateKeyBufferSize*(size: int): int =
+template brRsaPrivateKeyBufferSize*(size: int): int {.deprecated.} =
   # BR_RSA_KBUF_PRIV_SIZE(size)
   (5 * ((size + 15) shr 4))
 
-template brRsaPublicKeyBufferSize*(size: int): int =
+template brRsaPublicKeyBufferSize*(size: int): int {.deprecated.} =
   # BR_RSA_KBUF_PUB_SIZE(size)
   (4 + ((size + 7) shr 3))
