@@ -71,6 +71,12 @@ func generate*[V](ctx: var HmacDrbgContext, v: var openArray[V]) =
 template generate*[V](ctx: var HmacDrbgContext, v: var seq[V]) =
   generate(ctx, v.toOpenArray(0, v.high()))
 
+func generateBytes*(ctx: var HmacDrbgContext, n: int): seq[byte] =
+  # https://github.com/nim-lang/Nim/issues/19357
+  if n > 0:
+    result = newSeqUninitialized[byte](n)
+    ctx.generate(result)
+
 func generate*(ctx: var HmacDrbgContext, T: type): T {.noinit.} =
   ## Create a new instance of `T` filled with random data - `T` must be
   ## a simple type
