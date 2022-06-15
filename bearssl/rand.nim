@@ -19,7 +19,7 @@ proc init*[S](T: type HmacDrbgContext, seed: openArray[S]): HmacDrbgContext =
   static: doAssert supportsCopyMem(S) and sizeof(S) > 0 and S isnot bool
 
   if seed.len == 0:
-    hmacDrbgInit(result, addr sha256Vtable, nil, 0)
+    hmacDrbgInit(result, addr bearssl_hash.sha256Vtable, nil, 0)
   else:
     hmacDrbgInit(
       result, addr sha256Vtable, unsafeAddr seed[0], uint seed.len * sizeof(S))
@@ -36,6 +36,7 @@ proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   ## consumers - typically, a single instance per thread should be created.
   ##
   ## The context is seeded with randomness from the OS / system.
+  ## Returns `nil` if the OS / system has no randomness API.
   let seeder = prngSeederSystem(nil)
   if seeder == nil:
     return nil
@@ -80,7 +81,7 @@ func generateBytes*(ctx: var HmacDrbgContext, n: int): seq[byte] =
 func generate*(ctx: var HmacDrbgContext, T: type): T {.noinit.} =
   ## Create a new instance of `T` filled with random data - `T` must be
   ## a simple type
-  generate(ctx, result)
+  ctx.generate(result)
 
 func update*[S](ctx: var HmacDrbgContext, seed: openArray[S]) =
   ## Update context with additional seed data

@@ -12,9 +12,9 @@ suite "random":
     let rng = HmacDrbgContext.new()
 
     var v: array[1024, byte]
-    generate(rng[], v)
+    rng[].generate(v)
 
-    let v2 = generate(rng[], array[1024, byte])
+    let v2 = rng[].generate(array[1024, byte])
     check:
       v != default(array[1024, byte]) # probable
       v2 != default(array[1024, byte]) # probable
@@ -27,6 +27,7 @@ suite "random":
 
     check:
       true in bools # probable
+      false in bools # probable
 
     var
       xxx = newSeq[int](1024)
@@ -36,9 +37,18 @@ suite "random":
       xxx != yyy # probable
 
   test "seed":
-    var
-      rng = HmacDrbgContext.init([byte 0])
-      rng2 = HmacDrbgContext.init([byte 0])
+    for seed in [[byte 0], [byte 1], [byte 1, 1], [byte 42, 13, 37]]:
+      var
+        rng = HmacDrbgContext.init(seed)
+        rng2 = HmacDrbgContext.init(seed)
 
-    check:
-      rng.generate(uint64) == rng2.generate(uint64)
+      check:
+        rng.generate(uint64) == rng2.generate(uint64)
+        
+    for seed in [[0], [1], [1, 1], [42, 1337, -5]]:
+      var
+        rng = HmacDrbgContext.init(seed)
+        rng2 = HmacDrbgContext.init(seed)
+
+      check:
+        rng.generate(uint64) == rng2.generate(uint64)
