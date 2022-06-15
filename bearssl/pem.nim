@@ -9,12 +9,11 @@ func init*(v: var PemDecoderContext) =
   # TODO prevent copying
   pemDecoderInit(v)
 
-func push*[S](ctx: var PemDecoderContext, data: openArray[S]): int =
-  static: doAssert supportsCopyMem(S)
+func push*(ctx: var PemDecoderContext, data: openArray[byte|char]): int =
   if data.len > 0:
     let consumed = pemDecoderPush(
-      ctx, unsafeAddr data[0], uint data.len * sizeof(S))
-    int(consumed) div sizeof(S)
+      ctx, unsafeAddr data[0], uint data.len)
+    int(consumed)
   else:
     0
 
@@ -38,7 +37,7 @@ func banner*(ctx: PemDecoderContext): string =
     res
 
 func pemEncode*(
-    data: openArray[byte], banner: cstring, flags: cuint = 0): seq[byte] =
+    data: openArray[byte|char], banner: cstring, flags: cuint = 0): string =
   let bytes = pemEncode(nil, nil, uint data.len, banner, flags)
   result.setLen(int bytes + 1)
   discard pemEncode(
