@@ -21,6 +21,8 @@ proc init*[S](T: type HmacDrbgContext, seed: openArray[S]): HmacDrbgContext =
   if seed.len == 0:
     hmacDrbgInit(result, addr bearssl_hash.sha256Vtable, nil, 0)
   else:
+    # In theory the multiplication can overflow, but practically we can't
+    # allocate that much memory, so it won't
     hmacDrbgInit(
       result, addr sha256Vtable, unsafeAddr seed[0], uint seed.len * sizeof(S))
 
@@ -64,6 +66,8 @@ func generate*[V](ctx: var HmacDrbgContext, v: var openArray[V]) =
       ctx.generate(b)
   else:
     if v.len > 0:
+      # In theory the multiplication can overflow, but practically we can't
+      # allocate that much memory, so it won't
       hmacDrbgGenerate(ctx, addr v[0], uint v.len * sizeof(V))
 
 template generate*[V](ctx: var HmacDrbgContext, v: var seq[V]) =
@@ -85,6 +89,8 @@ func update*[S](ctx: var HmacDrbgContext, seed: openArray[S]) =
   static: doAssert supportsCopyMem(S) and sizeof(S) > 0 and S isnot bool
 
   if seed.len > 0:
+    # In theory the multiplication can overflow, but practically we can't
+    # allocate that much memory, so it won't
     hmacDrbgUpdate(ctx, unsafeAddr seed[0], uint seed.len * sizeof(S))
 
 # Convenience helpers using bearssl naming
