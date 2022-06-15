@@ -36,6 +36,11 @@ In general, the mappings follow the conventions of the original BearSSL library 
 * `uint` used instead of `csize_t` - these are the same type in Nim, but spelled more conveniently
   * Canonical nim code will have to be careful when converting existing `int` lengths, looking out for out-of-range values
 
+In addition to the raw `C`-like api, convenience functions are added where applicable - these follow a similar set of conventions:
+
+* named after the function they simplify, but take advantage of types and overload support in Nim
+* help turn pointers and bytes into Nim types
+
 ## Installation
 
 You can install the developement version of the library through nimble with the following command:
