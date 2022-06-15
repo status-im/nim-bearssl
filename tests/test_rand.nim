@@ -37,18 +37,26 @@ suite "random":
       xxx != yyy # probable
 
   test "seed":
-    for seed in [[byte 0], [byte 1], [byte 1, 1], [byte 42, 13, 37]]:
+    for seed in [@[byte 0], @[byte 1], @[byte 1, 1], @[byte 42, 13, 37]]:
       var
         rng = HmacDrbgContext.init(seed)
         rng2 = HmacDrbgContext.init(seed)
 
       check:
         rng.generate(uint64) == rng2.generate(uint64)
-        
-    for seed in [[0], [1], [1, 1], [42, 1337, -5]]:
+
+    for seed in [@[0], @[1], @[1, 1], @[42, 1337, -5]]:
       var
         rng = HmacDrbgContext.init(seed)
         rng2 = HmacDrbgContext.init(seed)
 
       check:
         rng.generate(uint64) == rng2.generate(uint64)
+
+  test "antiseed":
+    var
+      rng = HmacDrbgContext.init([0])
+      rng2 = HmacDrbgContext.init([1])
+
+    check:
+      rng.generate(array[1024, byte]) != rng2.generate(array[1024, byte])

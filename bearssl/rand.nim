@@ -24,13 +24,6 @@ proc init*[S](T: type HmacDrbgContext, seed: openArray[S]): HmacDrbgContext =
     hmacDrbgInit(
       result, addr sha256Vtable, unsafeAddr seed[0], uint seed.len * sizeof(S))
 
-proc init*(T: type HmacDrbgContext, seeder: PrngSeeder): HmacDrbgContext =
-  ## Create a new randomness context with the given seed - typically, a single
-  ## instance per thread should be created.
-  ##
-  ## The context is seeded with the given non-empty `seed`.
-  hmacDrbgInit(result, addr sha256Vtable, nil, 0)
-
 proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   ## Create a new randomness context intended to be shared between randomness
   ## consumers - typically, a single instance per thread should be created.
@@ -41,8 +34,12 @@ proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   if seeder == nil:
     return nil
 
-  let rng = (ref T)()
-  rng[] = HmacDrbgContext.init(seeder)
+  let rng = (ref HmacDrbgContext)()
+  hmacDrbgInit(rng[], addr sha256Vtable, nil, 0)
+
+  if seeder(addr rng.vtable) == 0:
+    return nil
+
   rng
 
 func generate*(ctx: var HmacDrbgContext, v: var auto) =
