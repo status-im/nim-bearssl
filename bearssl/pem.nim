@@ -28,8 +28,14 @@ func setdest*(
 func lastEvent*(ctx: var PemDecoderContext): cint =
   pemDecoderEvent(ctx)
 
-func name*(ctx: PemDecoderContext): cstring =
-  unsafeAddr ctx.name
+func banner*(ctx: PemDecoderContext): string =
+  ## Return the `name` field as a string
+  if ctx.name[ctx.name.high] == char(0):
+    $(unsafeAddr ctx.name)
+  else:
+    var res = newString(ctx.name.len)
+    for i, c in ctx.name: res[i] = ctx.name[i]
+    res
 
 func pemEncode*(
     data: openArray[byte], banner: cstring, flags: cuint = 0): seq[byte] =
