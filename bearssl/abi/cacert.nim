@@ -11,13 +11,11 @@
 ## This certificate store was downloaded from
 ## https://curl.haxx.se/ca/cacert.pem
 ## And converted to C header using ``brssl ta cacert.pem > cacert.h``.
+
+import ./csources
 from ./bearssl_x509 import X509TrustAnchor
-from os import parentDir, `/`
 
-const
-  currentSourceDir* = currentSourcePath.parentDir
-
-{.passc: "-I" & currentSourceDir.parentDir / "certs".}
+{.passc: "-I" & bearPath & "../certs/".}
 
 var MozillaTrustAnchors* {.
     importc: "TAs", header: "cacert20210119.h".}: array[129, X509TrustAnchor]

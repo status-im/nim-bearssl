@@ -8,7 +8,7 @@
 ## those terms.
 
 import
-  os
+  std/[os, strutils]
 
 export os
 
@@ -26,12 +26,12 @@ export os
 # purpose - wrappers do the same
 
 static: doAssert sizeof(csize_t) == sizeof(int)
-
 const
-  bearPath* = currentSourcePath.parentDir.parentDir / "csources"
-  bearIncPath* = bearPath / "inc"
-  bearSrcPath* = bearPath / "src"
-  bearToolsPath* = bearPath / "tools"
+  bearPath* = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/../" &
+             "csources" & "/"
+  bearIncPath* = bearPath & "inc/"
+  bearSrcPath* = bearPath & "src/"
+  bearToolsPath* = bearPath & "tools/"
 
 # TODO https://github.com/nim-lang/Nim/issues/19864
 
