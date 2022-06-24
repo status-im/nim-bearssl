@@ -6,14 +6,14 @@ import
 {.used.}
 
 const
-  bearToolsPath = bearPath / "tools"
+  bearToolsPath = bearPath & "tools/"
 
 
-{.compile: bearToolsPath / "vector.c".}
-{.compile: bearToolsPath / "xmem.c".}
-{.compile: bearToolsPath / "names.c".}
-{.compile: bearToolsPath / "certs.c".}
-{.compile: bearToolsPath / "files.c".}
+{.compile: bearToolsPath & "vector.c".}
+{.compile: bearToolsPath & "xmem.c".}
+{.compile: bearToolsPath & "names.c".}
+{.compile: bearToolsPath & "certs.c".}
+{.compile: bearToolsPath & "files.c".}
 
 type
   X509NoAnchorContext* {.importc: "x509_noanchor_context",

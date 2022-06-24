@@ -8,7 +8,7 @@ import
 const
   bearRootPath = bearSrcPath
 
-{.compile: bearRootPath / "settings.c".}
+{.compile: bearRootPath & "settings.c".}
 
 type
   ConfigOption* {.importc: "br_config_option", header: "bearssl.h", bycopy.} = object

@@ -5,10 +5,10 @@ import
 {.used.}
 
 const
-  bearKdfPath = bearSrcPath / "kdf"
+  bearKdfPath = bearSrcPath & "kdf/"
 
-{.compile: bearKdfPath / "hkdf.c".}
-{.compile: bearKdfPath / "shake.c".}
+{.compile: bearKdfPath & "hkdf.c".}
+{.compile: bearKdfPath & "shake.c".}
 
 type
   INNER_C_UNION_bearssl_kdf_1* {.importc: "br_hkdf_context::no_name",

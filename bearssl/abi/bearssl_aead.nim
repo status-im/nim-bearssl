@@ -5,11 +5,11 @@ import
 {.used.}
 
 const
-  bearAeadPath = bearSrcPath / "aead"
+  bearAeadPath = bearSrcPath & "aead/"
 
-{.compile: bearAeadPath / "ccm.c".}
-{.compile: bearAeadPath / "eax.c".}
-{.compile: bearAeadPath / "gcm.c".}
+{.compile: bearAeadPath & "ccm.c".}
+{.compile: bearAeadPath & "eax.c".}
+{.compile: bearAeadPath & "gcm.c".}
 
 type
   AeadClass* {.importc: "br_aead_class", header: "bearssl_aead.h", bycopy.} = object
