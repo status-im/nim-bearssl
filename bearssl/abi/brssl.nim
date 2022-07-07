@@ -22,5 +22,5 @@ type
 proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) {.importcFunc,
     importc: "x509_noanchor_init", header: "brssl.h".}
 
-proc initNoAnchor*(xwc: var X509NoAnchorContext, inner: ptr ptr X509Class) {.
+proc initNoAnchor*(xwc: var X509NoanchorContext, inner: ptr ptr X509Class) {.
      importcFunc, importc: "x509_noanchor_init", header: "brssl.h", deprecated: "x509NoanchorInit".}
