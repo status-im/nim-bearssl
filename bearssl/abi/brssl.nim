@@ -2,7 +2,6 @@ import
   "."/[csources, bearssl_x509]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
-{.pragma: headerFunc, importcFunc, header: "brssl.h".}
 {.used.}
 
 const
@@ -16,9 +15,12 @@ const
 {.compile: bearToolsPath & "files.c".}
 
 type
-  X509NoAnchorContext* {.importc: "x509_noanchor_context",
-                         header: "brssl.h", bycopy.} = object
+  X509NoanchorContext* {.importc: "x509_noanchor_context", header: "brssl.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr X509Class
+    inner* {.importc: "inner".}: ptr ptr X509Class
 
-proc initNoAnchor*(xwc: var X509NoAnchorContext, inner: ptr ptr X509Class) {.
-     importcFunc, importc: "x509_noanchor_init", header: "brssl.h".}
+proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) {.importcFunc,
+    importc: "x509_noanchor_init", header: "brssl.h".}
+
+proc initNoAnchor*(xwc: var X509NoanchorContext, inner: ptr ptr X509Class) {.
+     importcFunc, importc: "x509_noanchor_init", header: "brssl.h", deprecated: "x509NoanchorInit".}
