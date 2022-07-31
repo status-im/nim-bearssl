@@ -20,6 +20,6 @@ const CurrentPath = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]
 {.passc: "-I" & CurrentPath & "/certs".}
 
 var MozillaTrustAnchors* {.
-    importc: "TAs", header: "cacert20210119.h".}: array[129, X509TrustAnchor]
+    importc: "TAs", header: "cacert20220719.h".}: array[140, X509TrustAnchor]
 var MozillaTrustAnchorsCount* {.
-    importc: "TAs_NUM", header: "cacert20210119.h".}: cint
+    importc: "TAs_NUM", header: "cacert20220719.h".}: cint
