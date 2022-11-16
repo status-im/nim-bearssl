@@ -10,14 +10,19 @@
 ## This module provides access to Mozilla's CA certificate store in PEM format.
 ## This certificate store was downloaded from
 ## https://curl.haxx.se/ca/cacert.pem
-## And converted to C header using ``brssl ta cacert.pem > cacert.h``.
+## And converted to C header using:
+##
+## echo '#include <brssl.h> > cacert.c'
+## brssl ta cacert.pem | sed "s/static //" >> cacert.c.
+## MozillaTrustAnchorsCount below needs to be updated manually to the same
+## value as TAs_NUM
 
 import ./csources
 from ./bearssl_x509 import X509TrustAnchor
 
-{.passc: "-I" & bearPath & "../certs/".}
+{.compile: bearPath & "/../certs/cacert20221116.c".}
 
-var MozillaTrustAnchors* {.
-    importc: "TAs", header: "cacert20210119.h".}: array[129, X509TrustAnchor]
-var MozillaTrustAnchorsCount* {.
-    importc: "TAs_NUM", header: "cacert20210119.h".}: cint
+const MozillaTrustAnchorsCount* = 142 # TAs_NUM
+
+var MozillaTrustAnchors* {.importc: "TAs".}: array[
+  MozillaTrustAnchorsCount, X509TrustAnchor]
