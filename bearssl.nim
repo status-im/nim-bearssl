@@ -7,26 +7,15 @@
 ## This file may not be copied, modified, or distributed except according to
 ## those terms.
 
-when defined(bearsslSplitAbi):
-  # This will become default in the future - we cannot use it now because there
-  # are duplicate symbols in `decls.nim` - the new ABI can already be accessed
-  # using the more specific imports (`import bearssl/ssl`)
-  import
-    ./bearssl/[
-      aead, blockx, brssl, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa,
-      ssl, x509],
-    ./bearssl/abi/[cacert, config]
-
-  export
+import
+  ./bearssl/[
     aead, blockx, brssl, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa,
-    ssl, x509,
-    cacert, config
+    ssl, x509],
+  ./bearssl/abi/[cacert, config]
 
-else:
-  import
-    ./bearssl/[cacert, errors, decls] # Deprecated, will be removed in the future
-
-  export cacert, errors, decls
-
+export
+  aead, blockx, brssl, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa,
+  ssl, x509,
+  cacert, config
 
 when defined(nimHasUsed): {.used.}

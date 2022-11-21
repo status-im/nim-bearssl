@@ -1,7 +1,7 @@
 mode = ScriptMode.Verbose
 
 packageName   = "bearssl"
-version       = "0.1.5"
+version       = "0.2.0"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
@@ -36,6 +36,4 @@ task test, "Run tests":
     for args in [
       "-d:debug",
       "-d:release",
-      "-d:bearsslSplitAbi -d:debug",
-      "-d:bearsslSplitAbi -d:release",
     ]: run args, path
