@@ -1,27 +1,42 @@
-import os, strutils
+mode = ScriptMode.Verbose
 
-# Package
+packageName   = "bearssl"
 version       = "0.1.5"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
-mode          = ScriptMode.Verbose
+skipDirs      = @["tests"]
 
-# Dependencies
 requires "nim >= 1.2.0",
-          "unittest2"
+         "unittest2"
 
-### Helper functions
-proc test(env, path: string) =
-  # Compilation language is controlled by TEST_LANG
-  exec "nim " & getEnv("TEST_LANG", "c") & " " & getEnv("NIMFLAGS") & " " & env &
-    " -d:bearsslSplitAbi -rf --hints:off --skipParentCfg --styleCheck:usages --styleCheck:error " & path
+let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
+let lang = getEnv("NIMLANG", "c") # Which backend (c/cpp/js)
+let flags = getEnv("NIMFLAGS", "") # Extra flags for the compiler
+let verbose = getEnv("V", "") notin ["", "0"]
+
+let styleCheckStyle = if (NimMajor, NimMinor) < (1, 6): "hint" else: "error"
+let cfg =
+  " --styleCheck:usages --styleCheck:" & styleCheckStyle &
+  (if verbose: "" else: " --verbosity:0 --hints:off") &
+  " --skipParentCfg --skipUserCfg --outdir:build --nimcache:build/nimcache -f"
+
+proc build(args, path: string) =
+  exec nimc & " " & lang & " " & cfg & " " & flags & " " & args & " " & path
+
+proc run(args, path: string) =
+  build args & " -r", path
+
+import strutils
 
 task test, "Run tests":
-  for path in listFiles(thisDir() / "tests"):
-    if path.split(".")[^1] != "nim":
+  for path in listFiles(thisDir() & "/tests"):
+    if not path.endsWith ".nim":
       continue
-    test "-d:debug", path
-    test "-d:release", path
-    test "--gc:arc -d:release", path
-    rmFile(path[0..^5].toExe())
+    run "-d:debug", path
+    run "-d:release", path
+    run "--gc:arc -d:release", path
+
+    run "-d:bearsslSplitAbi -d:debug", path
+    run "-d:bearsslSplitAbi -d:release", path
+    run "-d:bearsslSplitAbi --gc:arc -d:release", path
