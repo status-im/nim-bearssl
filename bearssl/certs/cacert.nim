@@ -17,8 +17,8 @@
 ## MozillaTrustAnchorsCount below needs to be updated manually to the same
 ## value as TAs_NUM
 
-import ./csources
-from ./bearssl_x509 import X509TrustAnchor
+import ../abi/csources
+from ../abi/bearssl_x509 import X509TrustAnchor
 
 {.compile: bearPath & "/../certs/cacert20221116.c".}
 

@@ -11,11 +11,11 @@ import
   ./bearssl/[
     aead, blockx, brssl, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa,
     ssl, x509],
-  ./bearssl/abi/[cacert, config]
+  ./bearssl/abi/config
 
 export
   aead, blockx, brssl, ec, errors, hash, hmac, kdf, pem, prf, rand, rsa,
   ssl, x509,
-  cacert, config
+  config
 
 when defined(nimHasUsed): {.used.}
