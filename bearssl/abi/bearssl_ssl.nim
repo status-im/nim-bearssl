@@ -1132,11 +1132,11 @@ type
     hashCV_len* {.importc: "hash_CV_len".}: uint
     hashCV_id* {.importc: "hash_CV_id".}: cint
 
-proc sslSessionCacheLruInit*(cc: var SslSessionCacheLru; store: ptr cuchar;
+proc sslSessionCacheLruInit*(cc: var SslSessionCacheLru; store: ptr byte;
                             storeLen: int) {.importcFunc,
     importc: "br_ssl_session_cache_lru_init", header: "bearssl_ssl.h".}
 
-proc sslSessionCacheLruForget*(cc: var SslSessionCacheLru; id: ptr cuchar) {.importcFunc,
+proc sslSessionCacheLruForget*(cc: var SslSessionCacheLru; id: ptr byte) {.importcFunc,
     importc: "br_ssl_session_cache_lru_forget", header: "bearssl_ssl.h".}
 
 
