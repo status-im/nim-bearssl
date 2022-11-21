@@ -30,13 +30,12 @@ proc run(args, path: string) =
 import strutils
 
 task test, "Run tests":
-  for path in listFiles(thisDir() & "/tests"):
-    if not path.endsWith ".nim":
-      continue
-    run "-d:debug", path
-    run "-d:release", path
-    run "--gc:arc -d:release", path
+  for path in listFiles("tests"):
+    if not path.endsWith ".nim": continue
 
-    run "-d:bearsslSplitAbi -d:debug", path
-    run "-d:bearsslSplitAbi -d:release", path
-    run "-d:bearsslSplitAbi --gc:arc -d:release", path
+    for args in [
+      "-d:debug",
+      "-d:release",
+      "-d:bearsslSplitAbi -d:debug",
+      "-d:bearsslSplitAbi -d:release",
+    ]: run args, path
