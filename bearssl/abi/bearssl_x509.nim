@@ -238,6 +238,13 @@ type
 
 
 type
+  X509TimeCheck* {.importc: "br_x509_time_check", header: "bearssl_x509.h".} =
+    proc (tctx: pointer; notBeforeDays: uint32;
+      notBeforeSeconds: uint32; notAfterDays: uint32;
+      notAfterSeconds: uint32): cint {.importcFunc.}
+
+
+type
   INNER_C_STRUCT_bearssl_x509_3* {.importc: "br_x509_minimal_context::no_name",
                                   header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
@@ -282,6 +289,8 @@ type
     savedDnHash* {.importc: "saved_dn_hash".}: array[64, byte]
     nameElts* {.importc: "name_elts".}: ptr NameElement
     numNameElts* {.importc: "num_name_elts".}: uint
+    itimeCtx* {.importc: "itime_ctx".}: pointer
+    itime* {.importc: "itime".}: X509TimeCheck
     irsa* {.importc: "irsa".}: RsaPkcs1Vrfy
     iecdsa* {.importc: "iecdsa".}: EcdsaVrfy
     iec* {.importc: "iec".}: ptr EcImpl
@@ -317,10 +326,17 @@ proc x509MinimalSetTime*(ctx: var X509MinimalContext; days: uint32; seconds: uin
     inline.} =
   ctx.days = days
   ctx.seconds = seconds
+  ctx.itime = nil
 
 
-proc x509MinimalSetMinrsa*(ctx: var X509MinimalContext; byteLength: cint) {.inline,
-    importcFunc.} =
+proc x509MinimalSetTimeCallback*(ctx: var X509MinimalContext; itimeCtx: pointer;
+                                itime: X509TimeCheck) {.inline, importcFunc,
+    importc: "br_x509_minimal_set_time_callback".} =
+  ctx.itimeCtx = itimeCtx
+  ctx.itime = itime
+
+
+proc x509MinimalSetMinrsa*(ctx: var X509MinimalContext; byteLength: cint) {.inline.} =
   ctx.minRsaSize = (int16)(byteLength - 128)
 
 
