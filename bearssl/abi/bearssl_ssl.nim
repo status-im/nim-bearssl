@@ -1240,18 +1240,18 @@ type
   SslioContext* {.importc: "br_sslio_context", header: "bearssl_ssl.h", bycopy.} = object
     engine* {.importc: "engine".}: ptr SslEngineContext
     lowRead* {.importc: "low_read".}: proc (readContext: pointer; data: ptr byte;
-                                        len: uint): cint {.importcFunc.}
+                                        len: uint): cint {.cdecl.}
     readContext* {.importc: "read_context".}: pointer
     lowWrite* {.importc: "low_write".}: proc (writeContext: pointer; data: ptr byte;
-        len: uint): cint {.importcFunc.}
+        len: uint): cint {.cdecl.}
     writeContext* {.importc: "write_context".}: pointer
 
 
 
 proc sslioInit*(ctx: var SslioContext; engine: ptr SslEngineContext; lowRead: proc (
-    readContext: pointer; data: ptr byte; len: uint): cint {.importcFunc.};
+    readContext: pointer; data: ptr byte; len: uint): cint {.cdecl.};
                readContext: pointer; lowWrite: proc (writeContext: pointer;
-    data: ptr byte; len: uint): cint {.importcFunc.}; writeContext: pointer) {.importcFunc,
+    data: ptr byte; len: uint): cint {.cdecl.}; writeContext: pointer) {.importcFunc,
     importc: "br_sslio_init", header: "bearssl_ssl.h".}
 
 proc sslioRead*(cc: var SslioContext; dst: pointer; len: uint): cint {.importcFunc,
