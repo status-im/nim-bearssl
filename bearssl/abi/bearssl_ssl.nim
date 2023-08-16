@@ -612,8 +612,7 @@ proc sslEngineSetSuites*(cc: var SslEngineContext; suites: ptr uint16;
                         suitesNum: uint) {.importcFunc,
     importc: "br_ssl_engine_set_suites", header: "bearssl_ssl.h".}
 
-proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) {.inline,
-    importcFunc.} =
+proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) {.inline.} =
   cc.x509ctx = x509ctx
 
 
@@ -633,8 +632,7 @@ proc sslEngineSetHash*(ctx: var SslEngineContext; id: cint; impl: ptr HashClass)
   multihashSetimpl(ctx.mhash, id, impl)
 
 
-proc sslEngineGetHash*(ctx: var SslEngineContext; id: cint): ptr HashClass {.inline,
-    importcFunc.} =
+proc sslEngineGetHash*(ctx: var SslEngineContext; id: cint): ptr HashClass {.inline.} =
   return multihashGetimpl(ctx.mhash, id)
 
 
@@ -659,8 +657,7 @@ proc sslEngineSetAesCbc*(cc: var SslEngineContext; implEnc: ptr BlockCbcencClass
 proc sslEngineSetDefaultAesCbc*(cc: var SslEngineContext) {.importcFunc,
     importc: "br_ssl_engine_set_default_aes_cbc", header: "bearssl_ssl.h".}
 
-proc sslEngineSetAesCtr*(cc: var SslEngineContext; impl: ptr BlockCtrClass) {.inline,
-    importcFunc.} =
+proc sslEngineSetAesCtr*(cc: var SslEngineContext; impl: ptr BlockCtrClass) {.inline.} =
   cc.iaesCtr = impl
 
 
@@ -680,13 +677,11 @@ proc sslEngineSetGhash*(cc: var SslEngineContext; impl: Ghash) {.inline.} =
   cc.ighash = impl
 
 
-proc sslEngineSetChacha20*(cc: var SslEngineContext; ichacha: Chacha20Run) {.inline,
-    importcFunc.} =
+proc sslEngineSetChacha20*(cc: var SslEngineContext; ichacha: Chacha20Run) {.inline.} =
   cc.ichacha = ichacha
 
 
-proc sslEngineSetPoly1305*(cc: var SslEngineContext; ipoly: Poly1305Run) {.inline,
-    importcFunc.} =
+proc sslEngineSetPoly1305*(cc: var SslEngineContext; ipoly: Poly1305Run) {.inline.} =
   cc.ipoly = ipoly
 
 
@@ -735,8 +730,7 @@ proc sslEngineGetEc*(cc: var SslEngineContext): ptr EcImpl {.inline.} =
   return cc.iec
 
 
-proc sslEngineSetRsavrfy*(cc: var SslEngineContext; irsavrfy: RsaPkcs1Vrfy) {.inline,
-    importcFunc.} =
+proc sslEngineSetRsavrfy*(cc: var SslEngineContext; irsavrfy: RsaPkcs1Vrfy) {.inline.} =
   cc.irsavrfy = irsavrfy
 
 
@@ -972,8 +966,7 @@ proc sslClientSetRsapub*(cc: var SslClientContext; irsapub: RsaPublic) {.inline.
 proc sslClientSetDefaultRsapub*(cc: var SslClientContext) {.importcFunc,
     importc: "br_ssl_client_set_default_rsapub", header: "bearssl_ssl.h".}
 
-proc sslClientSetMinClienthelloLen*(cc: var SslClientContext; len: uint16) {.inline,
-    importcFunc.} =
+proc sslClientSetMinClienthelloLen*(cc: var SslClientContext; len: uint16) {.inline.} =
   cc.minClienthelloLen = len
 
 

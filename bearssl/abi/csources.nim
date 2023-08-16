@@ -35,9 +35,11 @@ const
 
 # TODO https://github.com/nim-lang/Nim/issues/19864
 
+{.passc: "-I" & quoteShell(currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]).}
 {.passc: "-I" & quoteShell(bearSrcPath)}
 {.passc: "-I" & quoteShell(bearIncPath)}
 {.passc: "-I" & quoteShell(bearToolsPath)}
+
 
 when defined(windows):
   {.passc: "-DBR_USE_WIN32_TIME=1".}
