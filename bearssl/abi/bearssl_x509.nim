@@ -330,8 +330,7 @@ proc x509MinimalSetTime*(ctx: var X509MinimalContext; days: uint32; seconds: uin
 
 
 proc x509MinimalSetTimeCallback*(ctx: var X509MinimalContext; itimeCtx: pointer;
-                                itime: X509TimeCheck) {.inline, importcFunc,
-    importc: "br_x509_minimal_set_time_callback".} =
+                                itime: X509TimeCheck) {.inline.} =
   ctx.itimeCtx = itimeCtx
   ctx.itime = itime
 
