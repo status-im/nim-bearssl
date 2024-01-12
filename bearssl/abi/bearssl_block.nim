@@ -4,60 +4,6 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearSymcPath = bearSrcPath & "symcipher/"
-
-{.compile: bearSymcPath & "aes_big_cbcdec.c".}
-{.compile: bearSymcPath & "aes_big_cbcenc.c".}
-{.compile: bearSymcPath & "aes_big_ctr.c".}
-{.compile: bearSymcPath & "aes_big_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_big_dec.c".}
-{.compile: bearSymcPath & "aes_big_enc.c".}
-{.compile: bearSymcPath & "aes_common.c".}
-{.compile: bearSymcPath & "aes_ct.c".}
-{.compile: bearSymcPath & "aes_ct64.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct64_ctr.c".}
-{.compile: bearSymcPath & "aes_ct64_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct64_dec.c".}
-{.compile: bearSymcPath & "aes_ct64_enc.c".}
-{.compile: bearSymcPath & "aes_ct_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct_ctr.c".}
-{.compile: bearSymcPath & "aes_ct_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct_dec.c".}
-{.compile: bearSymcPath & "aes_ct_enc.c".}
-{.compile: bearSymcPath & "aes_pwr8.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcdec.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcenc.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctr.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_cbcdec.c".}
-{.compile: bearSymcPath & "aes_small_cbcenc.c".}
-{.compile: bearSymcPath & "aes_small_ctr.c".}
-{.compile: bearSymcPath & "aes_small_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_dec.c".}
-{.compile: bearSymcPath & "aes_small_enc.c".}
-{.compile: bearSymcPath & "aes_x86ni.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcdec.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcenc.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctr.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctrcbc.c".}
-{.compile: bearSymcPath & "chacha20_ct.c".}
-{.compile: bearSymcPath & "chacha20_sse2.c".}
-{.compile: bearSymcPath & "des_ct.c".}
-{.compile: bearSymcPath & "des_ct_cbcdec.c".}
-{.compile: bearSymcPath & "des_ct_cbcenc.c".}
-{.compile: bearSymcPath & "des_support.c".}
-{.compile: bearSymcPath & "des_tab.c".}
-{.compile: bearSymcPath & "des_tab_cbcdec.c".}
-{.compile: bearSymcPath & "des_tab_cbcenc.c".}
-{.compile: bearSymcPath & "poly1305_ctmul.c".}
-{.compile: bearSymcPath & "poly1305_ctmul32.c".}
-{.compile: bearSymcPath & "poly1305_ctmulq.c".}
-{.compile: bearSymcPath & "poly1305_i15.c".}
-
 type
   BlockCbcencClass* {.importc: "br_block_cbcenc_class", header: "bearssl_block.h",
                      bycopy.} = object

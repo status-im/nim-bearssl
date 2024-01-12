@@ -25,6 +25,8 @@ export os
 # Some functions take a length as input - in bearssl, `csize_t` is used for this
 # purpose - wrappers do the same
 
+{.used.}
+
 static: doAssert sizeof(csize_t) == sizeof(int)
 const
   bearPath* = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/../" &
@@ -32,12 +34,14 @@ const
   bearIncPath* = bearPath & "inc/"
   bearSrcPath* = bearPath & "src/"
   bearToolsPath* = bearPath & "tools/"
+  bearStaticLibPath = bearPath & "build/libbearssl.a"
 
 # TODO https://github.com/nim-lang/Nim/issues/19864
 
 {.passc: "-I" & quoteShell(bearSrcPath)}
 {.passc: "-I" & quoteShell(bearIncPath)}
 {.passc: "-I" & quoteShell(bearToolsPath)}
+{.passl: bearStaticLibPath.}
 
 when defined(windows):
   {.passc: "-DBR_USE_WIN32_TIME=1".}

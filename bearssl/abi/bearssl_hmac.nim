@@ -4,12 +4,6 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearMacPath = bearSrcPath & "mac/"
-
-{.compile: bearMacPath & "hmac.c".}
-{.compile: bearMacPath & "hmac_ct.c".}
-
 type
   HmacKeyContext* {.importc: "br_hmac_key_context", header: "bearssl_hmac.h", bycopy.} = object
     digVtable* {.importc: "dig_vtable".}: ptr HashClass
