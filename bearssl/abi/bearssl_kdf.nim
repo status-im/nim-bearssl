@@ -4,12 +4,6 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearKdfPath = bearSrcPath & "kdf/"
-
-{.compile: bearKdfPath & "hkdf.c".}
-{.compile: bearKdfPath & "shake.c".}
-
 type
   INNER_C_UNION_bearssl_kdf_1* {.importc: "br_hkdf_context::no_name",
                                 header: "bearssl_kdf.h", bycopy, union.} = object

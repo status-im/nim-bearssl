@@ -5,20 +5,6 @@ import
 {.used.}
 
 const
-  bearX509Path = bearSrcPath & "x509/"
-
-{.compile: bearX509Path & "asn1enc.c".}
-{.compile: bearX509Path & "encode_ec_pk8der.c".}
-{.compile: bearX509Path & "encode_ec_rawder.c".}
-{.compile: bearX509Path & "encode_rsa_pk8der.c".}
-{.compile: bearX509Path & "encode_rsa_rawder.c".}
-{.compile: bearX509Path & "skey_decoder.c".}
-{.compile: bearX509Path & "x509_decoder.c".}
-{.compile: bearX509Path & "x509_knownkey.c".}
-{.compile: bearX509Path & "x509_minimal.c".}
-{.compile: bearX509Path & "x509_minimal_full.c".}
-
-const
   ERR_X509_OK* = 32
 
 
