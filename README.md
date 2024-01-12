@@ -41,6 +41,10 @@ In addition to the raw `C`-like api, convenience functions are added where appli
 * named after the function they simplify, but take advantage of types and overload support in Nim
 * help turn pointers and bytes into Nim types
 
+## Static linking
+
+If you'd like to statically link to a precompiled `libbearssl.a` library, define `-d:bearStaticLibPath=/path/to/libbearssl.a`. This will take advantage of BearSSL's "static linking model in which only algorithms that are actually used get pulled into the linked binary."
+
 ## Installation
 
 You can install the developement version of the library through nimble with the following command:

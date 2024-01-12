@@ -4,6 +4,13 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
+when not bearUseStaticLib:
+  const
+    bearCodecPath = bearSrcPath & "codec/"
+
+  {.compile: bearCodecPath & "pemdec.c".}
+  {.compile: bearCodecPath & "pemenc.c".}
+
 type
   INNER_C_STRUCT_bearssl_pem_1* {.importc: "br_pem_decoder_context::no_name",
                                  header: "bearssl_pem.h", bycopy.} = object

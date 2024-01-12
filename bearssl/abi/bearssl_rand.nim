@@ -4,6 +4,14 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
+when not bearUseStaticLib:
+  const
+    bearRandPath = bearSrcPath & "rand/"
+
+  # {.compile: bearRandPath & "aesctr_drbg.c".}
+  {.compile: bearRandPath & "hmac_drbg.c".}
+  {.compile: bearRandPath & "sysrng.c".}
+
 type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint

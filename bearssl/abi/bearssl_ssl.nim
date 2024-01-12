@@ -6,6 +6,47 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
+when not bearUseStaticLib:
+  const
+    bearSslPath = bearSrcPath & "ssl/"
+
+  {.compile: bearSslPath & "ssl_ccert_single_ec.c".}
+  {.compile: bearSslPath & "ssl_ccert_single_rsa.c".}
+  {.compile: bearSslPath & "ssl_client.c".}
+  {.compile: bearSslPath & "ssl_client_default_rsapub.c".}
+  {.compile: bearSslPath & "ssl_client_full.c".}
+  {.compile: bearSslPath & "ssl_engine.c".}
+  {.compile: bearSslPath & "ssl_engine_default_aescbc.c".}
+  {.compile: bearSslPath & "ssl_engine_default_aesccm.c".}
+  {.compile: bearSslPath & "ssl_engine_default_aesgcm.c".}
+  {.compile: bearSslPath & "ssl_engine_default_chapol.c".}
+  {.compile: bearSslPath & "ssl_engine_default_descbc.c".}
+  {.compile: bearSslPath & "ssl_engine_default_ec.c".}
+  {.compile: bearSslPath & "ssl_engine_default_ecdsa.c".}
+  {.compile: bearSslPath & "ssl_engine_default_rsavrfy.c".}
+  {.compile: bearSslPath & "ssl_hashes.c".}
+  {.compile: bearSslPath & "ssl_hs_client.c".}
+  {.compile: bearSslPath & "ssl_hs_server.c".}
+  {.compile: bearSslPath & "ssl_io.c".}
+  {.compile: bearSslPath & "ssl_keyexport.c".}
+  {.compile: bearSslPath & "ssl_lru.c".}
+  {.compile: bearSslPath & "ssl_rec_cbc.c".}
+  {.compile: bearSslPath & "ssl_rec_ccm.c".}
+  {.compile: bearSslPath & "ssl_rec_chapol.c".}
+  {.compile: bearSslPath & "ssl_rec_gcm.c".}
+  {.compile: bearSslPath & "ssl_scert_single_ec.c".}
+  {.compile: bearSslPath & "ssl_scert_single_rsa.c".}
+  {.compile: bearSslPath & "ssl_server.c".}
+  {.compile: bearSslPath & "ssl_server_full_ec.c".}
+  {.compile: bearSslPath & "ssl_server_full_rsa.c".}
+  {.compile: bearSslPath & "ssl_server_mine2c.c".}
+  {.compile: bearSslPath & "ssl_server_mine2g.c".}
+  {.compile: bearSslPath & "ssl_server_minf2c.c".}
+  {.compile: bearSslPath & "ssl_server_minf2g.c".}
+  {.compile: bearSslPath & "ssl_server_minr2g.c".}
+  {.compile: bearSslPath & "ssl_server_minu2g.c".}
+  {.compile: bearSslPath & "ssl_server_minv2g.c".}
+
 const
   SSL_BUFSIZE_INPUT* = (16384 + 325)
 

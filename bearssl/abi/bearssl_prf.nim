@@ -4,6 +4,15 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
+when not bearUseStaticLib:
+  const
+    bearSslPath = bearSrcPath & "ssl/"
+
+  {.compile: bearSslPath & "prf.c".}
+  {.compile: bearSslPath & "prf_md5sha1.c".}
+  {.compile: bearSslPath & "prf_sha256.c".}
+  {.compile: bearSslPath & "prf_sha384.c".}
+
 type
   TlsPrfSeedChunk* {.importc: "br_tls_prf_seed_chunk", header: "bearssl_prf.h",
                     bycopy.} = object
