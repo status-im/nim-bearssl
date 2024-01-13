@@ -164,4 +164,4 @@ jobs:
         shell: bash
         run: |
           (cd bearssl/csources/ && make)
-          env NIMLAND=c nimble "-d:bearStaticLibPath=$(pwd)/bearssl/csources/build/libbearssl.a" test
+          env NIMLANG=c nimble "-d:bearStaticLibPath=$(pwd)/bearssl/csources/build/libbearssl.a" test
