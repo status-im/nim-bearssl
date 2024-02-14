@@ -25,8 +25,10 @@ proc build(args, path: string) =
 
 proc run(args, path: string) =
   build args & " -r", path
+  if (NimMajor, NimMinor) > (1, 6):
+    build args & " --mm:refc -r", path
 
-import strutils
+from std/strutils import endsWith
 
 task test, "Run tests":
   for path in listFiles("tests"):
