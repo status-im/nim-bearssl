@@ -32,7 +32,7 @@ proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   ##
   ## The context is seeded with randomness from the OS / system.
   ## Returns `nil` if the OS / system has no randomness API.
-  let seeder = prngSeederSystem(nil)
+  let seeder = prngSeederSystem(constCstringArray(nil))
   if seeder == nil:
     return nil
 
