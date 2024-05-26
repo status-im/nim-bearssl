@@ -200,7 +200,7 @@ type
     getPkey* {.importc: "get_pkey".}: proc (ctx: ptr ptr X509Class; usages: ptr cuint): ptr X509Pkey {.
         importcFunc.}
 
-
+  X509ClassPointerConst* {.importc: "const br_x509_class**", header: "bearssl_x509.h", bycopy.} = pointer
 
 type
   X509KnownkeyContext* {.importc: "br_x509_knownkey_context",

@@ -544,7 +544,7 @@ type
     alert* {.importc: "alert".}: byte
     closeReceived* {.importc: "close_received".}: byte
     mhash* {.importc: "mhash".}: MultihashContext
-    x509ctx* {.importc: "x509ctx".}: ptr ptr X509Class
+    x509ctx* {.importc: "x509ctx".}: X509ClassPointerConst
     chain* {.importc: "chain".}: ptr X509Certificate
     chainLen* {.importc: "chain_len".}: uint
     certCur* {.importc: "cert_cur".}: ptr byte
@@ -612,9 +612,12 @@ proc sslEngineSetSuites*(cc: var SslEngineContext; suites: ptr uint16;
                         suitesNum: uint) {.importcFunc,
     importc: "br_ssl_engine_set_suites", header: "bearssl_ssl.h".}
 
-proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) {.inline.} =
+proc sslEngineSetX509*(cc: var SslEngineContext;
+                       x509ctx: X509ClassPointerConst) =
   cc.x509ctx = x509ctx
 
+proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) =
+  cc.x509ctx = X509ClassPointerConst(x509ctx)
 
 proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: cstringArray;
                                num: uint) {.inline.} =
