@@ -1080,6 +1080,7 @@ type
                                  params: ptr SslSessionParameters): cint {.importcFunc.}
 
 
+  SslSessionCacheClassPointerConst* {.importc: "const br_ssl_session_cache_class**", header: "bearssl_ssl.h", bycopy.} = pointer
 
 
   SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
@@ -1107,7 +1108,7 @@ type
                      bycopy.} = object
     eng* {.importc: "eng".}: SslEngineContext
     clientMaxVersion* {.importc: "client_max_version".}: uint16
-    cacheVtable* {.importc: "cache_vtable".}: ptr ptr SslSessionCacheClass
+    cacheVtable* {.importc: "cache_vtable".}: SslSessionCacheClassPointerConst
     clientSuites* {.importc: "client_suites".}: array[MAX_CIPHER_SUITES,
         SuiteTranslated]
     clientSuitesNum* {.importc: "client_suites_num".}: byte
@@ -1225,7 +1226,7 @@ proc sslServerSetTrustAnchorNamesAlt*(cc: var SslServerContext;
 
 
 proc sslServerSetCache*(cc: var SslServerContext;
-                       vtable: ptr ptr SslSessionCacheClass) {.inline.} =
+                        vtable: SslSessionCacheClassPointerConst) {.inline.} =
   cc.cacheVtable = vtable
 
 
