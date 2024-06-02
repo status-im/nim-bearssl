@@ -544,7 +544,7 @@ type
     alert* {.importc: "alert".}: byte
     closeReceived* {.importc: "close_received".}: byte
     mhash* {.importc: "mhash".}: MultihashContext
-    x509ctx* {.importc: "x509ctx".}: ptr ptr X509Class
+    x509ctx* {.importc: "x509ctx".}: X509ClassPointerConst
     chain* {.importc: "chain".}: ptr X509Certificate
     chainLen* {.importc: "chain_len".}: uint
     certCur* {.importc: "cert_cur".}: ptr byte
@@ -612,9 +612,12 @@ proc sslEngineSetSuites*(cc: var SslEngineContext; suites: ptr uint16;
                         suitesNum: uint) {.importcFunc,
     importc: "br_ssl_engine_set_suites", header: "bearssl_ssl.h".}
 
-proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) {.inline.} =
+proc sslEngineSetX509*(cc: var SslEngineContext;
+                       x509ctx: X509ClassPointerConst) =
   cc.x509ctx = x509ctx
 
+proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) =
+  cc.x509ctx = X509ClassPointerConst(x509ctx)
 
 proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: cstringArray;
                                num: uint) {.inline.} =
@@ -1077,6 +1080,7 @@ type
                                  params: ptr SslSessionParameters): cint {.importcFunc.}
 
 
+  SslSessionCacheClassPointerConst* {.importc: "const br_ssl_session_cache_class**", header: "bearssl_ssl.h", bycopy.} = pointer
 
 
   SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
@@ -1104,7 +1108,7 @@ type
                      bycopy.} = object
     eng* {.importc: "eng".}: SslEngineContext
     clientMaxVersion* {.importc: "client_max_version".}: uint16
-    cacheVtable* {.importc: "cache_vtable".}: ptr ptr SslSessionCacheClass
+    cacheVtable* {.importc: "cache_vtable".}: SslSessionCacheClassPointerConst
     clientSuites* {.importc: "client_suites".}: array[MAX_CIPHER_SUITES,
         SuiteTranslated]
     clientSuitesNum* {.importc: "client_suites_num".}: byte
@@ -1222,7 +1226,7 @@ proc sslServerSetTrustAnchorNamesAlt*(cc: var SslServerContext;
 
 
 proc sslServerSetCache*(cc: var SslServerContext;
-                       vtable: ptr ptr SslSessionCacheClass) {.inline.} =
+                        vtable: SslSessionCacheClassPointerConst) {.inline.} =
   cc.cacheVtable = vtable
 
 

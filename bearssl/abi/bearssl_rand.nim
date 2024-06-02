@@ -52,9 +52,9 @@ proc hmacDrbgGetHash*(ctx: var HmacDrbgContext): ptr HashClass {.inline.} =
 
 type
   PrngSeeder* {.importc: "br_prng_seeder".} = proc (ctx: ptr ptr PrngClass): cint {.importcFunc.}
+  constCstringArray* {.importc: "const char**", nodecl.} = pointer
 
-
-proc prngSeederSystem*(name: cstringArray): PrngSeeder {.importcFunc,
+proc prngSeederSystem*(name: constCstringArray): PrngSeeder {.importcFunc,
     importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
 
 # type
