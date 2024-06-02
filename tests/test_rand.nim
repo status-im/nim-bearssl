@@ -20,7 +20,7 @@ suite "random":
       v2 != default(array[1024, byte]) # probable
 
     for i in 0..<1000:
-      doAssert cast[int](rng[].generate(bool)) in [0, 1]
+      doAssert int(rng[].generate(bool)) in [0, 1]
 
     var bools: array[64 * 1024, bool]
     rng[].generate(bools)
