@@ -39,7 +39,7 @@ proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   let rng = (ref HmacDrbgContext)()
   hmacDrbgInit(rng[], addr sha256Vtable, nil, 0)
 
-  if seeder(addr rng.vtable) == 0:
+  if seeder(PrngClassPointerConst(addr rng.vtable)) == 0:
     return nil
 
   rng
