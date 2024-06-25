@@ -18,8 +18,11 @@ type
     vtable* {.importc: "vtable".}: ptr X509Class
     inner* {.importc: "inner".}: ptr ptr X509Class
 
-proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) {.importcFunc,
+proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: X509ClassPointerConst) {.importcFunc,
     importc: "x509_noanchor_init", header: "brssl_cpp.h".}
+
+proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) =
+  x509NoanchorInit(xwc, X509ClassPointerConst(inner))
 
 proc initNoAnchor*(xwc: var X509NoanchorContext, inner: ptr ptr X509Class) {.
      importcFunc, importc: "x509_noanchor_init", header: "brssl_cpp.h", deprecated: "x509NoanchorInit".}
