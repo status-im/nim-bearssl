@@ -18,6 +18,8 @@ jobs:
         target:
           - os: linux
             cpu: amd64
+          - os: linux-ubuntu-24
+            cpu: amd64
           - os: linux
             cpu: i386
           - os: macos
@@ -31,6 +33,9 @@ jobs:
           - target:
               os: linux
             builder: ubuntu-latest
+          - target:
+              os: linux-ubuntu-24
+            builder: ubuntu-24.04
           - target:
               os: macos
               cpu: amd64
@@ -163,10 +168,20 @@ jobs:
             bash build_nim.sh nim csources dist/nimble NimBinaries
           echo '${{ github.workspace }}/nim/bin' >> $GITHUB_PATH
 
+      - name: Use gcc 14
+        if : ${{ matrix.target.os == 'linux-ubuntu-24' }}
+        run: |
+          # Add GCC-14 to alternatives
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
+
+          # Set GCC-14 as the default
+          sudo update-alternatives --set gcc /usr/bin/gcc-14
+
       - name: Run tests
         run: |
           nim --version
           nimble --version
+          gcc --version
           nimble install -y --depsOnly
           env NIMLANG=c nimble test
           # C++ support requires fixing const pointer proc assignments
