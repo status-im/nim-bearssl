@@ -357,20 +357,20 @@ template rsaKbufPubSize*(size: untyped): untyped =
 
 
 type
-  RsaKeygen* {.importc: "br_rsa_keygen".} = proc (rngCtx: ptr ptr PrngClass; sk: ptr RsaPrivateKey; kbufPriv: pointer;
+  RsaKeygen* {.importc: "br_rsa_keygen".} = proc (rngCtx: PrngClassPointerConst; sk: ptr RsaPrivateKey; kbufPriv: pointer;
                   pk: ptr RsaPublicKey; kbufPub: pointer; size: cuint; pubexp: uint32): uint32 {.
       importcFunc.}
 
 
-proc rsaI15Keygen*(rngCtx: ptr ptr PrngClass; sk: ptr RsaPrivateKey; kbufPriv: pointer;
+proc rsaI15Keygen*(rngCtx: PrngClassPointerConst; sk: ptr RsaPrivateKey; kbufPriv: pointer;
                   pk: ptr RsaPublicKey; kbufPub: pointer; size: cuint; pubexp: uint32): uint32 {.
     importcFunc, importc: "br_rsa_i15_keygen", header: "bearssl_rsa.h".}
 
-proc rsaI31Keygen*(rngCtx: ptr ptr PrngClass; sk: ptr RsaPrivateKey; kbufPriv: pointer;
+proc rsaI31Keygen*(rngCtx: PrngClassPointerConst; sk: ptr RsaPrivateKey; kbufPriv: pointer;
                   pk: ptr RsaPublicKey; kbufPub: pointer; size: cuint; pubexp: uint32): uint32 {.
     importcFunc, importc: "br_rsa_i31_keygen", header: "bearssl_rsa.h".}
 
-proc rsaI62Keygen*(rngCtx: ptr ptr PrngClass; sk: ptr RsaPrivateKey; kbufPriv: pointer;
+proc rsaI62Keygen*(rngCtx: PrngClassPointerConst; sk: ptr RsaPrivateKey; kbufPriv: pointer;
                   pk: ptr RsaPublicKey; kbufPub: pointer; size: cuint; pubexp: uint32): uint32 {.
     importcFunc, importc: "br_rsa_i62_keygen", header: "bearssl_rsa.h".}
 
