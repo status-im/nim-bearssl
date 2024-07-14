@@ -34,7 +34,7 @@ jobs:
               os: linux
             builder: ubuntu-latest
           - target:
-              os: linux-ubuntu-24
+              os: linux-ubuntu-24 # this must be removed when latest is 24.04
             builder: ubuntu-24.04
           - target:
               os: macos
