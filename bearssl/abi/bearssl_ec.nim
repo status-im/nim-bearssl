@@ -329,9 +329,9 @@ proc ecKeygen*(rngCtx: PrngClassPointerConst; impl: ptr EcImpl; sk: ptr EcPrivat
               kbuf: pointer; curve: cint): uint {.importcFunc, importc: "br_ec_keygen",
     header: "bearssl_ec.h".}
 
-proc ecKeygen*(rngCtx: ptr ptr PrngClass; impl: ptr EcImpl; sk: ptr EcPrivateKey;
-              kbuf: pointer; curve: cint): uint =
-  ecKeygen(PrngClassPointerConst(rngCtx), impl, sk, kbuf, curve)
+# proc ecKeygen*(rngCtx: ptr ptr PrngClass; impl: ptr EcImpl; sk: ptr EcPrivateKey;
+#               kbuf: pointer; curve: cint): uint =
+#   ecKeygen(PrngClassPointerConst(rngCtx), impl, sk, kbuf, curve)
 
 proc ecComputePub*(impl: ptr EcImpl; pk: ptr EcPublicKey; kbuf: pointer;
                   sk: ptr EcPrivateKey): uint {.importcFunc,
