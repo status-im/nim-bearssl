@@ -9,4 +9,4 @@ suite "x509":
     var x509: X509MinimalContext
 
     x509MinimalInit(x509, nil, nil, 0)
-    x509NoanchorInit(xwc, X509ClassPointerConst(addr x509.vtable))
+    x509NoanchorInit(xwc, addr x509.vtable)

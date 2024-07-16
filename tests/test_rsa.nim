@@ -17,7 +17,7 @@ type
     pexplen*: uint
 
 suite "rsa":
-  test "rsaKeygenGetDefault":
+  test "test rsaKeygenGetDefault interface":
     let rng = HmacDrbgContext.new()
 
     let
