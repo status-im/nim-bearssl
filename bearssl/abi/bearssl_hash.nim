@@ -23,18 +23,19 @@ const
 {.compile: bearHashPath & "sha2small.c".}
 
 type
+  ConstPtrPtrHashClass* {.importc: "const br_hash_class**", header: "bearssl_hash.h", bycopy.} = pointer
+
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
     desc* {.importc: "desc".}: uint32
-    init* {.importc: "init".}: proc (ctx: ptr ptr HashClass) {.importcFunc.}
-    update* {.importc: "update".}: proc (ctx: ptr ptr HashClass; data: pointer;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrHashClass) {.importcFunc.}
+    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: pointer;
                                      len: uint) {.importcFunc.}
-    `out`* {.importc: "out".}: proc (ctx: ptr ptr HashClass; dst: pointer) {.importcFunc.}
-    state* {.importc: "state".}: proc (ctx: ptr ptr HashClass; dst: pointer): uint64 {.
+    `out`* {.importc: "out".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer) {.importcFunc.}
+    state* {.importc: "state".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer): uint64 {.
         importcFunc.}
-    setState* {.importc: "set_state".}: proc (ctx: ptr ptr HashClass; stb: pointer;
+    setState* {.importc: "set_state".}: proc (ctx: ConstPtrPtrHashClass; stb: pointer;
         count: uint64) {.importcFunc.}
-
 
 template hashdesc_Id*(id: untyped): untyped =
   ((uint32)(id) shl hashdesc_Id_Off)
