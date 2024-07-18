@@ -16,5 +16,5 @@ suite "ec":
     var ecimp = ecGetDefault()
     var res = new EcPrivateKey
     check ecKeygen(
-      addr rng.vtable, ecimp, addr res.key, addr res.buffer[0], cint(EC_secp256r1)
+      PrngClassPointerConst(addr rng.vtable), ecimp, addr res.key, addr res.buffer[0], cint(EC_secp256r1)
     ) != 0
