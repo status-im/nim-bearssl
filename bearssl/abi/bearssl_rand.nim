@@ -22,6 +22,7 @@ type
     update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
                                      seedLen: uint) {.importcFunc.}
 
+  PrngClassPointerConst* {.importc: "const br_prng_class**", header: "bearssl_rand.h", bycopy.} = pointer
 
 
 type
@@ -52,10 +53,10 @@ proc hmacDrbgGetHash*(ctx: var HmacDrbgContext): ptr HashClass {.inline.} =
 
 
 type
-  PrngSeeder* {.importc: "br_prng_seeder".} = proc (ctx: ptr ptr PrngClass): cint {.importcFunc.}
+  PrngSeeder* {.importc: "br_prng_seeder".} = proc (ctx: PrngClassPointerConst): cint {.importcFunc.}
+  constCstringArray* {.importc: "const char**", nodecl.} = pointer
 
-
-proc prngSeederSystem*(name: cstringArray): PrngSeeder {.importcFunc,
+proc prngSeederSystem*(name: constCstringArray): PrngSeeder {.importcFunc,
     importc: "br_prng_seeder_system", header: "bearssl_rand.h".}
 
 # type

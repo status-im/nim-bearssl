@@ -1,12 +1,11 @@
 import
-  "."/[csources, bearssl_x509]
+  "."/[csources, bearssl_block, bearssl_pem, bearssl_x509]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
 const
   bearToolsPath = bearPath & "tools/"
-
 
 {.compile: bearToolsPath & "vector.c".}
 {.compile: bearToolsPath & "xmem.c".}
@@ -15,12 +14,15 @@ const
 {.compile: bearToolsPath & "files.c".}
 
 type
-  X509NoanchorContext* {.importc: "x509_noanchor_context", header: "brssl.h", bycopy.} = object
+  X509NoanchorContext* {.importc: "x509_noanchor_context", header: "brssl_cpp.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr X509Class
     inner* {.importc: "inner".}: ptr ptr X509Class
 
-proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) {.importcFunc,
-    importc: "x509_noanchor_init", header: "brssl.h".}
+proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: X509ClassPointerConst) {.importcFunc,
+    importc: "x509_noanchor_init", header: "brssl_cpp.h".}
+
+proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) =
+  x509NoanchorInit(xwc, X509ClassPointerConst(inner))
 
 proc initNoAnchor*(xwc: var X509NoanchorContext, inner: ptr ptr X509Class) {.
-     importcFunc, importc: "x509_noanchor_init", header: "brssl.h", deprecated: "x509NoanchorInit".}
+     importcFunc, importc: "x509_noanchor_init", header: "brssl_cpp.h", deprecated: "x509NoanchorInit".}

@@ -43,7 +43,15 @@ proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: uint): uint
 
 proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
     src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline.} =
-  ctx.dest = dest
+  
+  # llvm-mingw will complaints about `incompatible function pointer types`
+  # because generated type missing const in the middle param
+  # `void (*)(void *, void *, size_t)`
+  when false:
+    ctx.dest = dest
+    
+  {.emit: """typedef void (*pem_decoder_dest_t)(void *, const void *, size_t);""" .}
+  {.emit: [ctx.dest, "= (pem_decoder_dest_t)", dest, ";"].}
   ctx.destCtx = destCtx
 
 
@@ -63,7 +71,7 @@ const
 
 
 proc pemDecoderName*(ctx: var PemDecoderContext): cstring {.inline.} =
-  return addr ctx.name
+  return cast[cstring](addr ctx.name)
 
 
 proc pemEncode*(dest: pointer; data: pointer; len: uint; banner: cstring; flags: cuint): uint {.

@@ -38,7 +38,7 @@ type
 proc hmacInit*(ctx: var HmacContext; kc: var HmacKeyContext; outLen: uint) {.importcFunc,
     importc: "br_hmac_init", header: "bearssl_hmac.h".}
 
-proc hmacSize*(ctx: var HmacContext): uint {.inline, importcFunc, importc: "br_hmac_size".} =
+proc hmacSize*(ctx: var HmacContext): uint {.inline.} =
   return ctx.outLen
 
 

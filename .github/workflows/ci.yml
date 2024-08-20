@@ -18,39 +18,46 @@ jobs:
         target:
           - os: linux
             cpu: amd64
+          - os: linux-gcc-14 # this is to use ubuntu 24 and install gcc 14. Must be removed when ubuntu-latest is 24.04
+            cpu: amd64
           - os: linux
             cpu: i386
           - os: macos
             cpu: amd64
+          - os: macos
+            cpu: arm64
           - os: windows
             cpu: amd64
-          #- os: windows
-            #cpu: i386
-        branch: [version-1-2, version-1-4, version-1-6, devel]
+        branch: [version-1-6, version-2-0, devel]
         include:
           - target:
               os: linux
-            builder: ubuntu-18.04
-            shell: bash
+            builder: ubuntu-latest
+          - target:
+              os: linux-gcc-14 # this is to use ubuntu 24 and install gcc 14. Must be removed when ubuntu-latest is 24.04
+            builder: ubuntu-24.04
           - target:
               os: macos
-            builder: macos-12
-            shell: bash
+              cpu: amd64
+            builder: macos-13
+          - target:
+              os: macos
+              cpu: arm64
+            builder: macos-latest
           - target:
               os: windows
-            builder: windows-2019
-            shell: msys2 {0}
+            builder: windows-latest
 
     defaults:
       run:
-        shell: ${{ matrix.shell }}
+        shell: bash
 
     name: '${{ matrix.target.os }}-${{ matrix.target.cpu }} (Nim ${{ matrix.branch }})'
     runs-on: ${{ matrix.builder }}
     continue-on-error: ${{ matrix.branch == 'devel' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -74,31 +81,36 @@ jobs:
           chmod 755 external/bin/gcc external/bin/g++
           echo '${{ github.workspace }}/external/bin' >> $GITHUB_PATH
 
-      - name: MSYS2 (Windows i386)
-        if: runner.os == 'Windows' && matrix.target.cpu == 'i386'
-        uses: msys2/setup-msys2@v2
+      - name: Restore llvm-mingw (Windows) from cache
+        if: runner.os == 'Windows'
+        id: windows-mingw-cache
+        uses: actions/cache@v4
         with:
-          path-type: inherit
-          msystem: MINGW32
-          install: >-
-            base-devel
-            git
-            mingw-w64-i686-toolchain
+          path: external/mingw-${{ matrix.target.cpu }}
+          key: 'mingw-llvm-17-${{ matrix.target.cpu }}'
 
-      - name: MSYS2 (Windows amd64)
-        if: runner.os == 'Windows' && matrix.target.cpu == 'amd64'
-        uses: msys2/setup-msys2@v2
-        with:
-          path-type: inherit
-          install: >-
-            base-devel
-            git
-            mingw-w64-x86_64-toolchain
+      - name: Install llvm-mingw dependency (Windows)
+        if: >
+          steps.windows-mingw-cache.outputs.cache-hit != 'true' &&
+          runner.os == 'Windows'
+        run: |
+          mkdir -p external
+          MINGW_BASE="https://github.com/mstorsjo/llvm-mingw/releases/download/20230905"
+          if [[ '${{ matrix.target.cpu }}' == 'amd64' ]]; then
+            MINGW_URL="$MINGW_BASE/llvm-mingw-20230905-ucrt-x86_64.zip"
+            ARCH=64
+          else
+            MINGW_URL="$MINGW_BASE/llvm-mingw-20230905-ucrt-i686.zip"
+            ARCH=32
+          fi
+          curl -L "$MINGW_URL" -o "external/mingw-${{ matrix.target.cpu }}.zip"
+          7z x -y "external/mingw-${{ matrix.target.cpu }}.zip" -oexternal/mingw-${{ matrix.target.cpu }}/
+          mv external/mingw-${{ matrix.target.cpu }}/**/* ./external/mingw-${{ matrix.target.cpu }}
 
       - name: Restore Nim DLLs dependencies (Windows) from cache
         if: runner.os == 'Windows'
         id: windows-dlls-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: external/dlls-${{ matrix.target.cpu }}
           key: 'dlls-${{ matrix.target.cpu }}'
@@ -116,12 +128,15 @@ jobs:
         if: >
           runner.os == 'Windows'
         run: |
+          echo '${{ github.workspace }}'"/external/mingw-${{ matrix.target.cpu }}/bin" >> $GITHUB_PATH
           echo "${{ github.workspace }}/external/dlls-${{ matrix.target.cpu }}" >> $GITHUB_PATH
 
       - name: Derive environment variables
         run: |
           if [[ '${{ matrix.target.cpu }}' == 'amd64' ]]; then
             PLATFORM=x64
+          elif [[ '${{ matrix.target.cpu }}' == 'arm64' ]]; then
+            PLATFORM=arm64
           else
             PLATFORM=x86
           fi
@@ -153,12 +168,24 @@ jobs:
             bash build_nim.sh nim csources dist/nimble NimBinaries
           echo '${{ github.workspace }}/nim/bin' >> $GITHUB_PATH
 
+      - name: Use gcc 14
+        if : ${{ matrix.target.os == 'linux-gcc-14' }}
+        run: |
+          # Add GCC-14 to alternatives
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
+
+          # Set GCC-14 as the default
+          sudo update-alternatives --set gcc /usr/bin/gcc-14
+
       - name: Run tests
         run: |
           nim --version
           nimble --version
+          gcc --version
           nimble install -y --depsOnly
           env NIMLANG=c nimble test
+          # C++ support requires fixing const pointer proc assignments
+          # env NIMLANG=cpp nimble test
 
       - name: Run tests with static bearssl
         shell: bash
