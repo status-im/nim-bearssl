@@ -4,23 +4,24 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearHashPath = bearSrcPath & "hash/"
+when not bearUseStaticLib:
+  const
+    bearHashPath = bearSrcPath & "hash/"
 
-{.compile: bearHashPath & "dig_oid.c".}
-{.compile: bearHashPath & "dig_size.c".}
-{.compile: bearHashPath & "ghash_ctmul.c".}
-{.compile: bearHashPath & "ghash_ctmul32.c".}
-{.compile: bearHashPath & "ghash_ctmul64.c".}
-{.compile: bearHashPath & "ghash_pclmul.c".}
-{.compile: bearHashPath & "ghash_pwr8.c".}
-{.compile: bearHashPath & "md5.c".}
-{.compile: bearHashPath & "md5sha1.c".}
-{.compile: bearHashPath & "mgf1.c".}
-{.compile: bearHashPath & "multihash.c".}
-{.compile: bearHashPath & "sha1.c".}
-{.compile: bearHashPath & "sha2big.c".}
-{.compile: bearHashPath & "sha2small.c".}
+  {.compile: bearHashPath & "dig_oid.c".}
+  {.compile: bearHashPath & "dig_size.c".}
+  {.compile: bearHashPath & "ghash_ctmul.c".}
+  {.compile: bearHashPath & "ghash_ctmul32.c".}
+  {.compile: bearHashPath & "ghash_ctmul64.c".}
+  {.compile: bearHashPath & "ghash_pclmul.c".}
+  {.compile: bearHashPath & "ghash_pwr8.c".}
+  {.compile: bearHashPath & "md5.c".}
+  {.compile: bearHashPath & "md5sha1.c".}
+  {.compile: bearHashPath & "mgf1.c".}
+  {.compile: bearHashPath & "multihash.c".}
+  {.compile: bearHashPath & "sha1.c".}
+  {.compile: bearHashPath & "sha2big.c".}
+  {.compile: bearHashPath & "sha2small.c".}
 
 type
   ConstPtrPtrHashClass* {.importc: "const br_hash_class**", header: "bearssl_hash.h", bycopy.} = pointer

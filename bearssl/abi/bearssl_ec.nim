@@ -4,46 +4,47 @@ import
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearEcPath = bearSrcPath & "ec/"
+when not bearUseStaticLib:
+  const
+    bearEcPath = bearSrcPath & "ec/"
 
-{.compile: bearEcPath & "ecdsa_atr.c".}
-{.compile: bearEcPath & "ecdsa_default_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_default_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_default_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_default_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_i15_bits.c".}
-{.compile: bearEcPath & "ecdsa_i15_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i15_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_i15_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i15_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_i31_bits.c".}
-{.compile: bearEcPath & "ecdsa_i31_sign_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i31_sign_raw.c".}
-{.compile: bearEcPath & "ecdsa_i31_vrfy_asn1.c".}
-{.compile: bearEcPath & "ecdsa_i31_vrfy_raw.c".}
-{.compile: bearEcPath & "ecdsa_rta.c".}
-{.compile: bearEcPath & "ec_all_m15.c".}
-{.compile: bearEcPath & "ec_all_m31.c".}
-{.compile: bearEcPath & "ec_c25519_i15.c".}
-{.compile: bearEcPath & "ec_c25519_i31.c".}
-{.compile: bearEcPath & "ec_c25519_m15.c".}
-{.compile: bearEcPath & "ec_c25519_m31.c".}
-{.compile: bearEcPath & "ec_c25519_m62.c".}
-{.compile: bearEcPath & "ec_c25519_m64.c".}
-{.compile: bearEcPath & "ec_curve25519.c".}
-{.compile: bearEcPath & "ec_default.c".}
-{.compile: bearEcPath & "ec_keygen.c".}
-{.compile: bearEcPath & "ec_p256_m15.c".}
-{.compile: bearEcPath & "ec_p256_m31.c".}
-{.compile: bearEcPath & "ec_p256_m62.c".}
-{.compile: bearEcPath & "ec_p256_m64.c".}
-{.compile: bearEcPath & "ec_prime_i15.c".}
-{.compile: bearEcPath & "ec_prime_i31.c".}
-{.compile: bearEcPath & "ec_pubkey.c".}
-{.compile: bearEcPath & "ec_secp256r1.c".}
-{.compile: bearEcPath & "ec_secp384r1.c".}
-{.compile: bearEcPath & "ec_secp521r1.c".}
+  {.compile: bearEcPath & "ecdsa_atr.c".}
+  {.compile: bearEcPath & "ecdsa_default_sign_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_default_sign_raw.c".}
+  {.compile: bearEcPath & "ecdsa_default_vrfy_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_default_vrfy_raw.c".}
+  {.compile: bearEcPath & "ecdsa_i15_bits.c".}
+  {.compile: bearEcPath & "ecdsa_i15_sign_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_i15_sign_raw.c".}
+  {.compile: bearEcPath & "ecdsa_i15_vrfy_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_i15_vrfy_raw.c".}
+  {.compile: bearEcPath & "ecdsa_i31_bits.c".}
+  {.compile: bearEcPath & "ecdsa_i31_sign_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_i31_sign_raw.c".}
+  {.compile: bearEcPath & "ecdsa_i31_vrfy_asn1.c".}
+  {.compile: bearEcPath & "ecdsa_i31_vrfy_raw.c".}
+  {.compile: bearEcPath & "ecdsa_rta.c".}
+  {.compile: bearEcPath & "ec_all_m15.c".}
+  {.compile: bearEcPath & "ec_all_m31.c".}
+  {.compile: bearEcPath & "ec_c25519_i15.c".}
+  {.compile: bearEcPath & "ec_c25519_i31.c".}
+  {.compile: bearEcPath & "ec_c25519_m15.c".}
+  {.compile: bearEcPath & "ec_c25519_m31.c".}
+  {.compile: bearEcPath & "ec_c25519_m62.c".}
+  {.compile: bearEcPath & "ec_c25519_m64.c".}
+  {.compile: bearEcPath & "ec_curve25519.c".}
+  {.compile: bearEcPath & "ec_default.c".}
+  {.compile: bearEcPath & "ec_keygen.c".}
+  {.compile: bearEcPath & "ec_p256_m15.c".}
+  {.compile: bearEcPath & "ec_p256_m31.c".}
+  {.compile: bearEcPath & "ec_p256_m62.c".}
+  {.compile: bearEcPath & "ec_p256_m64.c".}
+  {.compile: bearEcPath & "ec_prime_i15.c".}
+  {.compile: bearEcPath & "ec_prime_i31.c".}
+  {.compile: bearEcPath & "ec_pubkey.c".}
+  {.compile: bearEcPath & "ec_secp256r1.c".}
+  {.compile: bearEcPath & "ec_secp384r1.c".}
+  {.compile: bearEcPath & "ec_secp521r1.c".}
 
 
 const

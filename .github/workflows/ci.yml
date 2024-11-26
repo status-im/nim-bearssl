@@ -186,3 +186,9 @@ jobs:
           env NIMLANG=c nimble test
           # C++ support requires fixing const pointer proc assignments
           # env NIMLANG=cpp nimble test
+
+      - name: Run tests with static bearssl
+        shell: bash
+        run: |
+          (cd bearssl/csources/ && make)
+          env NIMLANG=c nimble "-d:bearStaticLibPath=$(pwd)/bearssl/csources/build/libbearssl.a" test
