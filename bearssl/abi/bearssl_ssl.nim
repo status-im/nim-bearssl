@@ -766,7 +766,7 @@ proc sslEngineInjectEntropy*(cc: var SslEngineContext; data: pointer; len: uint)
     importcFunc, importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
 
 proc sslEngineGetServerName*(cc: var SslEngineContext): cstring {.inline.} =
-  return addr cc.serverName
+  return cast[cstring](addr cc.serverName)
 
 
 proc sslEngineGetVersion*(cc: var SslEngineContext): cuint {.inline.} =

@@ -76,7 +76,10 @@ template generate*[V](ctx: var HmacDrbgContext, v: var seq[V]) =
 func generateBytes*(ctx: var HmacDrbgContext, n: int): seq[byte] =
   # https://github.com/nim-lang/Nim/issues/19357
   if n > 0:
-    result = newSeqUninitialized[byte](n)
+    result = when (NimMajor, NimMinor) < (2, 2):
+               newSeqUninitialized[byte](n)
+             else:
+               newSeqUninit[byte](n)
     ctx.generate(result)
 
 func generate*(ctx: var HmacDrbgContext, T: type): T {.noinit.} =
