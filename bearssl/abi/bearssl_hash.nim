@@ -191,7 +191,7 @@ type
 proc sha256Init*(ctx: var Sha256Context) {.importcFunc, importc: "br_sha256_init",
                                        header: "bearssl_hash.h".}
 
-template sha256Update*(ctx: var Sha256Context; data: pointer; len: int) =
+template sha256Update*(ctx: var Sha256Context; data: pointer; len: uint) =
   sha224Update(ctx, data, len)
 
 proc sha256Out*(ctx: var Sha256Context; `out`: pointer) {.importcFunc,
