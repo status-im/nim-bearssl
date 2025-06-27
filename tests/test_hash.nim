@@ -5,7 +5,7 @@ import std/[strutils, sequtils],
 {.used.}
 
 suite "Hashing":
-  let
+  const
     input = [
       "",
       "a",
@@ -16,7 +16,7 @@ suite "Hashing":
       "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
     ]
   test "MD5":
-    let
+    const
       output = [
         "d41d8cd98f00b204e9800998ecf8427e",
         "0cc175b9c0f1b6a831c399e269772661",
@@ -37,7 +37,7 @@ suite "Hashing":
       md5Out(ctx, addr res[0])
       check res.foldl(a & b.toHex(), "").toLower() == output[i]
   test "SHA256":
-    let
+    const
       output = [
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
