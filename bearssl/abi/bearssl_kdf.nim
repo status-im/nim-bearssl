@@ -26,21 +26,21 @@ type
 
 
 proc hkdfInit*(hc: var HkdfContext; digestVtable: ptr HashClass; salt: pointer;
-              saltLen: uint) {.importcFunc, importc: "br_hkdf_init",
+              saltlen: csize_t) {.importcFunc, importc: "br_hkdf_init",
                                 header: "bearssl_kdf.h".}
 
 
 var hkdfNoSalt* {.importc: "br_hkdf_no_salt", header: "bearssl_kdf.h".}: byte
 
 
-proc hkdfInject*(hc: var HkdfContext; ikm: pointer; ikmLen: uint) {.importcFunc,
+proc hkdfInject*(hc: var HkdfContext; ikm: pointer; ikmlen: csize_t) {.importcFunc,
     importc: "br_hkdf_inject", header: "bearssl_kdf.h".}
 
 proc hkdfFlip*(hc: var HkdfContext) {.importcFunc, importc: "br_hkdf_flip",
                                   header: "bearssl_kdf.h".}
 
-proc hkdfProduce*(hc: var HkdfContext; info: pointer; infoLen: uint; `out`: pointer;
-                 outLen: uint): uint {.importcFunc, importc: "br_hkdf_produce",
+proc hkdfProduce*(hc: var HkdfContext; info: pointer; infolen: csize_t; `out`: pointer;
+                 outlen: csize_t): uint {.importcFunc, importc: "br_hkdf_produce",
     header: "bearssl_kdf.h".}
 
 type
@@ -55,11 +55,11 @@ type
 proc shakeInit*(sc: var ShakeContext; securityLevel: cint) {.importcFunc,
     importc: "br_shake_init", header: "bearssl_kdf.h".}
 
-proc shakeInject*(sc: var ShakeContext; data: pointer; len: uint) {.importcFunc,
+proc shakeInject*(sc: var ShakeContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_shake_inject", header: "bearssl_kdf.h".}
 
 proc shakeFlip*(hc: var ShakeContext) {.importcFunc, importc: "br_shake_flip",
                                     header: "bearssl_kdf.h".}
 
-proc shakeProduce*(sc: var ShakeContext; `out`: pointer; len: uint) {.importcFunc,
+proc shakeProduce*(sc: var ShakeContext; `out`: pointer; len: csize_t) {.importcFunc,
     importc: "br_shake_produce", header: "bearssl_kdf.h".}

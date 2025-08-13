@@ -15,11 +15,11 @@ type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
     init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: pointer;
-                                 seed: pointer; seedLen: uint) {.importcFunc.}
+                                 seed: pointer; seedlen: csize_t) {.importcFunc.}
     generate* {.importc: "generate".}: proc (ctx: ptr ptr PrngClass; `out`: pointer;
-        len: uint) {.importcFunc.}
+        len: csize_t) {.importcFunc.}
     update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
-                                     seedLen: uint) {.importcFunc.}
+                                     seedlen: csize_t) {.importcFunc.}
 
   PrngClassPointerConst* {.importc: "const br_prng_class**", header: "bearssl_rand.h", bycopy.} = pointer
 
@@ -38,13 +38,13 @@ var hmacDrbgVtable* {.importc: "br_hmac_drbg_vtable", header: "bearssl_rand.h".}
 
 
 proc hmacDrbgInit*(ctx: var HmacDrbgContext; digestClass: ptr HashClass; seed: pointer;
-                  seedLen: uint) {.importcFunc, importc: "br_hmac_drbg_init",
+                  seedlen: csize_t) {.importcFunc, importc: "br_hmac_drbg_init",
                                     header: "bearssl_rand.h".}
 
-proc hmacDrbgGenerate*(ctx: var HmacDrbgContext; `out`: pointer; len: uint) {.importcFunc,
+proc hmacDrbgGenerate*(ctx: var HmacDrbgContext; `out`: pointer; len: csize_t) {.importcFunc,
     importc: "br_hmac_drbg_generate", header: "bearssl_rand.h".}
 
-proc hmacDrbgUpdate*(ctx: var HmacDrbgContext; seed: pointer; seedLen: uint) {.importcFunc,
+proc hmacDrbgUpdate*(ctx: var HmacDrbgContext; seed: pointer; seedlen: csize_t) {.importcFunc,
     importc: "br_hmac_drbg_update", header: "bearssl_rand.h".}
 
 proc hmacDrbgGetHash*(ctx: var HmacDrbgContext): ptr HashClass {.inline.} =
@@ -71,11 +71,11 @@ proc prngSeederSystem*(name: constCstringArray): PrngSeeder {.importcFunc,
 
 
 # proc aesctrDrbgInit*(ctx: var AesctrDrbgContext; aesctr: ptr BlockCtrClass;
-#                     seed: pointer; seedLen: uint) {.importcFunc,
+#                     seed: pointer; seedlen: csize_t) {.importcFunc,
 #     importc: "br_aesctr_drbg_init", header: "bearssl_rand.h".}
 
-# proc aesctrDrbgGenerate*(ctx: var AesctrDrbgContext; `out`: pointer; len: uint) {.
+# proc aesctrDrbgGenerate*(ctx: var AesctrDrbgContext; `out`: pointer; len: csize_t) {.
 #     importcFunc, importc: "br_aesctr_drbg_generate", header: "bearssl_rand.h".}
 
-# proc aesctrDrbgUpdate*(ctx: var AesctrDrbgContext; seed: pointer; seedLen: uint) {.
+# proc aesctrDrbgUpdate*(ctx: var AesctrDrbgContext; seed: pointer; seedlen: csize_t) {.
 #     importcFunc, importc: "br_aesctr_drbg_update", header: "bearssl_rand.h".}

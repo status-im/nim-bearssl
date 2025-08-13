@@ -20,18 +20,18 @@ type
 
 
 
-proc tls10Prf*(dst: pointer; len: uint; secret: pointer; secretLen: uint;
+proc tls10Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
               label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.importcFunc,
     importc: "br_tls10_prf", header: "bearssl_prf.h".}
 
-proc tls12Sha256Prf*(dst: pointer; len: uint; secret: pointer; secretLen: uint;
+proc tls12Sha256Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
                     label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.
     importcFunc, importc: "br_tls12_sha256_prf", header: "bearssl_prf.h".}
 
-proc tls12Sha384Prf*(dst: pointer; len: uint; secret: pointer; secretLen: uint;
+proc tls12Sha384Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
                     label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.
     importcFunc, importc: "br_tls12_sha384_prf", header: "bearssl_prf.h".}
 
 type
-  TlsPrfImpl* {.importc: "br_tls_prf_impl".} = proc (dst: pointer; len: uint; secret: pointer; secretLen: uint;
+  TlsPrfImpl* {.importc: "br_tls_prf_impl".} = proc (dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
                    label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.importcFunc.}
