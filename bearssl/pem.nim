@@ -20,7 +20,7 @@ func push*(ctx: var PemDecoderContext, data: openArray[byte|char]): int =
 func setdest*(
     ctx: var PemDecoderContext;
     dest: proc (destCtx: pointer;
-      src: pointer; len: uint) {.cdecl, gcsafe, noSideEffect, raises: [].};
+      src: pointer; len: csize_t) {.cdecl, gcsafe, noSideEffect, raises: [].};
     destCtx: pointer) =
   pemDecoderSetdest(ctx, dest, destCtx)
 
