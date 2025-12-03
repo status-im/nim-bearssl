@@ -35,7 +35,7 @@ const
 
 # TODO https://github.com/nim-lang/Nim/issues/19864
 
-{.passc: "-I\"" & currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] .}
+{.passc: "-I\"" & currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "\"".}
 {.passc: "-I\"" & bearSrcPath & "\""}
 {.passc: "-I\"" & bearIncPath & "\""}
 {.passc: "-I\"" & bearToolsPath & "\""}
