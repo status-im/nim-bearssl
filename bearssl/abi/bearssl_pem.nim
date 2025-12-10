@@ -25,7 +25,7 @@ type
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: uint) {.importcFunc.}
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: csize_t) {.importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
@@ -37,11 +37,11 @@ type
 proc pemDecoderInit*(ctx: var PemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: uint): uint {.
+proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: csize_t): uint {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: uint) {.importcFunc.}; destCtx: pointer) {.inline.} =
+    src: pointer; len: csize_t) {.importcFunc.}; destCtx: pointer) {.inline.} =
   
   # llvm-mingw will complaints about `incompatible function pointer types`
   # because generated type missing const in the middle param
@@ -73,7 +73,7 @@ proc pemDecoderName*(ctx: var PemDecoderContext): cstring {.inline.} =
   return cast[cstring](addr ctx.name)
 
 
-proc pemEncode*(dest: pointer; data: pointer; len: uint; banner: cstring; flags: cuint): uint {.
+proc pemEncode*(dest: pointer; data: pointer; len: csize_t; banner: cstring; flags: cuint): uint {.
     importcFunc, importc: "br_pem_encode", header: "bearssl_pem.h".}
 
 const

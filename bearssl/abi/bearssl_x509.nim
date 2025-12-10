@@ -194,7 +194,7 @@ type
     startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
         importcFunc.}
     append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ptr byte;
-                                     len: uint) {.importcFunc.}
+                                     len: csize_t) {.importcFunc.}
     endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.importcFunc.}
     endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.importcFunc.}
     getPkey* {.importc: "get_pkey".}: proc (ctx: ptr ptr X509Class; usages: ptr cuint): ptr X509Pkey {.
@@ -368,7 +368,7 @@ type
     isCA* {.importc: "isCA".}: bool
     copyDn* {.importc: "copy_dn".}: byte
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
-    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: uint) {.
+    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: csize_t) {.
         importcFunc.}
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
@@ -379,10 +379,10 @@ type
 
 
 proc x509DecoderInit*(ctx: var X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: pointer; len: uint) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
+    buf: pointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
     importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
-proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: uint) {.importcFunc,
+proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_x509_decoder_push", header: "bearssl_x509.h".}
 
 proc x509DecoderGetPkey*(ctx: var X509DecoderContext): ptr X509Pkey {.inline.} =
@@ -445,7 +445,7 @@ type
 proc skeyDecoderInit*(ctx: var SkeyDecoderContext) {.importcFunc,
     importc: "br_skey_decoder_init", header: "bearssl_x509.h".}
 
-proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: pointer; len: uint) {.importcFunc,
+proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_skey_decoder_push", header: "bearssl_x509.h".}
 
 proc skeyDecoderLastError*(ctx: var SkeyDecoderContext): cint {.inline.} =
@@ -478,11 +478,11 @@ proc skeyDecoderGetEc*(ctx: var SkeyDecoderContext): ptr EcPrivateKey {.inline.}
 
 
 proc encodeRsaRawDer*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                     d: pointer; dlen: uint): uint {.importcFunc,
+                     d: pointer; dlen: csize_t): uint {.importcFunc,
     importc: "br_encode_rsa_raw_der", header: "bearssl_x509.h".}
 
 proc encodeRsaPkcs8Der*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                       d: pointer; dlen: uint): uint {.importcFunc,
+                       d: pointer; dlen: csize_t): uint {.importcFunc,
     importc: "br_encode_rsa_pkcs8_der", header: "bearssl_x509.h".}
 
 proc encodeEcRawDer*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): uint {.
