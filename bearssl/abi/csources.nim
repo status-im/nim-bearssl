@@ -35,10 +35,17 @@ const
 
 # TODO https://github.com/nim-lang/Nim/issues/19864
 
-{.passc: "-I\"" & currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "\"".}
-{.passc: "-I\"" & bearSrcPath & "\""}
-{.passc: "-I\"" & bearIncPath & "\""}
-{.passc: "-I\"" & bearToolsPath & "\""}
+# quoteShell is not defined when compiling to bare metal
+when not defined(`any`) and not defined(standalone):
+  {.passc: "-I" & quoteShell(currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]).}
+  {.passc: "-I" & quoteShell(bearSrcPath)}
+  {.passc: "-I" & quoteShell(bearIncPath)}
+  {.passc: "-I" & quoteShell(bearToolsPath)}
+else:
+  {.passc: "-I\"" & currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "\"".}
+  {.passc: "-I\"" & bearSrcPath & "\""}
+  {.passc: "-I\"" & bearIncPath & "\""}
+  {.passc: "-I\"" & bearToolsPath & "\""}
 
 
 when defined(windows):
