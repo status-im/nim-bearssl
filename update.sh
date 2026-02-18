@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ## Nim-BearSSL
 ## Copyright (c) 2026 Status Research & Development GmbH
 ## Licensed under either of
