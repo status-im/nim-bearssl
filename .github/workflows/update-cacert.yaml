@@ -1,0 +1,39 @@
+## Nim-BearSSL
+## Copyright (c) 2026 Status Research & Development GmbH
+## Licensed under either of
+##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
+##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
+## at your option.
+## This file may not be copied, modified, or distributed except according to
+## those terms.
+name: Update cacert
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update
+        id: update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ./update.sh; then
+            echo "changes=1" >> $GITHUB_OUTPUT
+          elif [ $? -eq 2 ]; then
+            echo "changes=0" >> $GITHUB_OUTPUT
+          else
+            exit 1
+          fi
+
+      - name: Release
+        if: steps.update.outputs.changes == 1
+        run: |
+          git push origin master
