@@ -10,7 +10,7 @@
 set -eu -o pipefail
 cd -P -- "$(dirname -- "$0")"
 
-if ! git diff --exit-code -- . ':(exclude)update.sh' > /dev/null; then
+if ! git diff --quiet -- . ':(exclude)update.sh'; then
   echo "Commit changes before updating!"
   exit 1
 fi
@@ -25,7 +25,7 @@ sed -i.bak -E \
   -e "s|(// SHA-256: )[0-9a-f]+|\1${HASH}|" \
   cacert.c
 rm cacert.c.bak
-if git diff --exit-code > /dev/null; then
+if git diff --quiet; then
   echo "This repository is already up to date"
   rm cacert.pem
   exit 2  # No changes
