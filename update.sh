@@ -39,7 +39,8 @@ fi
 # Convert .pem to .c
 TODAY="$(date +%Y-%m-%d)"
 echo "// ${TODAY}: ${URL}" > cacert.c
-echo "// SHA-256: ${HASH}\n" >> cacert.c
+echo "// SHA-256: ${HASH}" >> cacert.c
+echo "" >> cacert.c
 echo '#include <brssl.h>' >> cacert.c
 ../csources/build/brssl ta cacert.pem | sed "s/static //" >> cacert.c
 rm cacert.pem
