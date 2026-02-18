@@ -12,17 +12,17 @@
 ## https://curl.haxx.se/ca/cacert.pem
 ## And converted to C header using:
 ##
-## echo '#include <brssl.h> > cacert.c'
-## brssl ta cacert.pem | sed "s/static //" >> cacert.c.
+## echo '#include <brssl.h>' > cacert.c
+## brssl ta cacert.pem | sed "s/static //" >> cacert.c
 ## MozillaTrustAnchorsCount below needs to be updated manually to the same
 ## value as TAs_NUM
 
 import ../abi/csources
 from ../abi/bearssl_x509 import X509TrustAnchor
 
-{.compile: bearPath & "/../certs/cacert20240311.c".}
+{.compile: bearPath & "/../certs/cacert.c".}
 
-const MozillaTrustAnchorsCount* = 147 # TAs_NUM
+const MozillaTrustAnchorsCount* = 147  # TAs_NUM
 
 var MozillaTrustAnchors* {.importc: "TAs".}: array[
   MozillaTrustAnchorsCount, X509TrustAnchor]

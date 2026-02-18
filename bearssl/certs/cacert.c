@@ -1,3 +1,5 @@
+// SHA-256: 0
+
 #include <brssl.h>
 
 const unsigned char TA0_DN[] = {
