@@ -17,8 +17,21 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+    env:
+      BRANCH: dev/github-actions/update-cacert
 
     steps:
+      - name: Cleanup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Branch deletion fails when using gh pr merge --auto,
+          # so clean up stale branch from prior run on start
+          # https://github.com/cli/cli/issues/9073
+          gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$BRANCH" \
+            || true
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -37,7 +50,41 @@ jobs:
             exit 1
           fi
 
-      - name: Release
+      - name: Create pull request
         if: steps.update.outputs.changes == 1
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git push origin master
+          git checkout -b "$BRANCH"
+          git push origin "$BRANCH"
+
+          # This uses GITHUB_TOKEN so doesn't trigger actions:
+          # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
+          gh pr create \
+            --title "$(git log -1 --format=%s)" \
+            --body "$(git log -1 --format=%b)" \
+            --base master \
+            --head "$BRANCH"
+
+      - name: Auto-merge pull request
+        if: steps.update.outputs.changes == 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          # Only trigger CI and auto-merge if changes are limited to certs
+          # to protect against malicious code in ./update.sh dependencies
+          # (e.g., the inner `make`) to overwrite ci.yaml and leak DEPLOY_KEY
+          if git show --name-only --format="" | grep -qv '^bearssl/certs/'; then
+            echo "::warning::Unexpected changes outside bearssl/certs"
+          else
+            # Force-push with the DEPLOY_KEY to trigger CI
+            git commit --amend --no-edit
+            ssh-agent bash -c '
+              ssh-add - <<< "$DEPLOY_KEY"
+              git push --force "git@github.com:${{ github.repository }}.git" "$BRANCH"
+            '
+
+            # Auto-merge when CI finished
+            gh pr merge "$BRANCH" --auto --squash
+          fi
