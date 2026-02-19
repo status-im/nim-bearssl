@@ -12,14 +12,17 @@ on:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
+env:
+  BRANCH: dev/github-actions/update-cacert
+
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-    env:
-      BRANCH: dev/github-actions/update-cacert
+    outputs:
+      changes: ${{ steps.update.outputs.changes }}
 
     steps:
       - name: Cleanup
@@ -63,27 +66,43 @@ jobs:
           gh pr create \
             --title "$(git log -1 --format=%s)" \
             --body "$(git log -1 --format=%b)" \
-            --base master \
+            --base "${{ github.event.repository.default_branch }}" \
             --head "$BRANCH"
 
-      - name: Auto-merge pull request
-        if: steps.update.outputs.changes == 1
+  auto-merge:
+    needs: update
+    if: needs.update.outputs.changes == 1
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 2
+
+      - name: Verify and trigger CI
         env:
           GH_TOKEN: ${{ github.token }}
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
           # Only trigger CI and auto-merge if changes are limited to certs
           # to protect against malicious code in ./update.sh dependencies
-          # (e.g., the inner `make`) to overwrite ci.yaml and leak DEPLOY_KEY
-          if git show --name-only --format="" | grep -qv '^bearssl/certs/'; then
+          # (e.g., the inner `make`) replacing binaries to leak DEPLOY_KEY
+          git fetch --depth=1 origin "${{ github.event.repository.default_branch }}"
+          if [ "$(git rev-parse HEAD~1)" != "$(git rev-parse FETCH_HEAD)" ]; then
+            echo "::warning::Unexpected extra commits on branch"
+          elif git diff --name-only HEAD~1 | grep -qv '^bearssl/certs/'; then
             echo "::warning::Unexpected changes outside bearssl/certs"
           else
             # Force-push with the DEPLOY_KEY to trigger CI
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             git commit --amend --no-edit
-            ssh-agent bash -c '
-              ssh-add - <<< "$DEPLOY_KEY"
-              git push --force "git@github.com:${{ github.repository }}.git" "$BRANCH"
-            '
+            git push --force origin "$BRANCH"
 
             # Auto-merge when CI finished
             gh pr merge "$BRANCH" --auto --squash
