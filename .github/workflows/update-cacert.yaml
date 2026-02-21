@@ -83,6 +83,7 @@ jobs:
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
           ref: ${{ env.BRANCH }}
+          fetch-depth: 2
 
       - name: Verify and trigger CI
         env:
