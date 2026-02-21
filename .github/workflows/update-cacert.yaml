@@ -1,0 +1,106 @@
+## Nim-BearSSL
+## Copyright (c) 2026 Status Research & Development GmbH
+## Licensed under either of
+##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
+##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
+## at your option.
+## This file may not be copied, modified, or distributed except according to
+## those terms.
+name: Update cacert
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+env:
+  BRANCH: dev/github-actions/update-cacert
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      changes: ${{ steps.update.outputs.changes }}
+
+    steps:
+      - name: Cleanup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Branch deletion fails when using gh pr merge --auto,
+          # so clean up stale branch from prior run on start
+          # https://github.com/cli/cli/issues/9073
+          gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$BRANCH" \
+            || true
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Update
+        id: update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ./update.sh; then
+            echo "changes=1" >> $GITHUB_OUTPUT
+          elif [ $? -eq 2 ]; then
+            echo "changes=0" >> $GITHUB_OUTPUT
+          else
+            exit 1
+          fi
+
+      - name: Create pull request
+        if: steps.update.outputs.changes == 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git checkout -b "$BRANCH"
+          git push origin "$BRANCH"
+
+          # This uses GITHUB_TOKEN so doesn't trigger actions:
+          # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
+          gh pr create \
+            --title "$(git log -1 --format=%s)" \
+            --body "$(git log -1 --format=%b)" \
+            --base "${{ github.event.repository.default_branch }}" \
+            --head "$BRANCH"
+
+  auto-merge:
+    needs: update
+    if: needs.update.outputs.changes == 1
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          ref: ${{ env.BRANCH }}
+
+      - name: Verify and trigger CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Only trigger CI and auto-merge if changes are limited to certs
+          # to protect against malicious code in ./update.sh dependencies
+          # (e.g., the inner `make`) replacing binaries to leak DEPLOY_KEY
+          git fetch --depth=1 origin "${{ github.event.repository.default_branch }}"
+          if git diff --name-only FETCH_HEAD HEAD | grep -qv '^bearssl/certs/'; then
+            echo "::warning::Unexpected changes outside bearssl/certs"
+          else
+            # Force-push with the DEPLOY_KEY to trigger CI
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit --amend --no-edit
+            git push --force origin "$BRANCH"
+
+            # Auto-merge when CI finished
+            gh pr merge "$BRANCH" --auto --squash
+          fi
