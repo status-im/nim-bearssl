@@ -1,5 +1,5 @@
 ## Nim-BearSSL
-## Copyright (c) 2018-2021 Status Research & Development GmbH
+## Copyright (c) 2018-2026 Status Research & Development GmbH
 ## Licensed under either of
 ##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
 ##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
@@ -22,7 +22,7 @@ from ../abi/bearssl_x509 import X509TrustAnchor
 
 {.compile: bearPath & "/../certs/cacert.c".}
 
-const MozillaTrustAnchorsCount* = 147  # TAs_NUM
+const MozillaTrustAnchorsCount* = 144  # TAs_NUM
 
 var MozillaTrustAnchors* {.importc: "TAs".}: array[
   MozillaTrustAnchorsCount, X509TrustAnchor]
