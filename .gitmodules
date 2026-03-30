@@ -1,3 +1,5 @@
 [submodule "bearssl/csources"]
 	path = bearssl/csources
-	url = https://github.com/status-im/BearSSL
+	url = https://www.bearssl.org/git/BearSSL
+	ignore = dirty
+	branch = master
