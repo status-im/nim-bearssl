@@ -487,6 +487,9 @@ type
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr byte
 
+  ProtocolNamesPointerConst* {.importc: "const char **", header: "bearssl_ssl.h",
+                              bycopy.} = pointer
+
   SslEngineContext* {.importc: "br_ssl_engine_context", header: "bearssl_ssl.h",
                      bycopy.} = object
     err* {.importc: "err".}: cint
@@ -549,7 +552,7 @@ type
     chainLen* {.importc: "chain_len".}: uint
     certCur* {.importc: "cert_cur".}: ptr byte
     certLen* {.importc: "cert_len".}: uint
-    protocolNames* {.importc: "protocol_names".}: cstringArray
+    protocolNames* {.importc: "protocol_names".}: ProtocolNamesPointerConst
     protocolNamesNum* {.importc: "protocol_names_num".}: uint16
     selectedProtocol* {.importc: "selected_protocol".}: uint16
     prf10* {.importc: "prf10".}: TlsPrfImpl
@@ -619,15 +622,19 @@ proc sslEngineSetX509*(cc: var SslEngineContext;
 proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) =
   cc.x509ctx = X509ClassPointerConst(x509ctx)
 
-proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: cstringArray;
-                               num: uint) {.inline.} =
+proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: ProtocolNamesPointerConst;
+                                num: uint) =
   ctx.protocolNames = names
+  ctx.protocolNamesNum = uint16 num
+
+proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: cstringArray; num: uint) =
+  ctx.protocolNames = ProtocolNamesPointerConst(names)
   ctx.protocolNamesNum = uint16 num
 
 proc sslEngineGetSelectedProtocol*(ctx: var SslEngineContext): cstring {.inline.} =
   var k: cuint
   k = ctx.selectedProtocol
-  return if (k == 0 or k == 0xFFFF): nil else: ctx.protocolNames[k - 1]
+  return if (k == 0 or k == 0xFFFF): nil else: cast[cstringArray](ctx.protocolNames)[k - 1]
 
 
 proc sslEngineSetHash*(ctx: var SslEngineContext; id: cint; impl: ptr HashClass) {.
