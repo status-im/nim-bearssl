@@ -1,5 +1,5 @@
 import
-  "."/[csources, intx]
+  "."/[consttypes, csources, intx]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -64,7 +64,7 @@ type
     contextSize* {.importc: "context_size".}: uint
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: pointer;
+    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcencClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
@@ -77,7 +77,7 @@ type
     contextSize* {.importc: "context_size".}: uint
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: pointer;
+    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
     run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcdecClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
@@ -89,9 +89,9 @@ type
     contextSize* {.importc: "context_size".}: uint
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: pointer;
+    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
-    run* {.importc: "run".}: proc (ctx: ptr ptr BlockCtrClass; iv: pointer; cc: uint32;
+    run* {.importc: "run".}: proc (ctx: ptr ptr BlockCtrClass; iv: ConstPointer; cc: uint32;
                                data: pointer; len: csize_t): uint32 {.importcFunc.}
 
 
@@ -102,7 +102,7 @@ type
     contextSize* {.importc: "context_size".}: uint
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: pointer;
+    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                        cbcmac: pointer; data: pointer; len: csize_t) {.
@@ -113,7 +113,7 @@ type
     ctr* {.importc: "ctr".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
     mac* {.importc: "mac".}: proc (ctx: ptr ptr BlockCtrcbcClass; cbcmac: pointer;
-                               data: pointer; len: csize_t) {.importcFunc.}
+                               data: ConstPointer; len: csize_t) {.importcFunc.}
 
 
 

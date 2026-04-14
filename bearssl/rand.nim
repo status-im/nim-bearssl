@@ -1,8 +1,8 @@
 import
   typetraits,
-  ./abi/[bearssl_hash, bearssl_rand]
+  ./abi/[bearssl_hash, bearssl_rand, consttypes]
 
-export bearssl_rand
+export bearssl_rand, consttypes
 
 # About types used in helpers:
 # `bool` types are problematic because because they only use one bit of the

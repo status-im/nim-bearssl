@@ -1,7 +1,7 @@
 import
   "."/[
     bearssl_aead, bearssl_block, bearssl_ec, bearssl_hash, bearssl_hmac,
-    bearssl_prf, bearssl_rand, bearssl_rsa, bearssl_x509, csources]
+    bearssl_prf, bearssl_rand, bearssl_rsa, bearssl_x509, consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -489,6 +489,10 @@ type
 
   ProtocolNamesPointerConst* {.importc: "const char **", header: "bearssl_ssl.h",
                               bycopy.} = pointer
+  ConstPtrSslClientContext* {.importc: "const br_ssl_client_context *",
+                             header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrSslServerContext* {.importc: "const br_ssl_server_context *",
+                             header: "bearssl_ssl.h", bycopy.} = pointer
 
   SslEngineContext* {.importc: "br_ssl_engine_context", header: "bearssl_ssl.h",
                      bycopy.} = object
@@ -887,13 +891,13 @@ type
     startName* {.importc: "start_name".}: proc (
         pctx: ptr ptr SslClientCertificateClass; len: csize_t) {.importcFunc.}
     appendName* {.importc: "append_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; data: ptr byte; len: csize_t) {.importcFunc.}
+        pctx: ptr ptr SslClientCertificateClass; data: ConstPtrByte; len: csize_t) {.importcFunc.}
     endName* {.importc: "end_name".}: proc (pctx: ptr ptr SslClientCertificateClass) {.
         importcFunc.}
     endNameList* {.importc: "end_name_list".}: proc (
         pctx: ptr ptr SslClientCertificateClass) {.importcFunc.}
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslClientCertificateClass;
-                                     cc: var SslClientContext; authTypes: uint32;
+                                     cc: ConstPtrSslClientContext; authTypes: uint32;
                                      choices: ptr SslClientCertificate) {.importcFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       data: ptr byte; len: var uint): uint32 {.
@@ -1037,7 +1041,7 @@ type
                          header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
     choose* {.importc: "choose".}: proc (pctx: ptr ptr SslServerPolicyClass;
-                                     cc: var SslServerContext;
+                                     cc: ConstPtrSslServerContext;
                                      choices: ptr SslServerChoices): cint {.importcFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       data: ptr byte; len: var uint): uint32 {.

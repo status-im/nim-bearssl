@@ -1,4 +1,4 @@
 import
-  ./abi/bearssl_hash
+  ./abi/[bearssl_hash, consttypes]
 
-export bearssl_hash
+export bearssl_hash, consttypes

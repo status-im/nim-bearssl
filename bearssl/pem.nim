@@ -1,8 +1,8 @@
 import
   typetraits,
-  ./abi/bearssl_pem
+  ./abi/[bearssl_pem, consttypes]
 
-export bearssl_pem
+export bearssl_pem, consttypes
 
 func init*(v: var PemDecoderContext) =
   # Careful, PemDecoderContext items are not copyable!
@@ -20,7 +20,7 @@ func push*(ctx: var PemDecoderContext, data: openArray[byte|char]): int =
 func setdest*(
     ctx: var PemDecoderContext;
     dest: proc (destCtx: pointer;
-      src: pointer; len: csize_t) {.cdecl, gcsafe, noSideEffect, raises: [].};
+      src: ConstPointer; len: csize_t) {.cdecl, gcsafe, noSideEffect, raises: [].};
     destCtx: pointer) =
   pemDecoderSetdest(ctx, dest, destCtx)
 

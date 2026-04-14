@@ -1,5 +1,5 @@
 import
-  "."/[bearssl_hash, bearssl_rand, csources, intx]
+  "."/[bearssl_hash, bearssl_rand, consttypes, csources, intx]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -185,16 +185,16 @@ type
 type
   EcImpl* {.importc: "br_ec_impl", header: "bearssl_ec.h", bycopy.} = object
     supportedCurves* {.importc: "supported_curves".}: uint32
-    generator* {.importc: "generator".}: proc (curve: cint; len: var uint): ptr byte {.
+    generator* {.importc: "generator".}: proc (curve: cint; len: var uint): ConstPtrByte {.
         importcFunc.}
-    order* {.importc: "order".}: proc (curve: cint; len: var uint): ptr byte {.importcFunc.}
+    order* {.importc: "order".}: proc (curve: cint; len: var uint): ConstPtrByte {.importcFunc.}
     xoff* {.importc: "xoff".}: proc (curve: cint; len: var uint): uint {.importcFunc.}
-    mul* {.importc: "mul".}: proc (g: ptr byte; glen: csize_t; x: ptr byte;
+    mul* {.importc: "mul".}: proc (g: ptr byte; glen: csize_t; x: ConstPtrByte;
                                xlen: csize_t; curve: cint): uint32 {.importcFunc.}
-    mulgen* {.importc: "mulgen".}: proc (r: ptr byte; x: ptr byte; xlen: csize_t;
+    mulgen* {.importc: "mulgen".}: proc (r: ptr byte; x: ConstPtrByte; xlen: csize_t;
                                      curve: cint): uint {.importcFunc.}
-    muladd* {.importc: "muladd".}: proc (a: ptr byte; b: ptr byte; len: csize_t;
-                                     x: ptr byte; xlen: csize_t; y: ptr byte;
+    muladd* {.importc: "muladd".}: proc (a: ptr byte; b: ConstPtrByte; len: csize_t;
+                                     x: ConstPtrByte; xlen: csize_t; y: ConstPtrByte;
                                      ylen: csize_t; curve: cint): uint32 {.importcFunc.}
 
 
