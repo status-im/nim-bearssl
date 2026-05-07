@@ -1,5 +1,5 @@
 import
-  "."/[bearssl_ec, bearssl_hash, bearssl_rsa, csources]
+  "."/[bearssl_ec, bearssl_hash, bearssl_rsa, consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -193,7 +193,7 @@ type
         serverName: cstring) {.importcFunc.}
     startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
         importcFunc.}
-    append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ptr byte;
+    append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ConstPtrByte;
                                      len: csize_t) {.importcFunc.}
     endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.importcFunc.}
     endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.importcFunc.}
@@ -368,7 +368,7 @@ type
     isCA* {.importc: "isCA".}: bool
     copyDn* {.importc: "copy_dn".}: byte
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
-    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: csize_t) {.
+    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: ConstPointer; len: csize_t) {.
         importcFunc.}
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
@@ -379,7 +379,7 @@ type
 
 
 proc x509DecoderInit*(ctx: var X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: pointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
+    buf: ConstPointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
     importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
 proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: csize_t) {.importcFunc,

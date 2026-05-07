@@ -1,4 +1,4 @@
 import
-  ./abi/bearssl_aead
+  ./abi/[bearssl_aead, consttypes]
 
-export bearssl_aead
+export bearssl_aead, consttypes

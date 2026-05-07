@@ -1,5 +1,5 @@
 import
-  "."/[csources]
+  "."/[consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -25,7 +25,7 @@ type
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: csize_t) {.importcFunc.}
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: ConstPointer; len: csize_t) {.importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
@@ -41,16 +41,8 @@ proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: csize_t): u
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: csize_t) {.importcFunc.}; destCtx: pointer) {.inline.} =
-  
-  # llvm-mingw will complaints about `incompatible function pointer types`
-  # because generated type missing const in the middle param
-  # `void (*)(void *, void *, size_t)`
-  when false:
-    ctx.dest = dest
-    
-  {.emit: """typedef void (*pem_decoder_dest_t)(void *, const void *, size_t);""" .}
-  {.emit: [ctx.dest, "= (pem_decoder_dest_t)", dest, ";"].}
+    src: ConstPointer; len: csize_t) {.importcFunc.}; destCtx: pointer) {.inline.} =
+  ctx.dest = dest
   ctx.destCtx = destCtx
 
 

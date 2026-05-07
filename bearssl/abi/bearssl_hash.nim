@@ -1,5 +1,5 @@
 import
-  "."/[csources, inner]
+  "."/[consttypes, csources, inner]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -29,12 +29,12 @@ type
     contextSize* {.importc: "context_size".}: uint
     desc* {.importc: "desc".}: uint32
     init* {.importc: "init".}: proc (ctx: ConstPtrPtrHashClass) {.importcFunc.}
-    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: pointer;
+    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: ConstPointer;
                                      len: csize_t) {.importcFunc.}
     `out`* {.importc: "out".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer) {.importcFunc.}
     state* {.importc: "state".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer): uint64 {.
         importcFunc.}
-    setState* {.importc: "set_state".}: proc (ctx: ConstPtrPtrHashClass; stb: pointer;
+    setState* {.importc: "set_state".}: proc (ctx: ConstPtrPtrHashClass; stb: ConstPointer;
         count: uint64) {.importcFunc.}
 
 template hashdesc_Id*(id: untyped): untyped =
@@ -344,25 +344,25 @@ proc multihashOut*(ctx: var MultihashContext; id: cint; dst: pointer): uint {.im
     importc: "br_multihash_out", header: "bearssl_hash.h".}
 
 type
-  Ghash* {.importc: "br_ghash".} = proc (y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc.}
+  Ghash* {.importc: "br_ghash".} = proc (y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc.}
 
 
-proc ghashCtmul*(y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc,
+proc ghashCtmul*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_ctmul", header: "bearssl_hash.h".}
 
-proc ghashCtmul32*(y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc,
+proc ghashCtmul32*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_ctmul32", header: "bearssl_hash.h".}
 
-proc ghashCtmul64*(y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc,
+proc ghashCtmul64*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_ctmul64", header: "bearssl_hash.h".}
 
-proc ghashPclmul*(y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc,
+proc ghashPclmul*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_pclmul", header: "bearssl_hash.h".}
 
 proc ghashPclmulGet*(): Ghash {.importcFunc, importc: "br_ghash_pclmul_get",
                              header: "bearssl_hash.h".}
 
-proc ghashPwr8*(y: pointer; h: pointer; data: pointer; len: csize_t) {.importcFunc,
+proc ghashPwr8*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_pwr8", header: "bearssl_hash.h".}
 
 proc ghashPwr8Get*(): Ghash {.importcFunc, importc: "br_ghash_pwr8_get",

@@ -1,4 +1,4 @@
 import
-  ./abi/bearssl_block
+  ./abi/[bearssl_block, consttypes]
 
-export bearssl_block
+export bearssl_block, consttypes

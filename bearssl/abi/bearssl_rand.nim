@@ -1,5 +1,5 @@
 import
-  "."/[bearssl_hash, bearssl_hmac, csources]
+  "."/[bearssl_hash, bearssl_hmac, consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -14,11 +14,11 @@ const
 type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
-    init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: pointer;
-                                 seed: pointer; seedlen: csize_t) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: ConstPointer;
+                                 seed: ConstPointer; seedlen: csize_t) {.importcFunc.}
     generate* {.importc: "generate".}: proc (ctx: ptr ptr PrngClass; `out`: pointer;
         len: csize_t) {.importcFunc.}
-    update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: pointer;
+    update* {.importc: "update".}: proc (ctx: ptr ptr PrngClass; seed: ConstPointer;
                                      seedlen: csize_t) {.importcFunc.}
 
   PrngClassPointerConst* {.importc: "const br_prng_class**", header: "bearssl_rand.h", bycopy.} = pointer
