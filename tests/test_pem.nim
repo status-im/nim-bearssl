@@ -14,7 +14,7 @@ suite "PEM":
 
     ctx.init()
 
-    proc test(dctx: pointer, data: ConstPointer, len: csize_t) {.cdecl.} =
+    proc test(dctx: pointer, data: pointer, len: csize_t) {.cdecl.} =
       cast[ptr bool](dctx)[] = true
 
     ctx.setdest(test, addr called)
