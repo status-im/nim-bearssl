@@ -9,7 +9,7 @@ const
 
 {.compile: bearCodecPath & "pemdec.c".}
 {.compile: bearCodecPath & "pemenc.c".}
-{.compile: currentSourcePath.parentDir / "pem_compat.c".}
+{.compile: currentSourcePath.parentDir & "/pem_compat.c".}
 
 type
   INNER_C_STRUCT_bearssl_pem_1* {.importc: "br_pem_decoder_context::no_name",
