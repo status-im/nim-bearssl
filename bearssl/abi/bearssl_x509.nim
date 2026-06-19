@@ -189,18 +189,29 @@ const
 type
   X509Class* {.importc: "br_x509_class", header: "bearssl_x509.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
-    startChain* {.importc: "start_chain".}: proc (ctx: ptr ptr X509Class;
-        serverName: cstring) {.importcFunc.}
-    startCert* {.importc: "start_cert".}: proc (ctx: ptr ptr X509Class; length: uint32) {.
+    startChain* {.importc: "start_chain".}: proc (ctx: X509ClassPointerConst;
+        serverName: ConstCstring) {.importcFunc.}
+    startCert* {.importc: "start_cert".}: proc (ctx: X509ClassPointerConst; length: uint32) {.
         importcFunc.}
-    append* {.importc: "append".}: proc (ctx: ptr ptr X509Class; buf: ConstPtrByte;
+    append* {.importc: "append".}: proc (ctx: X509ClassPointerConst; buf: ConstPtrByte;
                                      len: csize_t) {.importcFunc.}
-    endCert* {.importc: "end_cert".}: proc (ctx: ptr ptr X509Class) {.importcFunc.}
-    endChain* {.importc: "end_chain".}: proc (ctx: ptr ptr X509Class): cuint {.importcFunc.}
-    getPkey* {.importc: "get_pkey".}: proc (ctx: ptr ptr X509Class; usages: ptr cuint): ptr X509Pkey {.
-        importcFunc.}
+    endCert* {.importc: "end_cert".}: proc (ctx: X509ClassPointerConst) {.importcFunc.}
+    endChain* {.importc: "end_chain".}: proc (ctx: X509ClassPointerConst): cuint {.importcFunc.}
+    getPkey* {.importc: "get_pkey".}: proc (ctx: X509ClassPointerConstConst;
+        usages: ptr cuint): ConstPtrX509Pkey {.importcFunc.}
 
   X509ClassPointerConst* {.importc: "const br_x509_class**", header: "bearssl_x509.h", bycopy.} = pointer
+    ## C type `const br_x509_class**` — the `ctx` argument of most X509 callbacks.
+  X509ClassPointerConstConst* {.
+    importc: "const br_x509_class *const *", header: "bearssl_x509.h", bycopy
+  .} = pointer
+    ## C type `const br_x509_class *const *` — the `ctx` argument of `get_pkey`.
+  ConstPtrX509Pkey* {.importc: "const br_x509_pkey *", header: "bearssl_x509.h", bycopy.} =
+    pointer
+    ## C type `const br_x509_pkey *` — the return type of `get_pkey`.
+    ## Aliased to `pointer` (not `ptr X509Pkey`): a typed-ptr alias emits the
+    ## structural `br_x509_pkey *`, dropping `const`; `pointer` keeps the
+    ## importc spelling so the qualifier survives.
 
 type
   X509KnownkeyContext* {.importc: "br_x509_knownkey_context",
