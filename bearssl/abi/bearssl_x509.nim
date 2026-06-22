@@ -17,6 +17,7 @@ const
 {.compile: bearX509Path & "x509_knownkey.c".}
 {.compile: bearX509Path & "x509_minimal.c".}
 {.compile: bearX509Path & "x509_minimal_full.c".}
+{.compile: currentSourcePath.parentDir & "/x509_compat.c".}
 
 const
   ERR_X509_OK* = 32
@@ -368,7 +369,7 @@ type
     isCA* {.importc: "isCA".}: bool
     copyDn* {.importc: "copy_dn".}: byte
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
-    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: ConstPointer; len: csize_t) {.
+    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: csize_t) {.
         importcFunc.}
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
@@ -379,8 +380,16 @@ type
 
 
 proc x509DecoderInit*(ctx: var X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: ConstPointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
-    importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
+    buf: pointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
+    importc: "nimbearssl_x509_decoder_init".}
+  ## `buf` stays `pointer`, not `ConstPointer`: the PEM `setdest`, hash `update`
+  ## and this `appendDn` callback are structurally identical, so Nim emits one
+  ## shared C `typedef` for all three. A `ConstPointer` alias renders that typedef
+  ## `const` in some translation units (compilation-order dependent), breaking
+  ## non-const downstream callbacks (e.g. nim-chronos's PEM `itemAppend`) under
+  ## `-Werror=incompatible[-function]-pointer-types`. const-correctness toward the
+  ## real C function is restored by the `x509_compat.c` shim. Mirrors
+  ## `pemDecoderSetdest`.
 
 proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_x509_decoder_push", header: "bearssl_x509.h".}

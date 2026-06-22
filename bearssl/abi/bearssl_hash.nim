@@ -29,7 +29,7 @@ type
     contextSize* {.importc: "context_size".}: uint
     desc* {.importc: "desc".}: uint32
     init* {.importc: "init".}: proc (ctx: ConstPtrPtrHashClass) {.importcFunc.}
-    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: ConstPointer;
+    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: pointer;
                                      len: csize_t) {.importcFunc.}
     `out`* {.importc: "out".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer) {.importcFunc.}
     state* {.importc: "state".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer): uint64 {.
