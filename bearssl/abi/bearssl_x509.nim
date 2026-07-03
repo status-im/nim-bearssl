@@ -200,8 +200,14 @@ type
         serverName: ConstCstring) {.importcFunc.}
     startCert* {.importc: "start_cert".}: proc (ctx: X509ClassPointerConst; length: uint32) {.
         importcFunc.}
-    append* {.importc: "append".}: proc (ctx: X509ClassPointerConst; buf: ConstPtrByte;
+    append* {.importc: "append".}: proc (ctx: pointer; buf: pointer;
                                      len: csize_t) {.importcFunc.}
+      ## Plain `pointer`, not the `const` aliases: a `const` spelling here poisons
+      ## the C `typedef` shared with the decoder/PEM/hash callbacks (order-dependent),
+      ## breaking them under clang `-Werror`. The real C field stays `const`-qualified.
+      ## Trade-off: `addr cls.append` (incl. `unittest2`'s `check cls.append != nil`)
+      ## then mismatches the `const` header field under clang
+      ## `-Wincompatible-pointer-types`; use the field by value, not by address.
     endCert* {.importc: "end_cert".}: proc (ctx: X509ClassPointerConst) {.importcFunc.}
     endChain* {.importc: "end_chain".}: proc (ctx: X509ClassPointerConst): cuint {.importcFunc.}
     getPkey* {.importc: "get_pkey".}: proc (ctx: X509ClassPointerConstConst;
