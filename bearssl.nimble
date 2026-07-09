@@ -1,7 +1,7 @@
 mode = ScriptMode.Verbose
 
 packageName   = "bearssl"
-version       = "0.2.10"
+version       = "0.2.11"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
