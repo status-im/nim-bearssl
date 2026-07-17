@@ -1,73 +1,13 @@
-import
-  "."/[bearssl_hash, bearssl_rand, csources, intx]
+import ./[bearssl_hash, bearssl_rand, csources, intx]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearRsaPath = bearSrcPath & "rsa/"
-
-{.compile: bearRsaPath & "rsa_default_keygen.c".}
-{.compile: bearRsaPath & "rsa_default_modulus.c".}
-{.compile: bearRsaPath & "rsa_default_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_default_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_default_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_default_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_default_priv.c".}
-{.compile: bearRsaPath & "rsa_default_privexp.c".}
-{.compile: bearRsaPath & "rsa_default_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_default_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_default_pub.c".}
-{.compile: bearRsaPath & "rsa_default_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i15_keygen.c".}
-{.compile: bearRsaPath & "rsa_i15_modulus.c".}
-{.compile: bearRsaPath & "rsa_i15_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i15_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i15_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i15_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i15_priv.c".}
-{.compile: bearRsaPath & "rsa_i15_privexp.c".}
-{.compile: bearRsaPath & "rsa_i15_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i15_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i15_pub.c".}
-{.compile: bearRsaPath & "rsa_i15_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i31_keygen.c".}
-{.compile: bearRsaPath & "rsa_i31_keygen_inner.c".}
-{.compile: bearRsaPath & "rsa_i31_modulus.c".}
-{.compile: bearRsaPath & "rsa_i31_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i31_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i31_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i31_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i31_priv.c".}
-{.compile: bearRsaPath & "rsa_i31_privexp.c".}
-{.compile: bearRsaPath & "rsa_i31_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i31_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i31_pub.c".}
-{.compile: bearRsaPath & "rsa_i31_pubexp.c".}
-{.compile: bearRsaPath & "rsa_i32_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i32_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i32_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i32_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i32_priv.c".}
-{.compile: bearRsaPath & "rsa_i32_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i32_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i32_pub.c".}
-{.compile: bearRsaPath & "rsa_i62_keygen.c".}
-{.compile: bearRsaPath & "rsa_i62_oaep_decrypt.c".}
-{.compile: bearRsaPath & "rsa_i62_oaep_encrypt.c".}
-{.compile: bearRsaPath & "rsa_i62_pkcs1_sign.c".}
-{.compile: bearRsaPath & "rsa_i62_pkcs1_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i62_priv.c".}
-{.compile: bearRsaPath & "rsa_i62_pss_sign.c".}
-{.compile: bearRsaPath & "rsa_i62_pss_vrfy.c".}
-{.compile: bearRsaPath & "rsa_i62_pub.c".}
-{.compile: bearRsaPath & "rsa_oaep_pad.c".}
-{.compile: bearRsaPath & "rsa_oaep_unpad.c".}
-{.compile: bearRsaPath & "rsa_pkcs1_sig_pad.c".}
-{.compile: bearRsaPath & "rsa_pkcs1_sig_unpad.c".}
-{.compile: bearRsaPath & "rsa_pss_sig_pad.c".}
-{.compile: bearRsaPath & "rsa_pss_sig_unpad.c".}
-{.compile: bearRsaPath & "rsa_ssl_decrypt.c".}
+# TODO Compile only the relevant backends for each platform
+{.compile: currentSourceDir() & "/bearssl_rsa.c".} # includes i62
+{.compile: currentSourceDir() & "/bearssl_rsa_i15.c".}
+{.compile: currentSourceDir() & "/bearssl_rsa_i31.c".}
+{.compile: currentSourceDir() & "/bearssl_rsa_i32.c".}
 
 type
   RsaPublicKey* {.importc: "br_rsa_public_key", header: "bearssl_rsa.h", bycopy.} = object

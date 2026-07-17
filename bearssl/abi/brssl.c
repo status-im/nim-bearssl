@@ -1,0 +1,5 @@
+#include "../csources/tools/vector.c"
+#include "../csources/tools/xmem.c"
+#include "../csources/tools/names.c"
+#include "../csources/tools/certs.c"
+#include "../csources/tools/files.c"

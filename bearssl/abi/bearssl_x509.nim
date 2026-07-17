@@ -1,5 +1,4 @@
-import
-  "."/[bearssl_ec, bearssl_hash, bearssl_rsa, consttypes, csources]
+import ./[bearssl_ec, bearssl_hash, bearssl_rsa, consttypes, csources]
 
 from std/os import DirSep, AltSep
 from std/strutils import rsplit
@@ -20,10 +19,7 @@ const
 {.compile: bearX509Path & "x509_knownkey.c".}
 {.compile: bearX509Path & "x509_minimal.c".}
 {.compile: bearX509Path & "x509_minimal_full.c".}
-# currentSourcePath.parentDir will break cross compilation
-# e.g. from linux to windows
-# So use rsplit workaround
-{.compile: currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/x509_compat.c".}
+{.compile: currentSourceDir() & "/x509_compat.c".}
 
 const
   ERR_X509_OK* = 32

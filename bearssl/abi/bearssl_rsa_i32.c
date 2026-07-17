@@ -1,0 +1,8 @@
+#include "../csources/src/rsa/rsa_i32_oaep_decrypt.c"
+#include "../csources/src/rsa/rsa_i32_oaep_encrypt.c"
+#include "../csources/src/rsa/rsa_i32_pkcs1_sign.c"
+#include "../csources/src/rsa/rsa_i32_pkcs1_vrfy.c"
+#include "../csources/src/rsa/rsa_i32_priv.c"
+#include "../csources/src/rsa/rsa_i32_pss_sign.c"
+#include "../csources/src/rsa/rsa_i32_pss_vrfy.c"
+#include "../csources/src/rsa/rsa_i32_pub.c"

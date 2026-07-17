@@ -1,5 +1,4 @@
-import
-  "."/[consttypes, csources, intx]
+import ./[consttypes, csources, intx]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
