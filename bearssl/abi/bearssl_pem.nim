@@ -1,8 +1,4 @@
-import
-  ./csources
-
-from std/os import DirSep, AltSep
-from std/strutils import rsplit
+import ./csources
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -12,10 +8,7 @@ const
 
 {.compile: bearCodecPath & "pemdec.c".}
 {.compile: bearCodecPath & "pemenc.c".}
-# currentSourcePath.parentDir will break cross compilation
-# e.g. from linux to windows
-# So use rsplit workaround
-{.compile: currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/pem_compat.c".}
+{.compile: currentSourceDir() & "/pem_compat.c".}
 
 type
   INNER_C_STRUCT_bearssl_pem_1* {.importc: "br_pem_decoder_context::no_name",

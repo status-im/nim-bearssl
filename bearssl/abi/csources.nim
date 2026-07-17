@@ -33,7 +33,7 @@ const
   bearSrcPath* = bearPath & "src/"
   bearToolsPath* = bearPath & "tools/"
 
-# TODO https://github.com/nim-lang/Nim/issues/19864
+# Include folders need to be avalable to all consumers of bearssl
 
 # quoteShell is not defined when compiling to bare metal
 when not defined(`any`) and not defined(standalone):
@@ -47,26 +47,7 @@ else:
   {.passc: "-I\"" & bearIncPath & "\""}
   {.passc: "-I\"" & bearToolsPath & "\""}
 
-
-when defined(windows):
-  {.passc: "-DBR_USE_WIN32_TIME=1".}
-  {.passc: "-DBR_USE_WIN32_RAND=1".}
-else:
-  {.passc: "-DBR_USE_UNIX_TIME=1".}
-  {.passc: "-DBR_USE_URANDOM=1".}
-
-when defined(i386) or defined(amd64) or defined(arm64):
-  {.passc: "-DBR_LE_UNALIGNED=1".}
-elif defined(powerpc) or defined(powerpc64):
-  {.passc: "-DBR_BE_UNALIGNED=1".}
-elif defined(powerpc64el):
-  {.passc: "-DBR_LE_UNALIGNED=1".}
-
-when sizeof(int) == 8:
-  {.passc: "-DBR_64=1".}
-  when hostCPU == "amd64":
-    {.passc:" -DBR_amd64=1".}
-  when defined(vcc):
-    {.passc: "-DBR_UMUL128=1".}
-  else:
-    {.passc: "-DBR_INT128=1".}
+template currentSourceDir*(): string =
+  # TODO https://github.com/nim-lang/Nim/issues/19558
+  # parentDir breaks cross compilation  e.g. from linux to windows
+  currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]

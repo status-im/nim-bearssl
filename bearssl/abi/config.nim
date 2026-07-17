@@ -1,5 +1,4 @@
-import
-  "."/[csources]
+import ./[csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.pragma: headerFunc, importcFunc, header: "bearssl.h".}

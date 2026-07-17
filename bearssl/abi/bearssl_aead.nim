@@ -1,5 +1,4 @@
-import
-  "."/[bearssl_block, bearssl_hash, consttypes, csources]
+import ./[bearssl_block, bearssl_hash, consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
