@@ -94,7 +94,7 @@ const
 
 type
   RsaOaepDecrypt* {.importc: "br_rsa_oaep_decrypt".} = proc (dig: ptr HashClass; label: pointer; labellen: csize_t;
-                       sk: ptr RsaPrivateKey; data: pointer; len: var uint): uint32 {.
+                       sk: ptr RsaPrivateKey; data: pointer; len: var csize_t): uint32 {.
       importcFunc.}
 
 
@@ -258,7 +258,7 @@ proc rsaI15OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: point
     importcFunc, importc: "br_rsa_i15_oaep_encrypt", header: "bearssl_rsa.h".}
 
 proc rsaI15OaepDecrypt*(dig: ptr HashClass; label: pointer; labellen: csize_t;
-                       sk: ptr RsaPrivateKey; data: pointer; len: var uint): uint32 {.
+                       sk: ptr RsaPrivateKey; data: pointer; len: var csize_t): uint32 {.
     importcFunc, importc: "br_rsa_i15_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI31OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
@@ -267,7 +267,7 @@ proc rsaI31OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: point
     importcFunc, importc: "br_rsa_i31_oaep_encrypt", header: "bearssl_rsa.h".}
 
 proc rsaI31OaepDecrypt*(dig: ptr HashClass; label: pointer; labellen: csize_t;
-                       sk: ptr RsaPrivateKey; data: pointer; len: var uint): uint32 {.
+                       sk: ptr RsaPrivateKey; data: pointer; len: var csize_t): uint32 {.
     importcFunc, importc: "br_rsa_i31_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI32OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
@@ -276,7 +276,7 @@ proc rsaI32OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: point
     importcFunc, importc: "br_rsa_i32_oaep_encrypt", header: "bearssl_rsa.h".}
 
 proc rsaI32OaepDecrypt*(dig: ptr HashClass; label: pointer; labellen: csize_t;
-                       sk: ptr RsaPrivateKey; data: pointer; len: var uint): uint32 {.
+                       sk: ptr RsaPrivateKey; data: pointer; len: var csize_t): uint32 {.
     importcFunc, importc: "br_rsa_i32_oaep_decrypt", header: "bearssl_rsa.h".}
 
 proc rsaI62OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: pointer;
@@ -285,7 +285,7 @@ proc rsaI62OaepEncrypt*(rnd: ptr ptr PrngClass; dig: ptr HashClass; label: point
     importcFunc, importc: "br_rsa_i62_oaep_encrypt", header: "bearssl_rsa.h".}
 
 proc rsaI62OaepDecrypt*(dig: ptr HashClass; label: pointer; labellen: csize_t;
-                       sk: ptr RsaPrivateKey; data: pointer; len: var uint): uint32 {.
+                       sk: ptr RsaPrivateKey; data: pointer; len: var csize_t): uint32 {.
     importcFunc, importc: "br_rsa_i62_oaep_decrypt", header: "bearssl_rsa.h".}
 
 template rsaKbufPrivSize*(size: untyped): untyped =
