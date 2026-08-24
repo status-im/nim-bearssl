@@ -1,14 +1,14 @@
 mode = ScriptMode.Verbose
 
 packageName   = "bearssl"
-version       = "0.2.12"
+version       = "0.2.13"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
 skipDirs      = @["tests"]
 
-requires "nim >= 1.6.0",
-         "unittest2"
+requires "nim >= 1.6.18",
+         "unittest2 >= 0.2.0"
 
 let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
 let lang = getEnv("NIMLANG", "c") # Which backend (c/cpp/js)
