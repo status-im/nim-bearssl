@@ -1,14 +1,14 @@
 mode = ScriptMode.Verbose
 
 packageName   = "bearssl"
-version       = "0.2.12"
+version       = "0.2.13"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
 skipDirs      = @["tests"]
 
-requires "nim >= 1.6.0",
-         "unittest2"
+requires "nim >= 2.0.10",
+         "unittest2 >= 0.2.0"
 
 let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
 let lang = getEnv("NIMLANG", "c") # Which backend (c/cpp/js)
@@ -25,8 +25,7 @@ proc build(args, path: string) =
 
 proc run(args, path: string) =
   build args & " --mm:refc -r", path
-  if (NimMajor, NimMinor) > (1, 6):
-    build args & " --mm:orc -r", path
+  build args & " --mm:orc -r", path
 
 from std/strutils import endsWith
 
