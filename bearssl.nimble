@@ -7,7 +7,7 @@ description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
 skipDirs      = @["tests"]
 
-requires "nim >= 2.0.10",
+requires "nim >= 1.6.18",
          "unittest2 >= 0.2.0"
 
 let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
@@ -25,7 +25,8 @@ proc build(args, path: string) =
 
 proc run(args, path: string) =
   build args & " --mm:refc -r", path
-  build args & " --mm:orc -r", path
+  if (NimMajor, NimMinor) > (1, 6):
+    build args & " --mm:orc -r", path
 
 from std/strutils import endsWith
 
