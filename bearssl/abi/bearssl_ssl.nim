@@ -181,7 +181,7 @@ type
         recordlen: csize_t): cint {.importcFunc.}
     decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr SslrecInClass; recordType: cint;
                                        version: cuint; payload: pointer;
-                                       len: var uint): ptr byte {.importcFunc.}
+                                       len: var csize_t): ptr byte {.importcFunc.}
 
 
 
@@ -189,10 +189,10 @@ type
   SslrecOutClass* {.importc: "br_sslrec_out_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: uint
     maxPlaintext* {.importc: "max_plaintext".}: proc (ctx: ptr ptr SslrecOutClass;
-        start: ptr uint; `end`: ptr uint) {.importcFunc.}
+        start: ptr csize_t; `end`: ptr csize_t) {.importcFunc.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr SslrecOutClass;
                                        recordType: cint; version: cuint;
-                                       plaintext: pointer; len: var uint): ptr byte {.
+                                       plaintext: pointer; len: var csize_t): ptr byte {.
         importcFunc.}
 
 
@@ -793,25 +793,25 @@ proc sslEngineLastError*(cc: var SslEngineContext): cint {.inline.} =
   return cc.err
 
 
-proc sslEngineSendappBuf*(cc: var SslEngineContext; len: var uint): ptr byte {.
+proc sslEngineSendappBuf*(cc: var SslEngineContext; len: var csize_t): ptr byte {.
     importcFunc, importc: "br_ssl_engine_sendapp_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineSendappAck*(cc: var SslEngineContext; len: csize_t) {.importcFunc,
     importc: "br_ssl_engine_sendapp_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvappBuf*(cc: var SslEngineContext; len: var uint): ptr byte {.
+proc sslEngineRecvappBuf*(cc: var SslEngineContext; len: var csize_t): ptr byte {.
     importcFunc, importc: "br_ssl_engine_recvapp_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvappAck*(cc: var SslEngineContext; len: csize_t) {.importcFunc,
     importc: "br_ssl_engine_recvapp_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineSendrecBuf*(cc: var SslEngineContext; len: var uint): ptr byte {.
+proc sslEngineSendrecBuf*(cc: var SslEngineContext; len: var csize_t): ptr byte {.
     importcFunc, importc: "br_ssl_engine_sendrec_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineSendrecAck*(cc: var SslEngineContext; len: csize_t) {.importcFunc,
     importc: "br_ssl_engine_sendrec_ack", header: "bearssl_ssl.h".}
 
-proc sslEngineRecvrecBuf*(cc: var SslEngineContext; len: var uint): ptr byte {.
+proc sslEngineRecvrecBuf*(cc: var SslEngineContext; len: var csize_t): ptr byte {.
     importcFunc, importc: "br_ssl_engine_recvrec_buf", header: "bearssl_ssl.h".}
 
 proc sslEngineRecvrecAck*(cc: var SslEngineContext; len: csize_t) {.importcFunc,
@@ -870,7 +870,7 @@ type
                                      cc: ConstPtrSslClientContext; authTypes: uint32;
                                      choices: ptr SslClientCertificate) {.importcFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslClientCertificateClass;
-                                      data: ptr byte; len: var uint): uint32 {.
+                                      data: ptr byte; len: var csize_t): uint32 {.
         importcFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslClientCertificateClass;
                                       hashId: cint; hvlen: csize_t;
@@ -1014,7 +1014,7 @@ type
                                      cc: ConstPtrSslServerContext;
                                      choices: ptr SslServerChoices): cint {.importcFunc.}
     doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslServerPolicyClass;
-                                      data: ptr byte; len: var uint): uint32 {.
+                                      data: ptr byte; len: var csize_t): uint32 {.
         importcFunc.}
     doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslServerPolicyClass;
                                       algoId: cuint; data: ptr byte;
