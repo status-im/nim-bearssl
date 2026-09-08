@@ -2,6 +2,8 @@ import
   typetraits,
   ./abi/bearssl_pem
 
+export PEM_BEGIN_OBJ, PEM_END_OBJ, PEM_ERROR
+
 type
   PemDestProc* = proc (
       destCtx: pointer; src: pointer; len: csize_t
