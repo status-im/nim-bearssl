@@ -1,5 +1,5 @@
 ## Nim-BearSSL
-## Copyright (c) 2018-2022 Status Research & Development GmbH
+## Copyright (c) 2018-2026 Status Research & Development GmbH
 ## Licensed under either of
 ##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
 ##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
@@ -32,6 +32,17 @@ const
   bearIncPath* = bearPath & "inc/"
   bearSrcPath* = bearPath & "src/"
   bearToolsPath* = bearPath & "tools/"
+
+func isPatchApplied: bool {.compileTime.} =
+  "nim-bearssl patches applied - 2026-09-24" in
+  staticRead(bearSrcPath & "inner.h")
+static:
+  if not isPatchApplied():
+    const cmd = "git -C " & quoteShell(bearPath) & " apply ../csources.patch"
+    echo cmd
+    echo staticExec(cmd)
+static:
+  doAssert isPatchApplied()
 
 # Include folders need to be avalable to all consumers of bearssl
 

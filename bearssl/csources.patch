@@ -1,0 +1,1904 @@
+From 4e73271f6c2d2048936913b17720c0cf7a10a9cf Mon Sep 17 00:00:00 2001
+From: Etan Kissling <etan@nimbus.team>
+Date: Thu, 24 Sep 2026 06:38:37 +0800
+Subject: [PATCH] Apply nim-bearssl patches.
+
+---
+ src/aead/eax.c                   |  22 +-
+ src/aead/gcm.c                   |  22 +-
+ src/hash/md5.c                   |  14 +-
+ src/hash/md5sha1.c               |  17 +-
+ src/hash/sha1.c                  |  14 +-
+ src/hash/sha2big.c               |  30 +--
+ src/hash/sha2small.c             |  30 +--
+ src/inner.h                      | 429 +++++++++++++++++++++++++++++--
+ src/rand/aesctr_drbg.c           |  12 +-
+ src/rand/hmac_drbg.c             |  12 +-
+ src/ssl/ssl_engine.c             |  11 +-
+ src/ssl/ssl_rec_cbc.c            |  41 +--
+ src/ssl/ssl_rec_ccm.c            |  41 +--
+ src/ssl/ssl_rec_chapol.c         |  41 +--
+ src/ssl/ssl_rec_gcm.c            |  41 +--
+ src/symcipher/aes_big_cbcdec.c   |  12 +-
+ src/symcipher/aes_big_cbcenc.c   |  12 +-
+ src/symcipher/aes_big_ctr.c      |  13 +-
+ src/symcipher/aes_big_ctrcbc.c   |  22 +-
+ src/symcipher/aes_ct64_cbcdec.c  |  12 +-
+ src/symcipher/aes_ct64_cbcenc.c  |  12 +-
+ src/symcipher/aes_ct64_ctr.c     |  13 +-
+ src/symcipher/aes_ct64_ctrcbc.c  |  22 +-
+ src/symcipher/aes_ct_cbcdec.c    |  12 +-
+ src/symcipher/aes_ct_cbcenc.c    |  12 +-
+ src/symcipher/aes_ct_ctr.c       |  13 +-
+ src/symcipher/aes_ct_ctrcbc.c    |  22 +-
+ src/symcipher/aes_pwr8_cbcdec.c  |  12 +-
+ src/symcipher/aes_pwr8_cbcenc.c  |  12 +-
+ src/symcipher/aes_pwr8_ctr.c     |  13 +-
+ src/symcipher/aes_pwr8_ctrcbc.c  |  22 +-
+ src/symcipher/aes_small_cbcdec.c |  12 +-
+ src/symcipher/aes_small_cbcenc.c |  12 +-
+ src/symcipher/aes_small_ctr.c    |  13 +-
+ src/symcipher/aes_small_ctrcbc.c |  22 +-
+ src/symcipher/aes_x86ni_cbcdec.c |  12 +-
+ src/symcipher/aes_x86ni_cbcenc.c |  12 +-
+ src/symcipher/aes_x86ni_ctr.c    |  13 +-
+ src/symcipher/aes_x86ni_ctrcbc.c |  22 +-
+ src/symcipher/des_ct_cbcdec.c    |  12 +-
+ src/symcipher/des_ct_cbcenc.c    |  12 +-
+ src/symcipher/des_tab_cbcdec.c   |  12 +-
+ src/symcipher/des_tab_cbcenc.c   |  12 +-
+ 43 files changed, 582 insertions(+), 597 deletions(-)
+
+diff --git a/src/aead/eax.c b/src/aead/eax.c
+index bcc704a..793bd9d 100644
+--- a/src/aead/eax.c
++++ b/src/aead/eax.c
+@@ -503,23 +503,5 @@ br_eax_check_tag(br_eax_context *ctx, const void *tag)
+ 	return br_eax_check_tag_trunc(ctx, tag, 16);
+ }
+ 
+-/* see bearssl_aead.h */
+-const br_aead_class br_eax_vtable = {
+-	16,
+-	(void (*)(const br_aead_class **, const void *, size_t))
+-		&br_eax_reset,
+-	(void (*)(const br_aead_class **, const void *, size_t))
+-		&br_eax_aad_inject,
+-	(void (*)(const br_aead_class **))
+-		&br_eax_flip,
+-	(void (*)(const br_aead_class **, int, void *, size_t))
+-		&br_eax_run,
+-	(void (*)(const br_aead_class **, void *))
+-		&br_eax_get_tag,
+-	(uint32_t (*)(const br_aead_class **, const void *))
+-		&br_eax_check_tag,
+-	(void (*)(const br_aead_class **, void *, size_t))
+-		&br_eax_get_tag_trunc,
+-	(uint32_t (*)(const br_aead_class **, const void *, size_t))
+-		&br_eax_check_tag_trunc
+-};
++/* see inner.h */
++br_aead_vtable(eax, 16);
+diff --git a/src/aead/gcm.c b/src/aead/gcm.c
+index ede5f08..d89151f 100644
+--- a/src/aead/gcm.c
++++ b/src/aead/gcm.c
+@@ -296,23 +296,5 @@ br_gcm_check_tag(br_gcm_context *ctx, const void *tag)
+ 	return br_gcm_check_tag_trunc(ctx, tag, 16);
+ }
+ 
+-/* see bearssl_aead.h */
+-const br_aead_class br_gcm_vtable = {
+-	16,
+-	(void (*)(const br_aead_class **, const void *, size_t))
+-		&br_gcm_reset,
+-	(void (*)(const br_aead_class **, const void *, size_t))
+-		&br_gcm_aad_inject,
+-	(void (*)(const br_aead_class **))
+-		&br_gcm_flip,
+-	(void (*)(const br_aead_class **, int, void *, size_t))
+-		&br_gcm_run,
+-	(void (*)(const br_aead_class **, void *))
+-		&br_gcm_get_tag,
+-	(uint32_t (*)(const br_aead_class **, const void *))
+-		&br_gcm_check_tag,
+-	(void (*)(const br_aead_class **, void *, size_t))
+-		&br_gcm_get_tag_trunc,
+-	(uint32_t (*)(const br_aead_class **, const void *, size_t))
+-		&br_gcm_check_tag_trunc
+-};
++/* see inner.h */
++br_aead_vtable(gcm, 16);
+diff --git a/src/hash/md5.c b/src/hash/md5.c
+index 0df7abe..816a1b8 100644
+--- a/src/hash/md5.c
++++ b/src/hash/md5.c
+@@ -191,18 +191,12 @@ br_md5_set_state(br_md5_context *cc, const void *stb, uint64_t count)
+ 	cc->count = count;
+ }
+ 
+-/* see bearssl.h */
+-const br_hash_class br_md5_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	md5,
+ 	sizeof(br_md5_context),
+ 	BR_HASHDESC_ID(br_md5_ID)
+ 		| BR_HASHDESC_OUT(16)
+ 		| BR_HASHDESC_STATE(16)
+ 		| BR_HASHDESC_LBLEN(6)
+-		| BR_HASHDESC_MD_PADDING,
+-	(void (*)(const br_hash_class **))&br_md5_init,
+-	(void (*)(const br_hash_class **, const void *, size_t))&br_md5_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_md5_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_md5_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_md5_set_state
+-};
++		| BR_HASHDESC_MD_PADDING);
+diff --git a/src/hash/md5sha1.c b/src/hash/md5sha1.c
+index f701aee..0693dcb 100644
+--- a/src/hash/md5sha1.c
++++ b/src/hash/md5sha1.c
+@@ -122,20 +122,11 @@ br_md5sha1_set_state(br_md5sha1_context *cc, const void *stb, uint64_t count)
+ 	cc->count = count;
+ }
+ 
+-/* see bearssl.h */
+-const br_hash_class br_md5sha1_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	md5sha1,
+ 	sizeof(br_md5sha1_context),
+ 	BR_HASHDESC_ID(br_md5sha1_ID)
+ 		| BR_HASHDESC_OUT(36)
+ 		| BR_HASHDESC_STATE(36)
+-		| BR_HASHDESC_LBLEN(6),
+-	(void (*)(const br_hash_class **))&br_md5sha1_init,
+-	(void (*)(const br_hash_class **, const void *, size_t))
+-		&br_md5sha1_update,
+-	(void (*)(const br_hash_class *const *, void *))
+-		&br_md5sha1_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))
+-		&br_md5sha1_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_md5sha1_set_state
+-};
++		| BR_HASHDESC_LBLEN(6));
+diff --git a/src/hash/sha1.c b/src/hash/sha1.c
+index 4f65d84..28efd73 100644
+--- a/src/hash/sha1.c
++++ b/src/hash/sha1.c
+@@ -173,19 +173,13 @@ br_sha1_set_state(br_sha1_context *cc, const void *stb, uint64_t count)
+ 	cc->count = count;
+ }
+ 
+-/* see bearssl.h */
+-const br_hash_class br_sha1_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	sha1,
+ 	sizeof(br_sha1_context),
+ 	BR_HASHDESC_ID(br_sha1_ID)
+ 		| BR_HASHDESC_OUT(20)
+ 		| BR_HASHDESC_STATE(20)
+ 		| BR_HASHDESC_LBLEN(6)
+ 		| BR_HASHDESC_MD_PADDING
+-		| BR_HASHDESC_MD_PADDING_BE,
+-	(void (*)(const br_hash_class **))&br_sha1_init,
+-	(void (*)(const br_hash_class **, const void *, size_t))&br_sha1_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_sha1_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_sha1_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_sha1_set_state
+-};
++		| BR_HASHDESC_MD_PADDING_BE);
+diff --git a/src/hash/sha2big.c b/src/hash/sha2big.c
+index 5be92ed..1dff605 100644
+--- a/src/hash/sha2big.c
++++ b/src/hash/sha2big.c
+@@ -246,8 +246,9 @@ br_sha512_out(const br_sha512_context *cc, void *dst)
+ 	sha2big_out(cc, dst, 8);
+ }
+ 
+-/* see bearssl.h */
+-const br_hash_class br_sha384_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	sha384,
+ 	sizeof(br_sha384_context),
+ 	BR_HASHDESC_ID(br_sha384_ID)
+ 		| BR_HASHDESC_OUT(48)
+@@ -255,18 +256,11 @@ const br_hash_class br_sha384_vtable = {
+ 		| BR_HASHDESC_LBLEN(7)
+ 		| BR_HASHDESC_MD_PADDING
+ 		| BR_HASHDESC_MD_PADDING_BE
+-		| BR_HASHDESC_MD_PADDING_128,
+-	(void (*)(const br_hash_class **))&br_sha384_init,
+-	(void (*)(const br_hash_class **, const void *, size_t))
+-		&br_sha384_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_sha384_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_sha384_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_sha384_set_state
+-};
++		| BR_HASHDESC_MD_PADDING_128);
+ 
+-/* see bearssl.h */
+-const br_hash_class br_sha512_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	sha512,
+ 	sizeof(br_sha512_context),
+ 	BR_HASHDESC_ID(br_sha512_ID)
+ 		| BR_HASHDESC_OUT(64)
+@@ -274,12 +268,4 @@ const br_hash_class br_sha512_vtable = {
+ 		| BR_HASHDESC_LBLEN(7)
+ 		| BR_HASHDESC_MD_PADDING
+ 		| BR_HASHDESC_MD_PADDING_BE
+-		| BR_HASHDESC_MD_PADDING_128,
+-	(void (*)(const br_hash_class **))&br_sha512_init,
+-	(void (*)(const br_hash_class **, const void *, size_t))
+-		&br_sha512_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_sha512_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_sha512_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_sha512_set_state
+-};
++		| BR_HASHDESC_MD_PADDING_128);
+diff --git a/src/hash/sha2small.c b/src/hash/sha2small.c
+index ca19655..236055c 100644
+--- a/src/hash/sha2small.c
++++ b/src/hash/sha2small.c
+@@ -304,38 +304,24 @@ br_sha256_out(const br_sha256_context *cc, void *dst)
+ 	sha2small_out(cc, dst, 8);
+ }
+ 
+-/* see bearssl.h */
+-const br_hash_class br_sha224_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	sha224,
+ 	sizeof(br_sha224_context),
+ 	BR_HASHDESC_ID(br_sha224_ID)
+ 		| BR_HASHDESC_OUT(28)
+ 		| BR_HASHDESC_STATE(32)
+ 		| BR_HASHDESC_LBLEN(6)
+ 		| BR_HASHDESC_MD_PADDING
+-		| BR_HASHDESC_MD_PADDING_BE,
+-	(void (*)(const br_hash_class **))&br_sha224_init,
+-	(void (*)(const br_hash_class **,
+-		const void *, size_t))&br_sha224_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_sha224_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_sha224_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_sha224_set_state
+-};
++		| BR_HASHDESC_MD_PADDING_BE);
+ 
+-/* see bearssl.h */
+-const br_hash_class br_sha256_vtable = {
++/* see inner.h */
++br_hash_vtable(
++	sha256,
+ 	sizeof(br_sha256_context),
+ 	BR_HASHDESC_ID(br_sha256_ID)
+ 		| BR_HASHDESC_OUT(32)
+ 		| BR_HASHDESC_STATE(32)
+ 		| BR_HASHDESC_LBLEN(6)
+ 		| BR_HASHDESC_MD_PADDING
+-		| BR_HASHDESC_MD_PADDING_BE,
+-	(void (*)(const br_hash_class **))&br_sha256_init,
+-	(void (*)(const br_hash_class **,
+-		const void *, size_t))&br_sha256_update,
+-	(void (*)(const br_hash_class *const *, void *))&br_sha256_out,
+-	(uint64_t (*)(const br_hash_class *const *, void *))&br_sha256_state,
+-	(void (*)(const br_hash_class **, const void *, uint64_t))
+-		&br_sha256_set_state
+-};
++		| BR_HASHDESC_MD_PADDING_BE);
+diff --git a/src/inner.h b/src/inner.h
+index 07e1d0a..efd2f39 100644
+--- a/src/inner.h
++++ b/src/inner.h
+@@ -461,7 +461,7 @@
+  * optimised code is used, to perform direct memory access when the
+  * underlying architecture supports it, both for endianness and
+  * alignment. This, however, may trigger strict aliasing issues; the
+- * code below uses unions to perform (supposedly) safe type punning.
++ * code below uses memcpy to perform (supposedly) safe type punning.
+  * Since the C aliasing rules are relatively complex and were amended,
+  * or at least re-explained with different phrasing, in all successive
+  * versions of the C standard, it is always a bit risky to bet that any
+@@ -469,26 +469,11 @@
+  * "right".
+  */
+ 
+-typedef union {
+-	uint16_t u;
+-	unsigned char b[sizeof(uint16_t)];
+-} br_union_u16;
+-
+-typedef union {
+-	uint32_t u;
+-	unsigned char b[sizeof(uint32_t)];
+-} br_union_u32;
+-
+-typedef union {
+-	uint64_t u;
+-	unsigned char b[sizeof(uint64_t)];
+-} br_union_u64;
+-
+ static inline void
+ br_enc16le(void *dst, unsigned x)
+ {
+ #if BR_LE_UNALIGNED
+-	((br_union_u16 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -502,7 +487,7 @@ static inline void
+ br_enc16be(void *dst, unsigned x)
+ {
+ #if BR_BE_UNALIGNED
+-	((br_union_u16 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -516,7 +501,9 @@ static inline unsigned
+ br_dec16le(const void *src)
+ {
+ #if BR_LE_UNALIGNED
+-	return ((const br_union_u16 *)src)->u;
++	unsigned x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -529,7 +516,9 @@ static inline unsigned
+ br_dec16be(const void *src)
+ {
+ #if BR_BE_UNALIGNED
+-	return ((const br_union_u16 *)src)->u;
++	unsigned x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -542,7 +531,7 @@ static inline void
+ br_enc32le(void *dst, uint32_t x)
+ {
+ #if BR_LE_UNALIGNED
+-	((br_union_u32 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -558,7 +547,7 @@ static inline void
+ br_enc32be(void *dst, uint32_t x)
+ {
+ #if BR_BE_UNALIGNED
+-	((br_union_u32 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -574,7 +563,9 @@ static inline uint32_t
+ br_dec32le(const void *src)
+ {
+ #if BR_LE_UNALIGNED
+-	return ((const br_union_u32 *)src)->u;
++	uint32_t x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -590,7 +581,9 @@ static inline uint32_t
+ br_dec32be(const void *src)
+ {
+ #if BR_BE_UNALIGNED
+-	return ((const br_union_u32 *)src)->u;
++	uint32_t x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -606,7 +599,7 @@ static inline void
+ br_enc64le(void *dst, uint64_t x)
+ {
+ #if BR_LE_UNALIGNED
+-	((br_union_u64 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -620,7 +613,7 @@ static inline void
+ br_enc64be(void *dst, uint64_t x)
+ {
+ #if BR_BE_UNALIGNED
+-	((br_union_u64 *)dst)->u = x;
++	memcpy(dst, (const void *)&x, sizeof(x));
+ #else
+ 	unsigned char *buf;
+ 
+@@ -634,7 +627,9 @@ static inline uint64_t
+ br_dec64le(const void *src)
+ {
+ #if BR_LE_UNALIGNED
+-	return ((const br_union_u64 *)src)->u;
++	uint64_t x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -648,7 +643,9 @@ static inline uint64_t
+ br_dec64be(const void *src)
+ {
+ #if BR_BE_UNALIGNED
+-	return ((const br_union_u64 *)src)->u;
++	uint64_t x;
++	memcpy(&x, src, sizeof(x));
++	return x;
+ #else
+ 	const unsigned char *buf;
+ 
+@@ -2574,4 +2571,380 @@ br_cpuid(uint32_t mask_eax, uint32_t mask_ebx,
+ 
+ /* ==================================================================== */
+ 
++/* nim-bearssl patches applied - 2026-09-24 */
++
++/* see bearssl_aead.h */
++#define br_aead_vtable(xxx, tag_size) \
++	static void \
++	br_##xxx##_reset_wrapper( \
++		const br_aead_class **cc, const void *iv, size_t len) \
++	{ \
++		br_##xxx##_reset((void *)cc, iv, len); \
++	} \
++    \
++	static void \
++	br_##xxx##_aad_inject_wrapper( \
++		const br_aead_class **cc, const void *data, size_t len) \
++	{ \
++		br_##xxx##_aad_inject((void *)cc, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_flip_wrapper( \
++		const br_aead_class **cc) \
++	{ \
++		br_##xxx##_flip((void *)cc); \
++	} \
++	\
++	static void \
++	br_##xxx##_run_wrapper( \
++		const br_aead_class **cc, int encrypt, void *data, size_t len) \
++	{ \
++		br_##xxx##_run((void *)cc, encrypt, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_get_tag_wrapper( \
++		const br_aead_class **cc, void *tag) \
++	{ \
++		br_##xxx##_get_tag((void *)cc, tag); \
++	} \
++	\
++	static uint32_t \
++	br_##xxx##_check_tag_wrapper( \
++		const br_aead_class **cc, const void *tag) \
++	{ \
++		return br_##xxx##_check_tag((void *)cc, tag); \
++	} \
++	\
++	static void \
++	br_##xxx##_get_tag_trunc_wrapper( \
++		const br_aead_class **cc, void *tag, size_t len) \
++	{ \
++		br_##xxx##_get_tag_trunc((void *)cc, tag, len); \
++	} \
++	\
++	static uint32_t \
++	br_##xxx##_check_tag_trunc_wrapper( \
++		const br_aead_class **cc, const void *tag, size_t len) \
++	{ \
++		return br_##xxx##_check_tag_trunc((void *)cc, tag, len); \
++	} \
++	\
++	const br_aead_class br_##xxx##_vtable = { \
++		tag_size, \
++		&br_##xxx##_reset_wrapper, \
++		&br_##xxx##_aad_inject_wrapper, \
++		&br_##xxx##_flip_wrapper, \
++		&br_##xxx##_run_wrapper, \
++		&br_##xxx##_get_tag_wrapper, \
++		&br_##xxx##_check_tag_wrapper, \
++		&br_##xxx##_get_tag_trunc_wrapper, \
++		&br_##xxx##_check_tag_trunc_wrapper \
++	}
++
++/* see bearssl_block.h */
++#define br_block_cbcenc_vtable(xxx, context_size, block_size, log_block_size) \
++	static void \
++	br_##xxx##_cbcenc_init_wrapper( \
++		const br_block_cbcenc_class **ctx, const void *key, size_t key_len) \
++	{ \
++		br_##xxx##_cbcenc_init((void *)ctx, key, key_len); \
++	} \
++	\
++	static void \
++	br_##xxx##_cbcenc_run_wrapper( \
++		const br_block_cbcenc_class *const *ctx, \
++		void *iv, void *data, size_t len) \
++	{ \
++		br_##xxx##_cbcenc_run((void *)ctx, iv, data, len); \
++	} \
++	\
++	const br_block_cbcenc_class br_##xxx##_cbcenc_vtable = { \
++		context_size, \
++		block_size, \
++		log_block_size, \
++		&br_##xxx##_cbcenc_init_wrapper, \
++		&br_##xxx##_cbcenc_run_wrapper \
++	}
++
++/* see bearssl_block.h */
++#define br_block_cbcdec_vtable(xxx, context_size, block_size, log_block_size) \
++	static void \
++	br_##xxx##_cbcdec_init_wrapper( \
++		const br_block_cbcdec_class **ctx, const void *key, size_t key_len) \
++	{ \
++		br_##xxx##_cbcdec_init((void *)ctx, key, key_len); \
++	} \
++	\
++	static void \
++	br_##xxx##_cbcdec_run_wrapper( \
++		const br_block_cbcdec_class *const *ctx, \
++		void *iv, void *data, size_t len) \
++	{ \
++		br_##xxx##_cbcdec_run((void *)ctx, iv, data, len); \
++	} \
++	\
++	const br_block_cbcdec_class br_##xxx##_cbcdec_vtable = { \
++		context_size, \
++		block_size, \
++		log_block_size, \
++		&br_##xxx##_cbcdec_init_wrapper, \
++		&br_##xxx##_cbcdec_run_wrapper \
++	}
++
++/* see bearssl_block.h */
++#define br_block_ctr_vtable(xxx, context_size, block_size, log_block_size) \
++	static void \
++	br_##xxx##_ctr_init_wrapper( \
++		const br_block_ctr_class **ctx, const void *key, size_t key_len) \
++	{ \
++		br_##xxx##_ctr_init((void *)ctx, key, key_len); \
++	} \
++	\
++	static uint32_t \
++	br_##xxx##_ctr_run_wrapper( \
++		const br_block_ctr_class *const *ctx, \
++		const void *iv, uint32_t cc, void *data, size_t len) \
++	{ \
++		return br_##xxx##_ctr_run((void *)ctx, iv, cc, data, len); \
++	} \
++	\
++	const br_block_ctr_class br_##xxx##_ctr_vtable = { \
++		context_size, \
++		block_size, \
++		log_block_size, \
++		&br_##xxx##_ctr_init_wrapper, \
++		&br_##xxx##_ctr_run_wrapper \
++	}
++
++/* see bearssl_block.h */
++#define br_block_ctrcbc_vtable(xxx, context_size, block_size, log_block_size) \
++	static void \
++	br_##xxx##_ctrcbc_init_wrapper( \
++		const br_block_ctrcbc_class **ctx, const void *key, size_t key_len) \
++	{ \
++		br_##xxx##_ctrcbc_init((void *)ctx, key, key_len); \
++	} \
++	\
++	static void \
++	br_##xxx##_ctrcbc_encrypt_wrapper( \
++		const br_block_ctrcbc_class *const *ctx, \
++		void *ctr, void *cbcmac, void *data, size_t len) \
++	{ \
++		br_##xxx##_ctrcbc_encrypt((void *)ctx, ctr, cbcmac, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_ctrcbc_decrypt_wrapper( \
++		const br_block_ctrcbc_class *const *ctx, \
++		void *ctr, void *cbcmac, void *data, size_t len) \
++	{ \
++		br_##xxx##_ctrcbc_decrypt((void *)ctx, ctr, cbcmac, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_ctrcbc_ctr_wrapper( \
++		const br_block_ctrcbc_class *const *ctx, \
++		void *ctr, void *data, size_t len) \
++	{ \
++		br_##xxx##_ctrcbc_ctr((void *)ctx, ctr, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_ctrcbc_mac_wrapper( \
++		const br_block_ctrcbc_class *const *ctx, \
++		void *cbcmac, const void *data, size_t len) \
++	{ \
++		br_##xxx##_ctrcbc_mac((void *)ctx, cbcmac, data, len); \
++	} \
++	\
++	const br_block_ctrcbc_class br_##xxx##_ctrcbc_vtable = { \
++		context_size, \
++		block_size, \
++		log_block_size, \
++		&br_##xxx##_ctrcbc_init_wrapper, \
++		&br_##xxx##_ctrcbc_encrypt_wrapper, \
++		&br_##xxx##_ctrcbc_decrypt_wrapper, \
++		&br_##xxx##_ctrcbc_ctr_wrapper, \
++		&br_##xxx##_ctrcbc_mac_wrapper \
++	}
++
++/* see bearssl_hash.h */
++#define br_hash_vtable(xxx, context_size, desc) \
++	static void \
++	br_##xxx##_init_wrapper( \
++		const br_hash_class **ctx) \
++	{ \
++		br_##xxx##_init((void *)ctx); \
++	} \
++	\
++	static void \
++	br_##xxx##_update_wrapper( \
++		const br_hash_class **ctx, const void *data, size_t len) \
++	{ \
++		br_##xxx##_update((void *)ctx, data, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_out_wrapper( \
++		const br_hash_class *const *ctx, void *dst) \
++	{ \
++		br_##xxx##_out((void *)ctx, dst); \
++	} \
++	\
++	static uint64_t \
++	br_##xxx##_state_wrapper( \
++		const br_hash_class *const *ctx, void *dst) \
++	{ \
++		return br_##xxx##_state((void *)ctx, dst); \
++	} \
++	\
++	static void \
++	br_##xxx##_set_state_wrapper( \
++		const br_hash_class **ctx, const void *stb, uint64_t count) \
++	{ \
++		br_##xxx##_set_state((void *)ctx, stb, count); \
++	} \
++	\
++	const br_hash_class br_##xxx##_vtable = { \
++		context_size, \
++		desc, \
++		&br_##xxx##_init_wrapper, \
++		&br_##xxx##_update_wrapper, \
++		&br_##xxx##_out_wrapper, \
++		&br_##xxx##_state_wrapper, \
++		&br_##xxx##_set_state_wrapper \
++	}
++
++/* see bearssl_rand.h */
++#define br_prng_vtable(xxx, context_size) \
++	static void \
++	br_##xxx##_init_wrapper( \
++		const br_prng_class **ctx, const void *params, \
++		const void *seed, size_t seed_len) \
++	{ \
++		br_##xxx##_init((void *)ctx, params, seed, seed_len); \
++	} \
++	\
++	static void \
++	br_##xxx##_generate_wrapper( \
++		const br_prng_class **ctx, void *out, size_t len) \
++	{ \
++		br_##xxx##_generate((void *)ctx, out, len); \
++	} \
++	\
++	static void \
++	br_##xxx##_update_wrapper( \
++		const br_prng_class **ctx, const void *seed, size_t seed_len) \
++	{ \
++		br_##xxx##_update((void *)ctx, seed, seed_len); \
++	} \
++	\
++	const br_prng_class br_##xxx##_vtable = { \
++		context_size, \
++		&br_##xxx##_init_wrapper, \
++		&br_##xxx##_generate_wrapper, \
++		&br_##xxx##_update_wrapper \
++	}
++
++/* see bearssl_ssl.h */
++#define br_sslrec_in_vtable(xxx, context_size) \
++	static int \
++	xxx##_check_length_wrapper( \
++		const br_sslrec_in_class *const *ctx, size_t record_len) \
++	{ \
++		return xxx##_check_length((void *)ctx, record_len); \
++	} \
++	\
++	static unsigned char * \
++	xxx##_decrypt_wrapper( \
++		const br_sslrec_in_class **ctx, \
++		int record_type, unsigned version, void *payload, size_t *len) \
++	{ \
++		return xxx##_decrypt((void *)ctx, record_type, version, payload, len); \
++	} \
++	\
++	const br_sslrec_in_class br_sslrec_in_##xxx##_vtable = { \
++		context_size, \
++		&xxx##_check_length_wrapper, \
++		&xxx##_decrypt_wrapper \
++	}
++
++#define br_sslrec_in_init_vtable(xxx, context_size) \
++	static int \
++	xxx##_check_length_wrapper( \
++		const br_sslrec_in_class *const *ctx, size_t record_len) \
++	{ \
++		return xxx##_check_length((void *)ctx, record_len); \
++	} \
++	\
++	static unsigned char * \
++	xxx##_decrypt_wrapper( \
++		const br_sslrec_in_class **ctx, \
++		int record_type, unsigned version, void *payload, size_t *len) \
++	{ \
++		return xxx##_decrypt((void *)ctx, record_type, version, payload, len); \
++	} \
++	\
++	const br_sslrec_in_##xxx##_class br_sslrec_in_##xxx##_vtable = { \
++		{ \
++			context_size, \
++			&xxx##_check_length_wrapper, \
++			&xxx##_decrypt_wrapper \
++		}, \
++		&in_##xxx##_init \
++	}
++
++/* see bearssl_ssl.h */
++#define br_sslrec_out_vtable(xxx, context_size) \
++	static void \
++	xxx##_max_plaintext_wrapper( \
++		const br_sslrec_out_class *const *ctx, size_t *start, size_t *end) \
++	{ \
++		xxx##_max_plaintext((void *)ctx, start, end); \
++	} \
++	\
++	static unsigned char * \
++	xxx##_encrypt_wrapper( \
++		const br_sslrec_out_class **ctx, \
++		int record_type, unsigned version, void *plaintext, size_t *len) \
++	{ \
++		return xxx##_encrypt( \
++			(void *)ctx, record_type, version, plaintext, len); \
++	} \
++	\
++	const br_sslrec_out_class br_sslrec_out_##xxx##_vtable = { \
++		context_size, \
++		&xxx##_max_plaintext_wrapper, \
++		&xxx##_encrypt_wrapper \
++	}
++
++/* see bearssl_ssl.h */
++#define br_sslrec_out_init_vtable(xxx, context_size) \
++	static void \
++	xxx##_max_plaintext_wrapper( \
++		const br_sslrec_out_class *const *ctx, size_t *start, size_t *end) \
++	{ \
++		xxx##_max_plaintext((void *)ctx, start, end); \
++	} \
++	\
++	static unsigned char * \
++	xxx##_encrypt_wrapper( \
++		const br_sslrec_out_class **ctx, \
++		int record_type, unsigned version, void *plaintext, size_t *len) \
++	{ \
++		return xxx##_encrypt( \
++			(void *)ctx, record_type, version, plaintext, len); \
++	} \
++	\
++	const br_sslrec_out_##xxx##_class br_sslrec_out_##xxx##_vtable = { \
++		{ \
++			context_size, \
++			&xxx##_max_plaintext_wrapper, \
++			&xxx##_encrypt_wrapper \
++		}, \
++		&out_##xxx##_init \
++	}
++
+ #endif
+diff --git a/src/rand/aesctr_drbg.c b/src/rand/aesctr_drbg.c
+index 8dbd501..cb817f9 100644
+--- a/src/rand/aesctr_drbg.c
++++ b/src/rand/aesctr_drbg.c
+@@ -194,13 +194,5 @@ br_aesctr_drbg_update(br_aesctr_drbg_context *ctx, const void *seed, size_t len)
+ 	ctx->cc = 0;
+ }
+ 
+-/* see bearssl_rand.h */
+-const br_prng_class br_aesctr_drbg_vtable = {
+-	sizeof(br_aesctr_drbg_context),
+-	(void (*)(const br_prng_class **, const void *, const void *, size_t))
+-		&br_aesctr_drbg_init,
+-	(void (*)(const br_prng_class **, void *, size_t))
+-		&br_aesctr_drbg_generate,
+-	(void (*)(const br_prng_class **, const void *, size_t))
+-		&br_aesctr_drbg_update
+-};
++/* see inner.h */
++br_prng_vtable(drbg, sizeof(br_aesctr_drbg_context));
+diff --git a/src/rand/hmac_drbg.c b/src/rand/hmac_drbg.c
+index d746756..d0c8558 100644
+--- a/src/rand/hmac_drbg.c
++++ b/src/rand/hmac_drbg.c
+@@ -145,13 +145,5 @@ br_hmac_drbg_update(br_hmac_drbg_context *ctx, const void *seed, size_t len)
+ 	br_hmac_out(&hc, ctx->V);
+ }
+ 
+-/* see bearssl.h */
+-const br_prng_class br_hmac_drbg_vtable = {
+-	sizeof(br_hmac_drbg_context),
+-	(void (*)(const br_prng_class **, const void *, const void *, size_t))
+-		&br_hmac_drbg_init,
+-	(void (*)(const br_prng_class **, void *, size_t))
+-		&br_hmac_drbg_generate,
+-	(void (*)(const br_prng_class **, const void *, size_t))
+-		&br_hmac_drbg_update
+-};
++/* see inner.h */
++br_prng_vtable(hmac_drbg, sizeof(br_hmac_drbg_context));
+diff --git a/src/ssl/ssl_engine.c b/src/ssl/ssl_engine.c
+index f59fe1a..a2ed503 100644
+--- a/src/ssl/ssl_engine.c
++++ b/src/ssl/ssl_engine.c
+@@ -955,15 +955,8 @@ clear_encrypt(br_sslrec_out_clear_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_out_class br_sslrec_out_clear_vtable = {
+-	sizeof(br_sslrec_out_clear_context),
+-	(void (*)(const br_sslrec_out_class *const *, size_t *, size_t *))
+-		&clear_max_plaintext,
+-	(unsigned char *(*)(const br_sslrec_out_class **,
+-		int, unsigned, void *, size_t *))
+-		&clear_encrypt
+-};
++/* see inner.h */
++br_sslrec_out_vtable(clear, sizeof(br_sslrec_out_clear_context));
+ 
+ /* ==================================================================== */
+ /*
+diff --git a/src/ssl/ssl_rec_cbc.c b/src/ssl/ssl_rec_cbc.c
+index 9e89bb6..1e58d42 100644
+--- a/src/ssl/ssl_rec_cbc.c
++++ b/src/ssl/ssl_rec_cbc.c
+@@ -25,13 +25,14 @@
+ #include "inner.h"
+ 
+ static void
+-in_cbc_init(br_sslrec_in_cbc_context *cc,
++in_cbc_init(const br_sslrec_in_cbc_class **ctx,
+ 	const br_block_cbcdec_class *bc_impl,
+ 	const void *bc_key, size_t bc_key_len,
+ 	const br_hash_class *dig_impl,
+ 	const void *mac_key, size_t mac_key_len, size_t mac_out_len,
+ 	const void *iv)
+ {
++	br_sslrec_in_cbc_context *cc = (void *)ctx;
+ 	cc->vtable = &br_sslrec_in_cbc_vtable;
+ 	cc->seq = 0;
+ 	bc_impl->init(&cc->bc.vtable, bc_key, bc_key_len);
+@@ -229,22 +230,8 @@ cbc_decrypt(br_sslrec_in_cbc_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_in_cbc_class br_sslrec_in_cbc_vtable = {
+-	{
+-		sizeof(br_sslrec_in_cbc_context),
+-		(int (*)(const br_sslrec_in_class *const *, size_t))
+-			&cbc_check_length,
+-		(unsigned char *(*)(const br_sslrec_in_class **,
+-			int, unsigned, void *, size_t *))
+-			&cbc_decrypt
+-	},
+-	(void (*)(const br_sslrec_in_cbc_class **,
+-		const br_block_cbcdec_class *, const void *, size_t,
+-		const br_hash_class *, const void *, size_t, size_t,
+-		const void *))
+-		&in_cbc_init
+-};
++/* see inner.h */
++br_sslrec_in_init_vtable(cbc, sizeof(br_sslrec_in_cbc_context));
+ 
+ /*
+  * For CBC output:
+@@ -265,13 +252,14 @@ const br_sslrec_in_cbc_class br_sslrec_in_cbc_vtable = {
+  */
+ 
+ static void
+-out_cbc_init(br_sslrec_out_cbc_context *cc,
++out_cbc_init(const br_sslrec_out_cbc_class **ctx,
+ 	const br_block_cbcenc_class *bc_impl,
+ 	const void *bc_key, size_t bc_key_len,
+ 	const br_hash_class *dig_impl,
+ 	const void *mac_key, size_t mac_key_len, size_t mac_out_len,
+ 	const void *iv)
+ {
++	br_sslrec_out_cbc_context *cc = (void *)ctx;
+ 	cc->vtable = &br_sslrec_out_cbc_vtable;
+ 	cc->seq = 0;
+ 	bc_impl->init(&cc->bc.vtable, bc_key, bc_key_len);
+@@ -422,19 +410,4 @@ cbc_encrypt(br_sslrec_out_cbc_context *cc,
+ }
+ 
+ /* see bearssl_ssl.h */
+-const br_sslrec_out_cbc_class br_sslrec_out_cbc_vtable = {
+-	{
+-		sizeof(br_sslrec_out_cbc_context),
+-		(void (*)(const br_sslrec_out_class *const *,
+-			size_t *, size_t *))
+-			&cbc_max_plaintext,
+-		(unsigned char *(*)(const br_sslrec_out_class **,
+-			int, unsigned, void *, size_t *))
+-			&cbc_encrypt
+-	},
+-	(void (*)(const br_sslrec_out_cbc_class **,
+-		const br_block_cbcenc_class *, const void *, size_t,
+-		const br_hash_class *, const void *, size_t, size_t,
+-		const void *))
+-		&out_cbc_init
+-};
++br_sslrec_out_init_vtable(cbc, sizeof(br_sslrec_out_cbc_context));
+diff --git a/src/ssl/ssl_rec_ccm.c b/src/ssl/ssl_rec_ccm.c
+index 92c3295..d5d779b 100644
+--- a/src/ssl/ssl_rec_ccm.c
++++ b/src/ssl/ssl_rec_ccm.c
+@@ -42,11 +42,12 @@ gen_ccm_init(br_sslrec_ccm_context *cc,
+ }
+ 
+ static void
+-in_ccm_init(br_sslrec_ccm_context *cc,
++in_ccm_init(const br_sslrec_in_ccm_class **ctx,
+ 	const br_block_ctrcbc_class *bc_impl,
+ 	const void *key, size_t key_len,
+ 	const void *iv, size_t tag_len)
+ {
++	br_sslrec_ccm_context *cc = (void *)ctx;
+ 	cc->vtable.in = &br_sslrec_in_ccm_vtable;
+ 	gen_ccm_init(cc, bc_impl, key, key_len, iv, tag_len);
+ }
+@@ -105,28 +106,16 @@ ccm_decrypt(br_sslrec_ccm_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_in_ccm_class br_sslrec_in_ccm_vtable = {
+-	{
+-		sizeof(br_sslrec_ccm_context),
+-		(int (*)(const br_sslrec_in_class *const *, size_t))
+-			&ccm_check_length,
+-		(unsigned char *(*)(const br_sslrec_in_class **,
+-			int, unsigned, void *, size_t *))
+-			&ccm_decrypt
+-	},
+-	(void (*)(const br_sslrec_in_ccm_class **,
+-		const br_block_ctrcbc_class *, const void *, size_t,
+-		const void *, size_t))
+-		&in_ccm_init
+-};
++/* see inner.h */
++br_sslrec_in_init_vtable(ccm, sizeof(br_sslrec_ccm_context));
+ 
+ static void
+-out_ccm_init(br_sslrec_ccm_context *cc,
++out_ccm_init(const br_sslrec_out_ccm_class **ctx,
+ 	const br_block_ctrcbc_class *bc_impl,
+ 	const void *key, size_t key_len,
+ 	const void *iv, size_t tag_len)
+ {
++	br_sslrec_ccm_context *cc = (void *)ctx;
+ 	cc->vtable.out = &br_sslrec_out_ccm_vtable;
+ 	gen_ccm_init(cc, bc_impl, key, key_len, iv, tag_len);
+ }
+@@ -195,19 +184,5 @@ ccm_encrypt(br_sslrec_ccm_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_out_ccm_class br_sslrec_out_ccm_vtable = {
+-	{
+-		sizeof(br_sslrec_ccm_context),
+-		(void (*)(const br_sslrec_out_class *const *,
+-			size_t *, size_t *))
+-			&ccm_max_plaintext,
+-		(unsigned char *(*)(const br_sslrec_out_class **,
+-			int, unsigned, void *, size_t *))
+-			&ccm_encrypt
+-	},
+-	(void (*)(const br_sslrec_out_ccm_class **,
+-		const br_block_ctrcbc_class *, const void *, size_t,
+-		const void *, size_t))
+-		&out_ccm_init
+-};
++/* see inner.h */
++br_sslrec_out_init_vtable(ccm, sizeof(br_sslrec_ccm_context));
+diff --git a/src/ssl/ssl_rec_chapol.c b/src/ssl/ssl_rec_chapol.c
+index 73b3c78..20f28e5 100644
+--- a/src/ssl/ssl_rec_chapol.c
++++ b/src/ssl/ssl_rec_chapol.c
+@@ -61,10 +61,11 @@ gen_chapol_process(br_sslrec_chapol_context *cc,
+ }
+ 
+ static void
+-in_chapol_init(br_sslrec_chapol_context *cc,
++in_chapol_init(const br_sslrec_in_chapol_class **ctx,
+ 	br_chacha20_run ichacha, br_poly1305_run ipoly,
+ 	const void *key, const void *iv)
+ {
++	br_sslrec_chapol_context *cc = (void *)ctx;
+ 	cc->vtable.in = &br_sslrec_in_chapol_vtable;
+ 	gen_chapol_init(cc, ichacha, ipoly, key, iv);
+ }
+@@ -102,27 +103,15 @@ chapol_decrypt(br_sslrec_chapol_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_in_chapol_class br_sslrec_in_chapol_vtable = {
+-	{
+-		sizeof(br_sslrec_chapol_context),
+-		(int (*)(const br_sslrec_in_class *const *, size_t))
+-			&chapol_check_length,
+-		(unsigned char *(*)(const br_sslrec_in_class **,
+-			int, unsigned, void *, size_t *))
+-			&chapol_decrypt
+-	},
+-	(void (*)(const br_sslrec_in_chapol_class **,
+-		br_chacha20_run, br_poly1305_run,
+-		const void *, const void *))
+-		&in_chapol_init
+-};
++/* see inner.h */
++br_sslrec_in_init_vtable(chapol, sizeof(br_sslrec_chapol_context));
+ 
+ static void
+-out_chapol_init(br_sslrec_chapol_context *cc,
++out_chapol_init(const br_sslrec_out_chapol_class **ctx,
+ 	br_chacha20_run ichacha, br_poly1305_run ipoly,
+ 	const void *key, const void *iv)
+ {
++	br_sslrec_chapol_context *cc = (void *)ctx;
+ 	cc->vtable.out = &br_sslrec_out_chapol_vtable;
+ 	gen_chapol_init(cc, ichacha, ipoly, key, iv);
+ }
+@@ -159,19 +148,5 @@ chapol_encrypt(br_sslrec_chapol_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_out_chapol_class br_sslrec_out_chapol_vtable = {
+-	{
+-		sizeof(br_sslrec_chapol_context),
+-		(void (*)(const br_sslrec_out_class *const *,
+-			size_t *, size_t *))
+-			&chapol_max_plaintext,
+-		(unsigned char *(*)(const br_sslrec_out_class **,
+-			int, unsigned, void *, size_t *))
+-			&chapol_encrypt
+-	},
+-	(void (*)(const br_sslrec_out_chapol_class **,
+-		br_chacha20_run, br_poly1305_run,
+-		const void *, const void *))
+-		&out_chapol_init
+-};
++/* see inner.h */
++br_sslrec_out_init_vtable(chapol, sizeof(br_sslrec_chapol_context));
+diff --git a/src/ssl/ssl_rec_gcm.c b/src/ssl/ssl_rec_gcm.c
+index 70df277..5c1c9d8 100644
+--- a/src/ssl/ssl_rec_gcm.c
++++ b/src/ssl/ssl_rec_gcm.c
+@@ -48,12 +48,13 @@ gen_gcm_init(br_sslrec_gcm_context *cc,
+ }
+ 
+ static void
+-in_gcm_init(br_sslrec_gcm_context *cc,
++in_gcm_init(const br_sslrec_in_gcm_class **ctx,
+ 	const br_block_ctr_class *bc_impl,
+ 	const void *key, size_t key_len,
+ 	br_ghash gh_impl,
+ 	const void *iv)
+ {
++	br_sslrec_gcm_context *cc = (void *)ctx;
+ 	cc->vtable.in = &br_sslrec_in_gcm_vtable;
+ 	gen_gcm_init(cc, bc_impl, key, key_len, gh_impl, iv);
+ }
+@@ -149,29 +150,17 @@ gcm_decrypt(br_sslrec_gcm_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_in_gcm_class br_sslrec_in_gcm_vtable = {
+-	{
+-		sizeof(br_sslrec_gcm_context),
+-		(int (*)(const br_sslrec_in_class *const *, size_t))
+-			&gcm_check_length,
+-		(unsigned char *(*)(const br_sslrec_in_class **,
+-			int, unsigned, void *, size_t *))
+-			&gcm_decrypt
+-	},
+-	(void (*)(const br_sslrec_in_gcm_class **,
+-		const br_block_ctr_class *, const void *, size_t,
+-		br_ghash, const void *))
+-		&in_gcm_init
+-};
++/* see inner.h */
++br_sslrec_in_init_vtable(gcm, sizeof(br_sslrec_gcm_context));
+ 
+ static void
+-out_gcm_init(br_sslrec_gcm_context *cc,
++out_gcm_init(const br_sslrec_out_gcm_class **ctx,
+ 	const br_block_ctr_class *bc_impl,
+ 	const void *key, size_t key_len,
+ 	br_ghash gh_impl,
+ 	const void *iv)
+ {
++	br_sslrec_gcm_context *cc = (void *)ctx;
+ 	cc->vtable.out = &br_sslrec_out_gcm_vtable;
+ 	gen_gcm_init(cc, bc_impl, key, key_len, gh_impl, iv);
+ }
+@@ -217,19 +206,5 @@ gcm_encrypt(br_sslrec_gcm_context *cc,
+ 	return buf;
+ }
+ 
+-/* see bearssl_ssl.h */
+-const br_sslrec_out_gcm_class br_sslrec_out_gcm_vtable = {
+-	{
+-		sizeof(br_sslrec_gcm_context),
+-		(void (*)(const br_sslrec_out_class *const *,
+-			size_t *, size_t *))
+-			&gcm_max_plaintext,
+-		(unsigned char *(*)(const br_sslrec_out_class **,
+-			int, unsigned, void *, size_t *))
+-			&gcm_encrypt
+-	},
+-	(void (*)(const br_sslrec_out_gcm_class **,
+-		const br_block_ctr_class *, const void *, size_t,
+-		br_ghash, const void *))
+-		&out_gcm_init
+-};
++/* see inner.h */
++br_sslrec_out_init_vtable(gcm, sizeof(br_sslrec_gcm_context));
+diff --git a/src/symcipher/aes_big_cbcdec.c b/src/symcipher/aes_big_cbcdec.c
+index d969a3b..f9e72f0 100644
+--- a/src/symcipher/aes_big_cbcdec.c
++++ b/src/symcipher/aes_big_cbcdec.c
+@@ -57,13 +57,9 @@ br_aes_big_cbcdec_run(const br_aes_big_cbcdec_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_big_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_big,
+ 	sizeof(br_aes_big_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_big_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_big_cbcdec_run
+-};
++	4);
+diff --git a/src/symcipher/aes_big_cbcenc.c b/src/symcipher/aes_big_cbcenc.c
+index 265e53b..38e9b41 100644
+--- a/src/symcipher/aes_big_cbcenc.c
++++ b/src/symcipher/aes_big_cbcenc.c
+@@ -55,13 +55,9 @@ br_aes_big_cbcenc_run(const br_aes_big_cbcenc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_big_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_big,
+ 	sizeof(br_aes_big_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_big_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_big_cbcenc_run
+-};
++	4);
+diff --git a/src/symcipher/aes_big_ctr.c b/src/symcipher/aes_big_ctr.c
+index 18fbb84..3ac5c44 100644
+--- a/src/symcipher/aes_big_ctr.c
++++ b/src/symcipher/aes_big_ctr.c
+@@ -71,14 +71,9 @@ br_aes_big_ctr_run(const br_aes_big_ctr_keys *ctx,
+ 	return cc;
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_big_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_big,
+ 	sizeof(br_aes_big_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_big_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_big_ctr_run
+-};
++	4);
+diff --git a/src/symcipher/aes_big_ctrcbc.c b/src/symcipher/aes_big_ctrcbc.c
+index d45ca76..e07cfc3 100644
+--- a/src/symcipher/aes_big_ctrcbc.c
++++ b/src/symcipher/aes_big_ctrcbc.c
+@@ -120,23 +120,9 @@ br_aes_big_ctrcbc_decrypt(const br_aes_big_ctrcbc_keys *ctx,
+ 	br_aes_big_ctrcbc_ctr(ctx, ctr, data, len);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_big_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_big,
+ 	sizeof(br_aes_big_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_big_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_big_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_big_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_big_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_big_ctrcbc_mac
+-};
++	4);
+diff --git a/src/symcipher/aes_ct64_cbcdec.c b/src/symcipher/aes_ct64_cbcdec.c
+index 5a7360b..d76fb92 100644
+--- a/src/symcipher/aes_ct64_cbcdec.c
++++ b/src/symcipher/aes_ct64_cbcdec.c
+@@ -92,13 +92,9 @@ br_aes_ct64_cbcdec_run(const br_aes_ct64_cbcdec_keys *ctx,
+ 	br_range_enc32le(iv, ivw, 4);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_ct64_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_ct64,
+ 	sizeof(br_aes_ct64_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_ct64_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_ct64_cbcdec_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct64_cbcenc.c b/src/symcipher/aes_ct64_cbcenc.c
+index 6cb9dec..4e011ad 100644
+--- a/src/symcipher/aes_ct64_cbcenc.c
++++ b/src/symcipher/aes_ct64_cbcenc.c
+@@ -69,13 +69,9 @@ br_aes_ct64_cbcenc_run(const br_aes_ct64_cbcenc_keys *ctx,
+ 	br_range_enc32le(iv, ivw, 4);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_ct64_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_ct64,
+ 	sizeof(br_aes_ct64_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_ct64_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_ct64_cbcenc_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct64_ctr.c b/src/symcipher/aes_ct64_ctr.c
+index 1275873..807bfc7 100644
+--- a/src/symcipher/aes_ct64_ctr.c
++++ b/src/symcipher/aes_ct64_ctr.c
+@@ -101,14 +101,9 @@ br_aes_ct64_ctr_run(const br_aes_ct64_ctr_keys *ctx,
+ 	return cc;
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_ct64_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_ct64,
+ 	sizeof(br_aes_ct64_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_ct64_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_ct64_ctr_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct64_ctrcbc.c b/src/symcipher/aes_ct64_ctrcbc.c
+index 21bb8ef..a945e10 100644
+--- a/src/symcipher/aes_ct64_ctrcbc.c
++++ b/src/symcipher/aes_ct64_ctrcbc.c
+@@ -411,23 +411,9 @@ br_aes_ct64_ctrcbc_decrypt(const br_aes_ct64_ctrcbc_keys *ctx,
+ 	br_enc32le((unsigned char *)cbcmac + 12, cm3);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_ct64_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_ct64,
+ 	sizeof(br_aes_ct64_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_ct64_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_ct64_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_ct64_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_ct64_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_ct64_ctrcbc_mac
+-};
++	4);
+diff --git a/src/symcipher/aes_ct_cbcdec.c b/src/symcipher/aes_ct_cbcdec.c
+index 522645a..03238da 100644
+--- a/src/symcipher/aes_ct_cbcdec.c
++++ b/src/symcipher/aes_ct_cbcdec.c
+@@ -99,13 +99,9 @@ br_aes_ct_cbcdec_run(const br_aes_ct_cbcdec_keys *ctx,
+ 	br_enc32le(ivbuf + 12, iv3);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_ct_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_ct,
+ 	sizeof(br_aes_ct_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_ct_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_ct_cbcdec_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct_cbcenc.c b/src/symcipher/aes_ct_cbcenc.c
+index cb85977..48ed65f 100644
+--- a/src/symcipher/aes_ct_cbcenc.c
++++ b/src/symcipher/aes_ct_cbcenc.c
+@@ -79,13 +79,9 @@ br_aes_ct_cbcenc_run(const br_aes_ct_cbcenc_keys *ctx,
+ 	br_enc32le(ivbuf + 12, iv3);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_ct_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_ct,
+ 	sizeof(br_aes_ct_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_ct_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_ct_cbcenc_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct_ctr.c b/src/symcipher/aes_ct_ctr.c
+index f407689..faaf032 100644
+--- a/src/symcipher/aes_ct_ctr.c
++++ b/src/symcipher/aes_ct_ctr.c
+@@ -103,14 +103,9 @@ br_aes_ct_ctr_run(const br_aes_ct_ctr_keys *ctx,
+ 	return cc;
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_ct_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_ct,
+ 	sizeof(br_aes_ct_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_ct_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_ct_ctr_run
+-};
++	4);
+diff --git a/src/symcipher/aes_ct_ctrcbc.c b/src/symcipher/aes_ct_ctrcbc.c
+index 8ae9fc7..e3eb411 100644
+--- a/src/symcipher/aes_ct_ctrcbc.c
++++ b/src/symcipher/aes_ct_ctrcbc.c
+@@ -400,23 +400,9 @@ br_aes_ct_ctrcbc_decrypt(const br_aes_ct_ctrcbc_keys *ctx,
+ 	br_enc32le((unsigned char *)cbcmac + 12, cm3);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_ct_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_ct,
+ 	sizeof(br_aes_ct_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_ct_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_ct_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_ct_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_ct_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_ct_ctrcbc_mac
+-};
++	4);
+diff --git a/src/symcipher/aes_pwr8_cbcdec.c b/src/symcipher/aes_pwr8_cbcdec.c
+index e535ba6..2a398ca 100644
+--- a/src/symcipher/aes_pwr8_cbcdec.c
++++ b/src/symcipher/aes_pwr8_cbcdec.c
+@@ -640,16 +640,12 @@ br_aes_pwr8_cbcdec_run(const br_aes_pwr8_cbcdec_keys *ctx,
+ 	memcpy(iv, nextiv, 16);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_pwr8_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_pwr8,
+ 	sizeof(br_aes_pwr8_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_pwr8_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_pwr8_cbcdec_run
+-};
++	4);
+ 
+ /* see bearssl_block.h */
+ const br_block_cbcdec_class *
+diff --git a/src/symcipher/aes_pwr8_cbcenc.c b/src/symcipher/aes_pwr8_cbcenc.c
+index 00f8eca..a39fcdb 100644
+--- a/src/symcipher/aes_pwr8_cbcenc.c
++++ b/src/symcipher/aes_pwr8_cbcenc.c
+@@ -387,16 +387,12 @@ br_aes_pwr8_cbcenc_run(const br_aes_pwr8_cbcenc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_pwr8_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_pwr8,
+ 	sizeof(br_aes_pwr8_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_pwr8_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_pwr8_cbcenc_run
+-};
++	4);
+ 
+ /* see bearssl_block.h */
+ const br_block_cbcenc_class *
+diff --git a/src/symcipher/aes_pwr8_ctr.c b/src/symcipher/aes_pwr8_ctr.c
+index f5d20c0..55d8931 100644
+--- a/src/symcipher/aes_pwr8_ctr.c
++++ b/src/symcipher/aes_pwr8_ctr.c
+@@ -686,17 +686,12 @@ br_aes_pwr8_ctr_run(const br_aes_pwr8_ctr_keys *ctx,
+ 	return cc;
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_pwr8_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_pwr8,
+ 	sizeof(br_aes_pwr8_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_pwr8_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_pwr8_ctr_run
+-};
++	4);
+ 
+ /* see bearssl_block.h */
+ const br_block_ctr_class *
+diff --git a/src/symcipher/aes_pwr8_ctrcbc.c b/src/symcipher/aes_pwr8_ctrcbc.c
+index a67d30b..73221fd 100644
+--- a/src/symcipher/aes_pwr8_ctrcbc.c
++++ b/src/symcipher/aes_pwr8_ctrcbc.c
+@@ -913,26 +913,12 @@ br_aes_pwr8_ctrcbc_mac(const br_aes_pwr8_ctrcbc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_pwr8_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_pwr8,
+ 	sizeof(br_aes_pwr8_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_pwr8_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_pwr8_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_pwr8_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_pwr8_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_pwr8_ctrcbc_mac
+-};
++	4);
+ 
+ #else
+ 
+diff --git a/src/symcipher/aes_small_cbcdec.c b/src/symcipher/aes_small_cbcdec.c
+index 8567244..2c58b73 100644
+--- a/src/symcipher/aes_small_cbcdec.c
++++ b/src/symcipher/aes_small_cbcdec.c
+@@ -57,13 +57,9 @@ br_aes_small_cbcdec_run(const br_aes_small_cbcdec_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_small_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_small,
+ 	sizeof(br_aes_small_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_small_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_small_cbcdec_run
+-};
++	4);
+diff --git a/src/symcipher/aes_small_cbcenc.c b/src/symcipher/aes_small_cbcenc.c
+index 0dc2910..df796ec 100644
+--- a/src/symcipher/aes_small_cbcenc.c
++++ b/src/symcipher/aes_small_cbcenc.c
+@@ -55,13 +55,9 @@ br_aes_small_cbcenc_run(const br_aes_small_cbcenc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_small_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_small,
+ 	sizeof(br_aes_small_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_small_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_small_cbcenc_run
+-};
++	4);
+diff --git a/src/symcipher/aes_small_ctr.c b/src/symcipher/aes_small_ctr.c
+index d5d371c..0ee8ce8 100644
+--- a/src/symcipher/aes_small_ctr.c
++++ b/src/symcipher/aes_small_ctr.c
+@@ -71,14 +71,9 @@ br_aes_small_ctr_run(const br_aes_small_ctr_keys *ctx,
+ 	return cc;
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_small_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_small,
+ 	sizeof(br_aes_small_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_small_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_small_ctr_run
+-};
++	4);
+diff --git a/src/symcipher/aes_small_ctrcbc.c b/src/symcipher/aes_small_ctrcbc.c
+index 2d6ba32..dc37428 100644
+--- a/src/symcipher/aes_small_ctrcbc.c
++++ b/src/symcipher/aes_small_ctrcbc.c
+@@ -120,23 +120,9 @@ br_aes_small_ctrcbc_decrypt(const br_aes_small_ctrcbc_keys *ctx,
+ 	br_aes_small_ctrcbc_ctr(ctx, ctr, data, len);
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_small_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_small,
+ 	sizeof(br_aes_small_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_small_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_small_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_small_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_small_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_small_ctrcbc_mac
+-};
++	4);
+diff --git a/src/symcipher/aes_x86ni_cbcdec.c b/src/symcipher/aes_x86ni_cbcdec.c
+index 862b1b5..245f6ef 100644
+--- a/src/symcipher/aes_x86ni_cbcdec.c
++++ b/src/symcipher/aes_x86ni_cbcdec.c
+@@ -200,16 +200,12 @@ br_aes_x86ni_cbcdec_run(const br_aes_x86ni_cbcdec_keys *ctx,
+ 
+ BR_TARGETS_X86_DOWN
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_aes_x86ni_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	aes_x86ni,
+ 	sizeof(br_aes_x86ni_cbcdec_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_aes_x86ni_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_aes_x86ni_cbcdec_run
+-};
++	4);
+ 
+ #else
+ 
+diff --git a/src/symcipher/aes_x86ni_cbcenc.c b/src/symcipher/aes_x86ni_cbcenc.c
+index 85feecd..8b4c13b 100644
+--- a/src/symcipher/aes_x86ni_cbcenc.c
++++ b/src/symcipher/aes_x86ni_cbcenc.c
+@@ -99,16 +99,12 @@ br_aes_x86ni_cbcenc_run(const br_aes_x86ni_cbcenc_keys *ctx,
+ 
+ BR_TARGETS_X86_DOWN
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_aes_x86ni_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	aes_x86ni,
+ 	sizeof(br_aes_x86ni_cbcenc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_aes_x86ni_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_aes_x86ni_cbcenc_run
+-};
++	4);
+ 
+ #else
+ 
+diff --git a/src/symcipher/aes_x86ni_ctr.c b/src/symcipher/aes_x86ni_ctr.c
+index 1cddd60..d2b89e4 100644
+--- a/src/symcipher/aes_x86ni_ctr.c
++++ b/src/symcipher/aes_x86ni_ctr.c
+@@ -187,17 +187,12 @@ br_aes_x86ni_ctr_run(const br_aes_x86ni_ctr_keys *ctx,
+ 
+ BR_TARGETS_X86_DOWN
+ 
+-/* see bearssl_block.h */
+-const br_block_ctr_class br_aes_x86ni_ctr_vtable = {
++/* see inner.h */
++br_block_ctr_vtable(
++	aes_x86ni,
+ 	sizeof(br_aes_x86ni_ctr_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctr_class **, const void *, size_t))
+-		&br_aes_x86ni_ctr_init,
+-	(uint32_t (*)(const br_block_ctr_class *const *,
+-		const void *, uint32_t, void *, size_t))
+-		&br_aes_x86ni_ctr_run
+-};
++	4);
+ 
+ #else
+ 
+diff --git a/src/symcipher/aes_x86ni_ctrcbc.c b/src/symcipher/aes_x86ni_ctrcbc.c
+index f57fead..c0f9fc1 100644
+--- a/src/symcipher/aes_x86ni_ctrcbc.c
++++ b/src/symcipher/aes_x86ni_ctrcbc.c
+@@ -563,26 +563,12 @@ br_aes_x86ni_ctrcbc_decrypt(const br_aes_x86ni_ctrcbc_keys *ctx,
+ 
+ BR_TARGETS_X86_DOWN
+ 
+-/* see bearssl_block.h */
+-const br_block_ctrcbc_class br_aes_x86ni_ctrcbc_vtable = {
++/* see inner.h */
++br_block_ctrcbc_vtable(
++	aes_x86ni,
+ 	sizeof(br_aes_x86ni_ctrcbc_keys),
+ 	16,
+-	4,
+-	(void (*)(const br_block_ctrcbc_class **, const void *, size_t))
+-		&br_aes_x86ni_ctrcbc_init,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_x86ni_ctrcbc_encrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, void *, size_t))
+-		&br_aes_x86ni_ctrcbc_decrypt,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, void *, size_t))
+-		&br_aes_x86ni_ctrcbc_ctr,
+-	(void (*)(const br_block_ctrcbc_class *const *,
+-		void *, const void *, size_t))
+-		&br_aes_x86ni_ctrcbc_mac
+-};
++	4);
+ 
+ #else
+ 
+diff --git a/src/symcipher/des_ct_cbcdec.c b/src/symcipher/des_ct_cbcdec.c
+index d208a3d..56c1a59 100644
+--- a/src/symcipher/des_ct_cbcdec.c
++++ b/src/symcipher/des_ct_cbcdec.c
+@@ -75,13 +75,9 @@ br_des_ct_cbcdec_run(const br_des_ct_cbcdec_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_des_ct_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	des_ct,
+ 	sizeof(br_des_ct_cbcdec_keys),
+ 	8,
+-	3,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_des_ct_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_des_ct_cbcdec_run
+-};
++	3);
+diff --git a/src/symcipher/des_ct_cbcenc.c b/src/symcipher/des_ct_cbcenc.c
+index 4b3610e..20e1ca9 100644
+--- a/src/symcipher/des_ct_cbcenc.c
++++ b/src/symcipher/des_ct_cbcenc.c
+@@ -57,13 +57,9 @@ br_des_ct_cbcenc_run(const br_des_ct_cbcenc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_des_ct_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	des_ct,
+ 	sizeof(br_des_ct_cbcenc_keys),
+ 	8,
+-	3,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_des_ct_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_des_ct_cbcenc_run
+-};
++	3);
+diff --git a/src/symcipher/des_tab_cbcdec.c b/src/symcipher/des_tab_cbcdec.c
+index e7eabe9..c401ce5 100644
+--- a/src/symcipher/des_tab_cbcdec.c
++++ b/src/symcipher/des_tab_cbcdec.c
+@@ -73,13 +73,9 @@ br_des_tab_cbcdec_run(const br_des_tab_cbcdec_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcdec_class br_des_tab_cbcdec_vtable = {
++/* see inner.h */
++br_block_cbcdec_vtable(
++	des_tab,
+ 	sizeof(br_des_tab_cbcdec_keys),
+ 	8,
+-	3,
+-	(void (*)(const br_block_cbcdec_class **, const void *, size_t))
+-		&br_des_tab_cbcdec_init,
+-	(void (*)(const br_block_cbcdec_class *const *, void *, void *, size_t))
+-		&br_des_tab_cbcdec_run
+-};
++	3);
+diff --git a/src/symcipher/des_tab_cbcenc.c b/src/symcipher/des_tab_cbcenc.c
+index 3a45ba3..117e7aa 100644
+--- a/src/symcipher/des_tab_cbcenc.c
++++ b/src/symcipher/des_tab_cbcenc.c
+@@ -55,13 +55,9 @@ br_des_tab_cbcenc_run(const br_des_tab_cbcenc_keys *ctx,
+ 	}
+ }
+ 
+-/* see bearssl_block.h */
+-const br_block_cbcenc_class br_des_tab_cbcenc_vtable = {
++/* see inner.h */
++br_block_cbcenc_vtable(
++	des_tab,
+ 	sizeof(br_des_tab_cbcenc_keys),
+ 	8,
+-	3,
+-	(void (*)(const br_block_cbcenc_class **, const void *, size_t))
+-		&br_des_tab_cbcenc_init,
+-	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
+-		&br_des_tab_cbcenc_run
+-};
++	3);
+-- 
+2.46.0
+
