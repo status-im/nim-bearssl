@@ -184,10 +184,10 @@ type
 type
   EcImpl* {.importc: "br_ec_impl", header: "bearssl_ec.h", bycopy.} = object
     supportedCurves* {.importc: "supported_curves".}: uint32
-    generator* {.importc: "generator".}: proc (curve: cint; len: var uint): ConstPtrByte {.
+    generator* {.importc: "generator".}: proc (curve: cint; len: var csize_t): ConstPtrByte {.
         importcFunc.}
-    order* {.importc: "order".}: proc (curve: cint; len: var uint): ConstPtrByte {.importcFunc.}
-    xoff* {.importc: "xoff".}: proc (curve: cint; len: var uint): uint {.importcFunc.}
+    order* {.importc: "order".}: proc (curve: cint; len: var csize_t): ConstPtrByte {.importcFunc.}
+    xoff* {.importc: "xoff".}: proc (curve: cint; len: var csize_t): csize_t {.importcFunc.}
     mul* {.importc: "mul".}: proc (g: ptr byte; glen: csize_t; x: ConstPtrByte;
                                xlen: csize_t; curve: cint): uint32 {.importcFunc.}
     mulgen* {.importc: "mulgen".}: proc (r: ptr byte; x: ConstPtrByte; xlen: csize_t;
