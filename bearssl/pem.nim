@@ -2,38 +2,57 @@ import
   typetraits,
   ./abi/bearssl_pem
 
-export bearssl_pem
+export PEM_BEGIN_OBJ, PEM_END_OBJ, PEM_ERROR
+
+type
+  PemDestProc* = proc (
+      destCtx: pointer; src: pointer; len: csize_t
+    ) {.cdecl, gcsafe, noSideEffect, raises: [].}
+
+  PemDecoderContext* = ref object
+    raw: RawPemDecoderContext
+    dest: PemDestProc
+    destCtx: pointer
 
 func init*(v: var PemDecoderContext) =
-  # Careful, PemDecoderContext items are not copyable!
+  # Careful, (Raw|)PemDecoderContext items are not copyable!
   # TODO prevent copying
-  pemDecoderInit(v)
+  if v == nil:
+    v.new()
+  pemDecoderInit(v.raw)
 
 func push*(ctx: var PemDecoderContext, data: openArray[byte|char]): int =
+  doAssert ctx != nil, "PemDecoderContext not initialized"
   if data.len > 0:
     let consumed = pemDecoderPush(
-      ctx, unsafeAddr data[0], uint data.len)
+      ctx[].raw, unsafeAddr data[0], uint data.len)
     int(consumed)
   else:
     0
 
-func setdest*(
-    ctx: var PemDecoderContext;
-    dest: proc (destCtx: pointer;
-      src: pointer; len: csize_t) {.cdecl, gcsafe, noSideEffect, raises: [].};
-    destCtx: pointer) =
-  pemDecoderSetdest(ctx, dest, destCtx)
+func destWrapper(destCtx: pointer, src: ConstPointer, len: csize_t) {.cdecl.} =
+  let ctx = cast[PemDecoderContext](destCtx)
+  ctx.dest(ctx.destCtx, cast[pointer](src), len)
+
+func setdest*(ctx: var PemDecoderContext; dest: PemDestProc; destCtx: pointer) =
+  doAssert ctx != nil, "PemDecoderContext not initialized"
+  ctx[].dest = dest
+  ctx[].destCtx = destCtx
+  ctx[].raw.dest = destWrapper
+  ctx[].raw.destCtx = cast[pointer](ctx)
 
 func lastEvent*(ctx: var PemDecoderContext): cint =
-  pemDecoderEvent(ctx)
+  doAssert ctx != nil, "PemDecoderContext not initialized"
+  pemDecoderEvent(ctx.raw)
 
 func banner*(ctx: PemDecoderContext): string =
   ## Return the `name` field as a string
-  if ctx.name[ctx.name.high] == char(0):
-    $(cast[cstring](unsafeAddr ctx.name))
+  doAssert ctx != nil, "PemDecoderContext not initialized"
+  if ctx[].raw.name[ctx[].raw.name.high] == char(0):
+    $(cast[cstring](unsafeAddr ctx[].raw.name))
   else:
-    var res = newString(ctx.name.len)
-    for i, c in ctx.name: res[i] = ctx.name[i]
+    var res = newString(ctx[].raw.name.len)
+    for i, c in ctx[].raw.name: res[i] = ctx[].raw.name[i]
     res
 
 func pemEncode*(
