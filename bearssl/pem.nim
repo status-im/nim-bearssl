@@ -38,7 +38,7 @@ func setdest*(ctx: var PemDecoderContext; dest: PemDestProc; destCtx: pointer) =
   doAssert ctx != nil, "PemDecoderContext not initialized"
   ctx[].dest = dest
   ctx[].destCtx = destCtx
-  ctx[].raw.dest = destWrapper
+  ctx[].raw.dest = if dest != nil: destWrapper else: nil
   ctx[].raw.destCtx = cast[pointer](ctx)
 
 func lastEvent*(ctx: var PemDecoderContext): cint =
