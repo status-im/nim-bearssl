@@ -38,7 +38,12 @@ func isPatchApplied: bool {.compileTime.} =
   staticRead(bearSrcPath & "inner.h")
 static:
   if not isPatchApplied():
-    const cmd = "git -C " & quoteShell(bearPath) & " apply ../csources.patch"
+    const cmd =
+      # quoteShell is not defined when compiling to bare metal
+      when not defined(`any`) and not defined(standalone):
+        "git -C " & quoteShell(bearPath) & " apply ../csources.patch"
+      else:
+        "git -C \"" & bearPath & "\" apply ../csources.patch"
     echo cmd
     echo staticExec(cmd)
 static:
