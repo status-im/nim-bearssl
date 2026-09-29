@@ -26,28 +26,40 @@ export os
 # purpose - wrappers do the same
 
 static: doAssert sizeof(csize_t) == sizeof(int)
+
+const bearssl = currentSourcePath.rsplit({DirSep, AltSep}, 2)[0] & "/"
+when defined(`any`) or defined(standalone):
+  const patched = bearssl
+else:
+  import std/[compilesettings, hashes]
+
+  const patched = block:
+    var h = hash(staticRead(bearssl & "csources.patch"))
+    for dir in ["abi", "certs"]:
+      for kind, path in walkDir(bearssl & dir):
+        if path.endsWith(".c"):
+          h = h !& hash(staticRead(path))
+    let dest = querySetting(nimcacheDir) & "/bearssl_" & toHex(!$h)
+    if dirExists(dest):
+      dest & "/"
+    else:
+      let (output, exitCode) = gorgeEx(
+        quoteShell(getCurrentCompilerExe()) &
+        " e --hints:off --warnings:off" &
+        " --skipUserCfg --skipParentCfg --skipProjCfg " &
+        quoteShell(bearssl & "abi/csources_patch.nims") & " " &
+        quoteShell(bearssl) & " " & quoteShell(dest))
+      doAssert exitCode == 0, output
+      if output.len == 0:  # `nim check`, `nimsuggest` etc don't run tools
+        bearssl
+      else:
+        dest & "/"
+
 const
-  bearPath* = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/../" &
-             "csources" & "/"
+  bearPath* = patched & "csources/"
   bearIncPath* = bearPath & "inc/"
   bearSrcPath* = bearPath & "src/"
   bearToolsPath* = bearPath & "tools/"
-
-func isPatchApplied: bool {.compileTime.} =
-  "nim-bearssl patches applied - 2026-09-24" in
-  staticRead(bearSrcPath & "inner.h")
-static:
-  if not isPatchApplied():
-    const cmd =
-      # quoteShell is not defined when compiling to bare metal
-      when not defined(`any`) and not defined(standalone):
-        "git -C " & quoteShell(bearPath) & " apply ../csources.patch"
-      else:
-        "git -C \"" & bearPath & "\" apply ../csources.patch"
-    echo cmd
-    echo staticExec(cmd)
-static:
-  doAssert isPatchApplied()
 
 # Include folders need to be avalable to all consumers of bearssl
 
@@ -66,4 +78,4 @@ else:
 template currentSourceDir*(): string =
   # TODO https://github.com/nim-lang/Nim/issues/19558
   # parentDir breaks cross compilation  e.g. from linux to windows
-  currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]
+  (patched & "abi/").rsplit({DirSep, AltSep}, 1)[0]
