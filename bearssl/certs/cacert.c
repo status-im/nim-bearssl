@@ -1,5 +1,5 @@
-// 2026-08-13: https://curl.haxx.se/ca/cacert.pem
-// SHA-256: f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9
+// 2026-09-25: https://curl.haxx.se/ca/cacert.pem
+// SHA-256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
 
 #include <brssl.h>
 
