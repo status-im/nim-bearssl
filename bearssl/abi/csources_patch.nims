@@ -29,10 +29,23 @@ if not dirExists(dest):
 
   # Apply patch
   putEnv("GIT_DIR", "/dev/null")  # Ignore outside repositories
-  let cmd = "git -C " & quoteShell(tmp / "csources") & " apply " &
-    quoteShell(bearssl / "csources.patch")
-  echo cmd
-  exec cmd
+  let
+    csources = quoteShell(tmp / "csources")
+    patch = quoteShell(bearssl / "csources.patch")
+  var didApply = false
+  for cmd in [
+      "git -C " & csources & " apply " & patch,
+      "patch -p1 -F0 -f -s -d " & csources & " -i " & patch]:
+    echo cmd
+    let (output, exitCode) = gorgeEx(cmd)
+    echo output
+    if exitCode == 0 and "/* nim-bearssl patches applied" in
+        readFile(tmp / "csources" / "src" / "inner.h"):
+      didApply = true
+      break
+  if not didApply:
+    rmDir(tmp)
+  doAssert didApply, "Failed to apply " & patch
 
   # Move to dest (or cancel if someone else was faster)
   try:
