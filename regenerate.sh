@@ -28,7 +28,7 @@ perl -0777 -pi -e '
   s/\(\(br_union_u(\d+) \*\)dst\)->u = x;/uint$1_t v = x;\n\tmemcpy(dst, &v, sizeof v);/g;
   s/return \(\(const br_union_u(\d+) \*\)src\)->u;/uint$1_t v;\n\tmemcpy(&v, src, sizeof v);\n\treturn v;/g;
 ' bearssl/csources/src/inner.h bearssl/csources/src/*/*.c
-echo "/* nim-bearssl patches applied - 2026-09-24 */" >> bearssl/csources/src/inner.h
+echo "/* nim-bearssl patches applied - 2026-09-24 - $(git -C bearssl/csources rev-parse HEAD) */" >> bearssl/csources/src/inner.h
 git -C bearssl/csources diff > bearssl/csources.patch
 git -C bearssl/csources checkout -- .
 

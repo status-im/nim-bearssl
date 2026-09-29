@@ -560,7 +560,7 @@ index ca19655..eaf8ac5 100644
 +	&br_sha256_set_state_wrapper
  };
 diff --git a/src/inner.h b/src/inner.h
-index 07e1d0a..20e5e75 100644
+index 07e1d0a..ac81c63 100644
 --- a/src/inner.h
 +++ b/src/inner.h
 @@ -488,7 +488,8 @@ static inline void
@@ -693,7 +693,7 @@ index 07e1d0a..20e5e75 100644
  /* ==================================================================== */
  
  #endif
-+/* nim-bearssl patches applied - 2026-09-24 */
++/* nim-bearssl patches applied - 2026-09-24 - 7bea48e5e850ab4cafbe68d3765cdaba13a86d6f */
 diff --git a/src/rand/aesctr_drbg.c b/src/rand/aesctr_drbg.c
 index 8dbd501..a9401a7 100644
 --- a/src/rand/aesctr_drbg.c
