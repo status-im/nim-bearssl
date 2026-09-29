@@ -2,7 +2,7 @@ import
   typetraits,
   ./abi/bearssl_pem
 
-export PEM_BEGIN_OBJ, PEM_END_OBJ, PEM_ERROR
+export PEM_BEGIN_OBJ, PEM_END_OBJ, PEM_ERROR, PEM_LINE64, PEM_CRLF
 
 type
   PemDestProc* = proc (
