@@ -70,6 +70,9 @@ func generate*[V](ctx: var HmacDrbgContext, v: var openArray[V]) =
       # allocate that much memory, so it won't
       hmacDrbgGenerate(ctx, addr v[0], uint v.len * sizeof(V))
 
+template generate*[I, V](ctx: var HmacDrbgContext, v: var array[I, V]) =
+  generate(ctx, v.toOpenArray(v.low(), v.high()))
+
 template generate*[V](ctx: var HmacDrbgContext, v: var seq[V]) =
   generate(ctx, v.toOpenArray(0, v.high()))
 
