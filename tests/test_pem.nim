@@ -2,6 +2,8 @@ import
   unittest2,
   ../bearssl/pem
 
+{.used.}
+
 suite "PEM":
   test "roundtrip":
     let
