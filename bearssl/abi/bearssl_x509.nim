@@ -19,7 +19,11 @@ const
 {.compile: bearX509Path & "x509_knownkey.c".}
 {.compile: bearX509Path & "x509_minimal.c".}
 {.compile: bearX509Path & "x509_minimal_full.c".}
-{.compile: currentSourceDir() & "/x509_compat.c".}
+
+type
+  X509ClassPointerConstConst* {.importc: "const br_x509_class *const *", header: "bearssl_x509.h", bycopy.} = pointer
+  X509ClassPointerConst* {.importc: "const br_x509_class**", header: "bearssl_x509.h", bycopy.} = pointer
+  ConstPtrX509Pkey* {.importc: "const br_x509_pkey *", header: "bearssl_x509.h", bycopy.} = pointer
 
 const
   ERR_X509_OK* = 32
@@ -194,33 +198,16 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     startChain* {.importc: "start_chain".}: proc (ctx: X509ClassPointerConst;
         serverName: ConstCstring) {.importcFunc.}
-    startCert* {.importc: "start_cert".}: proc (ctx: X509ClassPointerConst; length: uint32) {.
-        importcFunc.}
-    append* {.importc: "append".}: proc (ctx: pointer; buf: pointer;
+    startCert* {.importc: "start_cert".}: proc (ctx: X509ClassPointerConst;
+        length: uint32) {.importcFunc.}
+    append* {.importc: "append".}: proc (ctx: X509ClassPointerConst; buf: ConstPtrByte;
                                      len: csize_t) {.importcFunc.}
-      ## Plain `pointer`, not the `const` aliases: a `const` spelling here poisons
-      ## the C `typedef` shared with the decoder/PEM/hash callbacks (order-dependent),
-      ## breaking them under clang `-Werror`. The real C field stays `const`-qualified.
-      ## Trade-off: `addr cls.append` (incl. `unittest2`'s `check cls.append != nil`)
-      ## then mismatches the `const` header field under clang
-      ## `-Wincompatible-pointer-types`; use the field by value, not by address.
     endCert* {.importc: "end_cert".}: proc (ctx: X509ClassPointerConst) {.importcFunc.}
     endChain* {.importc: "end_chain".}: proc (ctx: X509ClassPointerConst): cuint {.importcFunc.}
     getPkey* {.importc: "get_pkey".}: proc (ctx: X509ClassPointerConstConst;
-        usages: ptr cuint): ConstPtrX509Pkey {.importcFunc.}
+                                        usages: ptr cuint): ConstPtrX509Pkey {.importcFunc.}
 
-  X509ClassPointerConst* {.importc: "const br_x509_class**", header: "bearssl_x509.h", bycopy.} = pointer
-    ## C type `const br_x509_class**` — the `ctx` argument of most X509 callbacks.
-  X509ClassPointerConstConst* {.
-    importc: "const br_x509_class *const *", header: "bearssl_x509.h", bycopy
-  .} = pointer
-    ## C type `const br_x509_class *const *` — the `ctx` argument of `get_pkey`.
-  ConstPtrX509Pkey* {.importc: "const br_x509_pkey *", header: "bearssl_x509.h", bycopy.} =
-    pointer
-    ## C type `const br_x509_pkey *` — the return type of `get_pkey`.
-    ## Aliased to `pointer` (not `ptr X509Pkey`): a typed-ptr alias emits the
-    ## structural `br_x509_pkey *`, dropping `const`; `pointer` keeps the
-    ## importc spelling so the qualifier survives.
+
 
 type
   X509KnownkeyContext* {.importc: "br_x509_knownkey_context",
@@ -250,7 +237,7 @@ const
 
 type
   NameElement* {.importc: "br_name_element", header: "bearssl_x509.h", bycopy.} = object
-    oid* {.importc: "oid".}: ptr byte
+    oid* {.importc: "oid".}: ConstPtrByte
     buf* {.importc: "buf".}: cstring
     len* {.importc: "len".}: csize_t
     status* {.importc: "status".}: cint
@@ -269,7 +256,7 @@ type
                                   header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr byte
+    ip* {.importc: "ip".}: ConstPtrByte
 
   X509MinimalContext* {.importc: "br_x509_minimal_context",
                        header: "bearssl_x509.h", bycopy.} = object
@@ -279,13 +266,13 @@ type
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
-    serverName* {.importc: "server_name".}: cstring
+    serverName* {.importc: "server_name".}: ConstCstring
     keyUsages* {.importc: "key_usages".}: byte
     days* {.importc: "days".}: uint32
     seconds* {.importc: "seconds".}: uint32
     certLength* {.importc: "cert_length".}: uint32
     numCerts* {.importc: "num_certs".}: uint32
-    hbuf* {.importc: "hbuf".}: ptr byte
+    hbuf* {.importc: "hbuf".}: ConstPtrByte
     hlen* {.importc: "hlen".}: csize_t
     pad* {.importc: "pad".}: array[256, byte]
     eePkeyData* {.importc: "ee_pkey_data".}: array[X509_BUFSIZE_KEY, byte]
@@ -370,7 +357,7 @@ type
                                   header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr byte
+    ip* {.importc: "ip".}: ConstPtrByte
 
   X509DecoderContext* {.importc: "br_x509_decoder_context",
                        header: "bearssl_x509.h", bycopy.} = object
@@ -388,9 +375,9 @@ type
     isCA* {.importc: "isCA".}: bool
     copyDn* {.importc: "copy_dn".}: byte
     appendDnCtx* {.importc: "append_dn_ctx".}: pointer
-    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: csize_t) {.
-        importcFunc.}
-    hbuf* {.importc: "hbuf".}: ptr byte
+    appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: ConstPointer;
+        len: csize_t) {.importcFunc.}
+    hbuf* {.importc: "hbuf".}: ConstPtrByte
     hlen* {.importc: "hlen".}: csize_t
     pkeyData* {.importc: "pkey_data".}: array[X509_BUFSIZE_KEY, byte]
     signerKeyType* {.importc: "signer_key_type".}: byte
@@ -399,19 +386,11 @@ type
 
 
 proc x509DecoderInit*(ctx: var X509DecoderContext; appendDn: proc (ctx: pointer;
-    buf: pointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
-    importc: "nimbearssl_x509_decoder_init".}
-  ## `buf` stays `pointer`, not `ConstPointer`: the PEM `setdest`, hash `update`
-  ## and this `appendDn` callback are structurally identical, so Nim emits one
-  ## shared C `typedef` for all three. A `ConstPointer` alias renders that typedef
-  ## `const` in some translation units (compilation-order dependent), breaking
-  ## non-const downstream callbacks (e.g. nim-chronos's PEM `itemAppend`) under
-  ## `-Werror=incompatible[-function]-pointer-types`. const-correctness toward the
-  ## real C function is restored by the `x509_compat.c` shim. Mirrors
-  ## `pemDecoderSetdest`.
+    buf: ConstPointer; len: csize_t) {.importcFunc.}; appendDnCtx: pointer) {.importcFunc,
+    importc: "br_x509_decoder_init", header: "bearssl_x509.h".}
 
-proc x509DecoderPush*(ctx: var X509DecoderContext; data: pointer; len: csize_t) {.importcFunc,
-    importc: "br_x509_decoder_push", header: "bearssl_x509.h".}
+proc x509DecoderPush*(ctx: var X509DecoderContext; data: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_x509_decoder_push", header: "bearssl_x509.h".}
 
 proc x509DecoderGetPkey*(ctx: var X509DecoderContext): ptr X509Pkey {.inline.} =
   if ctx.decoded and ctx.err == 0:
@@ -453,7 +432,7 @@ type
                                   header: "bearssl_x509.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr byte
+    ip* {.importc: "ip".}: ConstPtrByte
 
   SkeyDecoderContext* {.importc: "br_skey_decoder_context",
                        header: "bearssl_x509.h", bycopy.} = object
@@ -462,7 +441,7 @@ type
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
-    hbuf* {.importc: "hbuf".}: ptr byte
+    hbuf* {.importc: "hbuf".}: ConstPtrByte
     hlen* {.importc: "hlen".}: csize_t
     pad* {.importc: "pad".}: array[256, byte]
     keyType* {.importc: "key_type".}: byte
@@ -473,8 +452,8 @@ type
 proc skeyDecoderInit*(ctx: var SkeyDecoderContext) {.importcFunc,
     importc: "br_skey_decoder_init", header: "bearssl_x509.h".}
 
-proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: pointer; len: csize_t) {.importcFunc,
-    importc: "br_skey_decoder_push", header: "bearssl_x509.h".}
+proc skeyDecoderPush*(ctx: var SkeyDecoderContext; data: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_skey_decoder_push", header: "bearssl_x509.h".}
 
 proc skeyDecoderLastError*(ctx: var SkeyDecoderContext): cint {.inline.} =
   if ctx.err != 0:
@@ -506,11 +485,11 @@ proc skeyDecoderGetEc*(ctx: var SkeyDecoderContext): ptr EcPrivateKey {.inline.}
 
 
 proc encodeRsaRawDer*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                     d: pointer; dlen: csize_t): csize_t {.importcFunc,
+                     d: ConstPointer; dlen: csize_t): csize_t {.importcFunc,
     importc: "br_encode_rsa_raw_der", header: "bearssl_x509.h".}
 
 proc encodeRsaPkcs8Der*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                       d: pointer; dlen: csize_t): csize_t {.importcFunc,
+                       d: ConstPointer; dlen: csize_t): csize_t {.importcFunc,
     importc: "br_encode_rsa_pkcs8_der", header: "bearssl_x509.h".}
 
 proc encodeEcRawDer*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): csize_t {.

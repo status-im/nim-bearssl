@@ -33,6 +33,7 @@ In general, the mappings follow the conventions of the original BearSSL library 
 * `byte` replaces `unsigned char*` - this type is predominantly used for byte buffers
 * `csize_t` is used for `size_t` - it converts implicitly to and from `uint` in Nim, but does not necessarily map to the same C type
   * Canonical nim code will have to be careful when converting existing `int` lengths, looking out for out-of-range values
+* `const` pointers in function types use the `const`-qualified aliases (`ConstPointer`, `ConstPtrByte`, `ConstCstring`, `ConstPtrXxx`, ...) - these are `pointer` / `cstring` in Nim, but they are different C types
 
 In addition to the raw `C`-like api, convenience functions are added where applicable - these follow a similar set of conventions:
 

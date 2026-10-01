@@ -58,14 +58,28 @@ const
 {.compile: bearSymcPath & "poly1305_i15.c".}
 
 type
+  ConstPtrBlockCbcdecClass* {.importc: "const br_block_cbcdec_class *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrBlockCbcencClass* {.importc: "const br_block_cbcenc_class *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrBlockCtrClass* {.importc: "const br_block_ctr_class *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrBlockCtrcbcClass* {.importc: "const br_block_ctrcbc_class *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrConstPtrBlockCbcdecClass* {.importc: "const br_block_cbcdec_class *const *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrConstPtrBlockCbcencClass* {.importc: "const br_block_cbcenc_class *const *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrConstPtrBlockCtrClass* {.importc: "const br_block_ctr_class *const *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrConstPtrBlockCtrcbcClass* {.importc: "const br_block_ctrcbc_class *const *", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrPtrBlockCbcdecClass* {.importc: "const br_block_cbcdec_class**", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrPtrBlockCbcencClass* {.importc: "const br_block_cbcenc_class**", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrPtrBlockCtrClass* {.importc: "const br_block_ctr_class**", header: "bearssl_block.h", bycopy.} = pointer
+  ConstPtrPtrBlockCtrcbcClass* {.importc: "const br_block_ctrcbc_class**", header: "bearssl_block.h", bycopy.} = pointer
+
+type
   BlockCbcencClass* {.importc: "br_block_cbcenc_class", header: "bearssl_block.h",
                      bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: ConstPointer;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcencClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
-    run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcencClass; iv: pointer;
+    run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCbcencClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
 
 
@@ -76,9 +90,9 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: ConstPointer;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcdecClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
-    run* {.importc: "run".}: proc (ctx: ptr ptr BlockCbcdecClass; iv: pointer;
+    run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCbcdecClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
 
 
@@ -88,10 +102,11 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: ConstPointer;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCtrClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
-    run* {.importc: "run".}: proc (ctx: ptr ptr BlockCtrClass; iv: ConstPointer; cc: uint32;
-                               data: pointer; len: csize_t): uint32 {.importcFunc.}
+    run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCtrClass;
+                               iv: ConstPointer; cc: uint32; data: pointer;
+                               len: csize_t): uint32 {.importcFunc.}
 
 
 
@@ -101,18 +116,19 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: ConstPointer;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCtrcbcClass; key: ConstPointer;
                                  keylen: csize_t) {.importcFunc.}
-    encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
-                                       cbcmac: pointer; data: pointer; len: csize_t) {.
+    encrypt* {.importc: "encrypt".}: proc (ctx: ConstPtrConstPtrBlockCtrcbcClass;
+                                       ctr: pointer; cbcmac: pointer; data: pointer;
+                                       len: csize_t) {.importcFunc.}
+    decrypt* {.importc: "decrypt".}: proc (ctx: ConstPtrConstPtrBlockCtrcbcClass;
+                                       ctr: pointer; cbcmac: pointer; data: pointer;
+                                       len: csize_t) {.importcFunc.}
+    ctr* {.importc: "ctr".}: proc (ctx: ConstPtrConstPtrBlockCtrcbcClass;
+                               ctr: pointer; data: pointer; len: csize_t) {.importcFunc.}
+    mac* {.importc: "mac".}: proc (ctx: ConstPtrConstPtrBlockCtrcbcClass;
+                               cbcmac: pointer; data: ConstPointer; len: csize_t) {.
         importcFunc.}
-    decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
-                                       cbcmac: pointer; data: pointer; len: csize_t) {.
-        importcFunc.}
-    ctr* {.importc: "ctr".}: proc (ctx: ptr ptr BlockCtrcbcClass; ctr: pointer;
-                               data: pointer; len: csize_t) {.importcFunc.}
-    mac* {.importc: "mac".}: proc (ctx: ptr ptr BlockCtrcbcClass; cbcmac: pointer;
-                               data: ConstPointer; len: csize_t) {.importcFunc.}
 
 
 
@@ -166,17 +182,17 @@ var aesBigCtrVtable* {.importc: "br_aes_big_ctr_vtable", header: "bearssl_block.
 var aesBigCtrcbcVtable* {.importc: "br_aes_big_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesBigCbcencInit*(ctx: var AesBigCbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_big_cbcenc_init", header: "bearssl_block.h".}
+proc aesBigCbcencInit*(ctx: var AesBigCbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_big_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesBigCbcdecInit*(ctx: var AesBigCbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_big_cbcdec_init", header: "bearssl_block.h".}
+proc aesBigCbcdecInit*(ctx: var AesBigCbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_big_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesBigCtrInit*(ctx: var AesBigCtrKeys; key: pointer; len: csize_t) {.importcFunc,
+proc aesBigCtrInit*(ctx: var AesBigCtrKeys; key: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_aes_big_ctr_init", header: "bearssl_block.h".}
 
-proc aesBigCtrcbcInit*(ctx: var AesBigCtrcbcKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_big_ctrcbc_init", header: "bearssl_block.h".}
+proc aesBigCtrcbcInit*(ctx: var AesBigCtrcbcKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_big_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesBigCbcencRun*(ctx: var AesBigCbcencKeys; iv: pointer; data: pointer;
                      len: csize_t) {.importcFunc, importc: "br_aes_big_cbcenc_run",
@@ -186,7 +202,7 @@ proc aesBigCbcdecRun*(ctx: var AesBigCbcdecKeys; iv: pointer; data: pointer;
                      len: csize_t) {.importcFunc, importc: "br_aes_big_cbcdec_run",
                                    header: "bearssl_block.h".}
 
-proc aesBigCtrRun*(ctx: var AesBigCtrKeys; iv: pointer; cc: uint32; data: pointer;
+proc aesBigCtrRun*(ctx: var AesBigCtrKeys; iv: ConstPointer; cc: uint32; data: pointer;
                   len: csize_t): uint32 {.importcFunc, importc: "br_aes_big_ctr_run",
                                         header: "bearssl_block.h".}
 
@@ -202,7 +218,7 @@ proc aesBigCtrcbcCtr*(ctx: var AesBigCtrcbcKeys; ctr: pointer; data: pointer;
                      len: csize_t) {.importcFunc, importc: "br_aes_big_ctrcbc_ctr",
                                    header: "bearssl_block.h".}
 
-proc aesBigCtrcbcMac*(ctx: var AesBigCtrcbcKeys; cbcmac: pointer; data: pointer;
+proc aesBigCtrcbcMac*(ctx: var AesBigCtrcbcKeys; cbcmac: pointer; data: ConstPointer;
                      len: csize_t) {.importcFunc, importc: "br_aes_big_ctrcbc_mac",
                                    header: "bearssl_block.h".}
 
@@ -257,16 +273,16 @@ var aesSmallCtrVtable* {.importc: "br_aes_small_ctr_vtable", header: "bearssl_bl
 var aesSmallCtrcbcVtable* {.importc: "br_aes_small_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesSmallCbcencInit*(ctx: var AesSmallCbcencKeys; key: pointer; len: csize_t) {.
+proc aesSmallCbcencInit*(ctx: var AesSmallCbcencKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_small_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesSmallCbcdecInit*(ctx: var AesSmallCbcdecKeys; key: pointer; len: csize_t) {.
+proc aesSmallCbcdecInit*(ctx: var AesSmallCbcdecKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_small_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesSmallCtrInit*(ctx: var AesSmallCtrKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_small_ctr_init", header: "bearssl_block.h".}
+proc aesSmallCtrInit*(ctx: var AesSmallCtrKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_small_ctr_init", header: "bearssl_block.h".}
 
-proc aesSmallCtrcbcInit*(ctx: var AesSmallCtrcbcKeys; key: pointer; len: csize_t) {.
+proc aesSmallCtrcbcInit*(ctx: var AesSmallCtrcbcKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_small_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesSmallCbcencRun*(ctx: var AesSmallCbcencKeys; iv: pointer; data: pointer;
@@ -277,9 +293,9 @@ proc aesSmallCbcdecRun*(ctx: var AesSmallCbcdecKeys; iv: pointer; data: pointer;
                        len: csize_t) {.importcFunc, importc: "br_aes_small_cbcdec_run",
                                      header: "bearssl_block.h".}
 
-proc aesSmallCtrRun*(ctx: var AesSmallCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                    len: csize_t): uint32 {.importcFunc, importc: "br_aes_small_ctr_run",
-    header: "bearssl_block.h".}
+proc aesSmallCtrRun*(ctx: var AesSmallCtrKeys; iv: ConstPointer; cc: uint32;
+                    data: pointer; len: csize_t): uint32 {.importcFunc,
+    importc: "br_aes_small_ctr_run", header: "bearssl_block.h".}
 
 proc aesSmallCtrcbcEncrypt*(ctx: var AesSmallCtrcbcKeys; ctr: pointer;
                            cbcmac: pointer; data: pointer; len: csize_t) {.importcFunc,
@@ -293,9 +309,9 @@ proc aesSmallCtrcbcCtr*(ctx: var AesSmallCtrcbcKeys; ctr: pointer; data: pointer
                        len: csize_t) {.importcFunc, importc: "br_aes_small_ctrcbc_ctr",
                                      header: "bearssl_block.h".}
 
-proc aesSmallCtrcbcMac*(ctx: var AesSmallCtrcbcKeys; cbcmac: pointer; data: pointer;
-                       len: csize_t) {.importcFunc, importc: "br_aes_small_ctrcbc_mac",
-                                     header: "bearssl_block.h".}
+proc aesSmallCtrcbcMac*(ctx: var AesSmallCtrcbcKeys; cbcmac: pointer;
+                       data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_aes_small_ctrcbc_mac", header: "bearssl_block.h".}
 
 const
   aesCtBLOCK_SIZE* = 16
@@ -347,17 +363,17 @@ var aesCtCtrVtable* {.importc: "br_aes_ct_ctr_vtable", header: "bearssl_block.h"
 var aesCtCtrcbcVtable* {.importc: "br_aes_ct_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesCtCbcencInit*(ctx: var AesCtCbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct_cbcenc_init", header: "bearssl_block.h".}
+proc aesCtCbcencInit*(ctx: var AesCtCbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesCtCbcdecInit*(ctx: var AesCtCbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct_cbcdec_init", header: "bearssl_block.h".}
+proc aesCtCbcdecInit*(ctx: var AesCtCbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesCtCtrInit*(ctx: var AesCtCtrKeys; key: pointer; len: csize_t) {.importcFunc,
+proc aesCtCtrInit*(ctx: var AesCtCtrKeys; key: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_aes_ct_ctr_init", header: "bearssl_block.h".}
 
-proc aesCtCtrcbcInit*(ctx: var AesCtCtrcbcKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct_ctrcbc_init", header: "bearssl_block.h".}
+proc aesCtCtrcbcInit*(ctx: var AesCtCtrcbcKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesCtCbcencRun*(ctx: var AesCtCbcencKeys; iv: pointer; data: pointer; len: csize_t) {.
     importcFunc, importc: "br_aes_ct_cbcenc_run", header: "bearssl_block.h".}
@@ -365,7 +381,7 @@ proc aesCtCbcencRun*(ctx: var AesCtCbcencKeys; iv: pointer; data: pointer; len: 
 proc aesCtCbcdecRun*(ctx: var AesCtCbcdecKeys; iv: pointer; data: pointer; len: csize_t) {.
     importcFunc, importc: "br_aes_ct_cbcdec_run", header: "bearssl_block.h".}
 
-proc aesCtCtrRun*(ctx: var AesCtCtrKeys; iv: pointer; cc: uint32; data: pointer;
+proc aesCtCtrRun*(ctx: var AesCtCtrKeys; iv: ConstPointer; cc: uint32; data: pointer;
                  len: csize_t): uint32 {.importcFunc, importc: "br_aes_ct_ctr_run",
                                        header: "bearssl_block.h".}
 
@@ -380,7 +396,7 @@ proc aesCtCtrcbcDecrypt*(ctx: var AesCtCtrcbcKeys; ctr: pointer; cbcmac: pointer
 proc aesCtCtrcbcCtr*(ctx: var AesCtCtrcbcKeys; ctr: pointer; data: pointer; len: csize_t) {.
     importcFunc, importc: "br_aes_ct_ctrcbc_ctr", header: "bearssl_block.h".}
 
-proc aesCtCtrcbcMac*(ctx: var AesCtCtrcbcKeys; cbcmac: pointer; data: pointer;
+proc aesCtCtrcbcMac*(ctx: var AesCtCtrcbcKeys; cbcmac: pointer; data: ConstPointer;
                     len: csize_t) {.importcFunc, importc: "br_aes_ct_ctrcbc_mac",
                                   header: "bearssl_block.h".}
 
@@ -435,17 +451,17 @@ var aesCt64CtrVtable* {.importc: "br_aes_ct64_ctr_vtable", header: "bearssl_bloc
 var aesCt64CtrcbcVtable* {.importc: "br_aes_ct64_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesCt64CbcencInit*(ctx: var AesCt64CbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct64_cbcenc_init", header: "bearssl_block.h".}
+proc aesCt64CbcencInit*(ctx: var AesCt64CbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct64_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesCt64CbcdecInit*(ctx: var AesCt64CbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct64_cbcdec_init", header: "bearssl_block.h".}
+proc aesCt64CbcdecInit*(ctx: var AesCt64CbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct64_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesCt64CtrInit*(ctx: var AesCt64CtrKeys; key: pointer; len: csize_t) {.importcFunc,
+proc aesCt64CtrInit*(ctx: var AesCt64CtrKeys; key: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_aes_ct64_ctr_init", header: "bearssl_block.h".}
 
-proc aesCt64CtrcbcInit*(ctx: var AesCt64CtrcbcKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_ct64_ctrcbc_init", header: "bearssl_block.h".}
+proc aesCt64CtrcbcInit*(ctx: var AesCt64CtrcbcKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_ct64_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesCt64CbcencRun*(ctx: var AesCt64CbcencKeys; iv: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_ct64_cbcenc_run",
@@ -455,9 +471,9 @@ proc aesCt64CbcdecRun*(ctx: var AesCt64CbcdecKeys; iv: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_ct64_cbcdec_run",
                                     header: "bearssl_block.h".}
 
-proc aesCt64CtrRun*(ctx: var AesCt64CtrKeys; iv: pointer; cc: uint32; data: pointer;
-                   len: csize_t): uint32 {.importcFunc, importc: "br_aes_ct64_ctr_run",
-    header: "bearssl_block.h".}
+proc aesCt64CtrRun*(ctx: var AesCt64CtrKeys; iv: ConstPointer; cc: uint32;
+                   data: pointer; len: csize_t): uint32 {.importcFunc,
+    importc: "br_aes_ct64_ctr_run", header: "bearssl_block.h".}
 
 proc aesCt64CtrcbcEncrypt*(ctx: var AesCt64CtrcbcKeys; ctr: pointer; cbcmac: pointer;
                           data: pointer; len: csize_t) {.importcFunc,
@@ -471,9 +487,9 @@ proc aesCt64CtrcbcCtr*(ctx: var AesCt64CtrcbcKeys; ctr: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_ct64_ctrcbc_ctr",
                                     header: "bearssl_block.h".}
 
-proc aesCt64CtrcbcMac*(ctx: var AesCt64CtrcbcKeys; cbcmac: pointer; data: pointer;
-                      len: csize_t) {.importcFunc, importc: "br_aes_ct64_ctrcbc_mac",
-                                    header: "bearssl_block.h".}
+proc aesCt64CtrcbcMac*(ctx: var AesCt64CtrcbcKeys; cbcmac: pointer;
+                      data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_aes_ct64_ctrcbc_mac", header: "bearssl_block.h".}
 
 const
   aesX86niBLOCK_SIZE* = 16
@@ -542,16 +558,16 @@ var aesX86niCtrVtable* {.importc: "br_aes_x86ni_ctr_vtable", header: "bearssl_bl
 var aesX86niCtrcbcVtable* {.importc: "br_aes_x86ni_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesX86niCbcencInit*(ctx: var AesX86niCbcencKeys; key: pointer; len: csize_t) {.
+proc aesX86niCbcencInit*(ctx: var AesX86niCbcencKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_x86ni_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesX86niCbcdecInit*(ctx: var AesX86niCbcdecKeys; key: pointer; len: csize_t) {.
+proc aesX86niCbcdecInit*(ctx: var AesX86niCbcdecKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_x86ni_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesX86niCtrInit*(ctx: var AesX86niCtrKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_x86ni_ctr_init", header: "bearssl_block.h".}
+proc aesX86niCtrInit*(ctx: var AesX86niCtrKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_x86ni_ctr_init", header: "bearssl_block.h".}
 
-proc aesX86niCtrcbcInit*(ctx: var AesX86niCtrcbcKeys; key: pointer; len: csize_t) {.
+proc aesX86niCtrcbcInit*(ctx: var AesX86niCtrcbcKeys; key: ConstPointer; len: csize_t) {.
     importcFunc, importc: "br_aes_x86ni_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesX86niCbcencRun*(ctx: var AesX86niCbcencKeys; iv: pointer; data: pointer;
@@ -562,9 +578,9 @@ proc aesX86niCbcdecRun*(ctx: var AesX86niCbcdecKeys; iv: pointer; data: pointer;
                        len: csize_t) {.importcFunc, importc: "br_aes_x86ni_cbcdec_run",
                                      header: "bearssl_block.h".}
 
-proc aesX86niCtrRun*(ctx: var AesX86niCtrKeys; iv: pointer; cc: uint32; data: pointer;
-                    len: csize_t): uint32 {.importcFunc, importc: "br_aes_x86ni_ctr_run",
-    header: "bearssl_block.h".}
+proc aesX86niCtrRun*(ctx: var AesX86niCtrKeys; iv: ConstPointer; cc: uint32;
+                    data: pointer; len: csize_t): uint32 {.importcFunc,
+    importc: "br_aes_x86ni_ctr_run", header: "bearssl_block.h".}
 
 proc aesX86niCtrcbcEncrypt*(ctx: var AesX86niCtrcbcKeys; ctr: pointer;
                            cbcmac: pointer; data: pointer; len: csize_t) {.importcFunc,
@@ -578,9 +594,9 @@ proc aesX86niCtrcbcCtr*(ctx: var AesX86niCtrcbcKeys; ctr: pointer; data: pointer
                        len: csize_t) {.importcFunc, importc: "br_aes_x86ni_ctrcbc_ctr",
                                      header: "bearssl_block.h".}
 
-proc aesX86niCtrcbcMac*(ctx: var AesX86niCtrcbcKeys; cbcmac: pointer; data: pointer;
-                       len: csize_t) {.importcFunc, importc: "br_aes_x86ni_ctrcbc_mac",
-                                     header: "bearssl_block.h".}
+proc aesX86niCtrcbcMac*(ctx: var AesX86niCtrcbcKeys; cbcmac: pointer;
+                       data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_aes_x86ni_ctrcbc_mac", header: "bearssl_block.h".}
 
 proc aesX86niCbcencGetVtable*(): ptr BlockCbcencClass {.importcFunc,
     importc: "br_aes_x86ni_cbcenc_get_vtable", header: "bearssl_block.h".}
@@ -661,17 +677,17 @@ var aesPwr8CtrVtable* {.importc: "br_aes_pwr8_ctr_vtable", header: "bearssl_bloc
 var aesPwr8CtrcbcVtable* {.importc: "br_aes_pwr8_ctrcbc_vtable", header: "bearssl_block.h".}: BlockCtrcbcClass
 
 
-proc aesPwr8CbcencInit*(ctx: var AesPwr8CbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_pwr8_cbcenc_init", header: "bearssl_block.h".}
+proc aesPwr8CbcencInit*(ctx: var AesPwr8CbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_pwr8_cbcenc_init", header: "bearssl_block.h".}
 
-proc aesPwr8CbcdecInit*(ctx: var AesPwr8CbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_pwr8_cbcdec_init", header: "bearssl_block.h".}
+proc aesPwr8CbcdecInit*(ctx: var AesPwr8CbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_pwr8_cbcdec_init", header: "bearssl_block.h".}
 
-proc aesPwr8CtrInit*(ctx: var AesPwr8CtrKeys; key: pointer; len: csize_t) {.importcFunc,
+proc aesPwr8CtrInit*(ctx: var AesPwr8CtrKeys; key: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_aes_pwr8_ctr_init", header: "bearssl_block.h".}
 
-proc aesPwr8CtrcbcInit*(ctx: var AesPwr8CtrcbcKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_aes_pwr8_ctrcbc_init", header: "bearssl_block.h".}
+proc aesPwr8CtrcbcInit*(ctx: var AesPwr8CtrcbcKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_aes_pwr8_ctrcbc_init", header: "bearssl_block.h".}
 
 proc aesPwr8CbcencRun*(ctx: var AesPwr8CbcencKeys; iv: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_pwr8_cbcenc_run",
@@ -681,9 +697,9 @@ proc aesPwr8CbcdecRun*(ctx: var AesPwr8CbcdecKeys; iv: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_pwr8_cbcdec_run",
                                     header: "bearssl_block.h".}
 
-proc aesPwr8CtrRun*(ctx: var AesPwr8CtrKeys; iv: pointer; cc: uint32; data: pointer;
-                   len: csize_t): uint32 {.importcFunc, importc: "br_aes_pwr8_ctr_run",
-    header: "bearssl_block.h".}
+proc aesPwr8CtrRun*(ctx: var AesPwr8CtrKeys; iv: ConstPointer; cc: uint32;
+                   data: pointer; len: csize_t): uint32 {.importcFunc,
+    importc: "br_aes_pwr8_ctr_run", header: "bearssl_block.h".}
 
 proc aesPwr8CtrcbcEncrypt*(ctx: var AesPwr8CtrcbcKeys; ctr: pointer; cbcmac: pointer;
                           data: pointer; len: csize_t) {.importcFunc,
@@ -697,9 +713,9 @@ proc aesPwr8CtrcbcCtr*(ctx: var AesPwr8CtrcbcKeys; ctr: pointer; data: pointer;
                       len: csize_t) {.importcFunc, importc: "br_aes_pwr8_ctrcbc_ctr",
                                     header: "bearssl_block.h".}
 
-proc aesPwr8CtrcbcMac*(ctx: var AesPwr8CtrcbcKeys; cbcmac: pointer; data: pointer;
-                      len: csize_t) {.importcFunc, importc: "br_aes_pwr8_ctrcbc_mac",
-                                    header: "bearssl_block.h".}
+proc aesPwr8CtrcbcMac*(ctx: var AesPwr8CtrcbcKeys; cbcmac: pointer;
+                      data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_aes_pwr8_ctrcbc_mac", header: "bearssl_block.h".}
 
 proc aesPwr8CbcencGetVtable*(): ptr BlockCbcencClass {.importcFunc,
     importc: "br_aes_pwr8_cbcenc_get_vtable", header: "bearssl_block.h".}
@@ -792,11 +808,11 @@ var desTabCbcencVtable* {.importc: "br_des_tab_cbcenc_vtable", header: "bearssl_
 var desTabCbcdecVtable* {.importc: "br_des_tab_cbcdec_vtable", header: "bearssl_block.h".}: BlockCbcdecClass
 
 
-proc desTabCbcencInit*(ctx: var DesTabCbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_des_tab_cbcenc_init", header: "bearssl_block.h".}
+proc desTabCbcencInit*(ctx: var DesTabCbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_des_tab_cbcenc_init", header: "bearssl_block.h".}
 
-proc desTabCbcdecInit*(ctx: var DesTabCbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_des_tab_cbcdec_init", header: "bearssl_block.h".}
+proc desTabCbcdecInit*(ctx: var DesTabCbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_des_tab_cbcdec_init", header: "bearssl_block.h".}
 
 proc desTabCbcencRun*(ctx: var DesTabCbcencKeys; iv: pointer; data: pointer;
                      len: csize_t) {.importcFunc, importc: "br_des_tab_cbcenc_run",
@@ -833,11 +849,11 @@ var desCtCbcencVtable* {.importc: "br_des_ct_cbcenc_vtable", header: "bearssl_bl
 var desCtCbcdecVtable* {.importc: "br_des_ct_cbcdec_vtable", header: "bearssl_block.h".}: BlockCbcdecClass
 
 
-proc desCtCbcencInit*(ctx: var DesCtCbcencKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_des_ct_cbcenc_init", header: "bearssl_block.h".}
+proc desCtCbcencInit*(ctx: var DesCtCbcencKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_des_ct_cbcenc_init", header: "bearssl_block.h".}
 
-proc desCtCbcdecInit*(ctx: var DesCtCbcdecKeys; key: pointer; len: csize_t) {.importcFunc,
-    importc: "br_des_ct_cbcdec_init", header: "bearssl_block.h".}
+proc desCtCbcdecInit*(ctx: var DesCtCbcdecKeys; key: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_des_ct_cbcdec_init", header: "bearssl_block.h".}
 
 proc desCtCbcencRun*(ctx: var DesCtCbcencKeys; iv: pointer; data: pointer; len: csize_t) {.
     importcFunc, importc: "br_des_ct_cbcenc_run", header: "bearssl_block.h".}
@@ -864,42 +880,44 @@ type
 
 
 type
-  Chacha20Run* {.importc: "br_chacha20_run".} = proc (key: pointer; iv: pointer; cc: uint32; data: pointer; len: csize_t): uint32 {.
+  Chacha20Run* {.importc: "br_chacha20_run".} = proc (key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer; len: csize_t): uint32 {.
       importcFunc.}
 
 
-proc chacha20CtRun*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: csize_t): uint32 {.
-    importcFunc, importc: "br_chacha20_ct_run", header: "bearssl_block.h".}
+proc chacha20CtRun*(key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer;
+                   len: csize_t): uint32 {.importcFunc, importc: "br_chacha20_ct_run",
+    header: "bearssl_block.h".}
 
-proc chacha20Sse2Run*(key: pointer; iv: pointer; cc: uint32; data: pointer; len: csize_t): uint32 {.
-    importcFunc, importc: "br_chacha20_sse2_run", header: "bearssl_block.h".}
+proc chacha20Sse2Run*(key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer;
+                     len: csize_t): uint32 {.importcFunc,
+    importc: "br_chacha20_sse2_run", header: "bearssl_block.h".}
 
 proc chacha20Sse2Get*(): Chacha20Run {.importcFunc, importc: "br_chacha20_sse2_get",
                                     header: "bearssl_block.h".}
 
 type
-  Poly1305Run* {.importc: "br_poly1305_run".} = proc (key: pointer; iv: pointer; data: pointer; len: csize_t;
-                    aad: pointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
+  Poly1305Run* {.importc: "br_poly1305_run".} = proc (key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                    aad: ConstPointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
                     encrypt: cint) {.importcFunc.}
 
 
-proc poly1305CtmulRun*(key: pointer; iv: pointer; data: pointer; len: csize_t;
-                      aad: pointer; aadlen: csize_t; tag: pointer;
+proc poly1305CtmulRun*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                      aad: ConstPointer; aadlen: csize_t; tag: pointer;
                       ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmul_run", header: "bearssl_block.h".}
 
-proc poly1305Ctmul32Run*(key: pointer; iv: pointer; data: pointer; len: csize_t;
-                        aad: pointer; aadlen: csize_t; tag: pointer;
+proc poly1305Ctmul32Run*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                        aad: ConstPointer; aadlen: csize_t; tag: pointer;
                         ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmul32_run", header: "bearssl_block.h".}
 
-proc poly1305I15Run*(key: pointer; iv: pointer; data: pointer; len: csize_t;
-                    aad: pointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
+proc poly1305I15Run*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                    aad: ConstPointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
                     encrypt: cint) {.importcFunc, importc: "br_poly1305_i15_run",
                                    header: "bearssl_block.h".}
 
-proc poly1305CtmulqRun*(key: pointer; iv: pointer; data: pointer; len: csize_t;
-                       aad: pointer; aadlen: csize_t; tag: pointer;
+proc poly1305CtmulqRun*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                       aad: ConstPointer; aadlen: csize_t; tag: pointer;
                        ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmulq_run", header: "bearssl_block.h".}
 

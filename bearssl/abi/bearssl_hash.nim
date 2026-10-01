@@ -22,19 +22,24 @@ const
 {.compile: bearHashPath & "sha2small.c".}
 
 type
+  ConstPtrConstPtrHashClass* {.importc: "const br_hash_class *const *", header: "bearssl_hash.h", bycopy.} = pointer
+  ConstPtrHashClass* {.importc: "const br_hash_class *", header: "bearssl_hash.h", bycopy.} = pointer
   ConstPtrPtrHashClass* {.importc: "const br_hash_class**", header: "bearssl_hash.h", bycopy.} = pointer
 
+type
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
     desc* {.importc: "desc".}: uint32
     init* {.importc: "init".}: proc (ctx: ConstPtrPtrHashClass) {.importcFunc.}
-    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: pointer;
-                                     len: csize_t) {.importcFunc.}
-    `out`* {.importc: "out".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer) {.importcFunc.}
-    state* {.importc: "state".}: proc (ctx: ConstPtrPtrHashClass; dst: pointer): uint64 {.
+    update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass;
+                                     data: ConstPointer; len: csize_t) {.importcFunc.}
+    `out`* {.importc: "out".}: proc (ctx: ConstPtrConstPtrHashClass; dst: pointer) {.
         importcFunc.}
-    setState* {.importc: "set_state".}: proc (ctx: ConstPtrPtrHashClass; stb: ConstPointer;
-        count: uint64) {.importcFunc.}
+    state* {.importc: "state".}: proc (ctx: ConstPtrConstPtrHashClass; dst: pointer): uint64 {.
+        importcFunc.}
+    setState* {.importc: "set_state".}: proc (ctx: ConstPtrPtrHashClass;
+        stb: ConstPointer; count: uint64) {.importcFunc.}
+
 
 template hashdesc_Id*(id: untyped): untyped =
   ((uint32)(id) shl hashdesc_Id_Off)
@@ -91,7 +96,7 @@ type
 proc md5Init*(ctx: var Md5Context) {.importcFunc, importc: "br_md5_init",
                                  header: "bearssl_hash.h".}
 
-proc md5Update*(ctx: var Md5Context; data: pointer; len: csize_t) {.importcFunc,
+proc md5Update*(ctx: var Md5Context; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_md5_update", header: "bearssl_hash.h".}
 
 proc md5Out*(ctx: var Md5Context; `out`: pointer) {.importcFunc, importc: "br_md5_out",
@@ -100,7 +105,7 @@ proc md5Out*(ctx: var Md5Context; `out`: pointer) {.importcFunc, importc: "br_md
 proc md5State*(ctx: var Md5Context; `out`: pointer): uint64 {.importcFunc,
     importc: "br_md5_state", header: "bearssl_hash.h".}
 
-proc md5SetState*(ctx: var Md5Context; stb: pointer; count: uint64) {.importcFunc,
+proc md5SetState*(ctx: var Md5Context; stb: ConstPointer; count: uint64) {.importcFunc,
     importc: "br_md5_set_state", header: "bearssl_hash.h".}
 
 const
@@ -126,7 +131,7 @@ type
 proc sha1Init*(ctx: var Sha1Context) {.importcFunc, importc: "br_sha1_init",
                                    header: "bearssl_hash.h".}
 
-proc sha1Update*(ctx: var Sha1Context; data: pointer; len: csize_t) {.importcFunc,
+proc sha1Update*(ctx: var Sha1Context; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_sha1_update", header: "bearssl_hash.h".}
 
 proc sha1Out*(ctx: var Sha1Context; `out`: pointer) {.importcFunc, importc: "br_sha1_out",
@@ -135,7 +140,7 @@ proc sha1Out*(ctx: var Sha1Context; `out`: pointer) {.importcFunc, importc: "br_
 proc sha1State*(ctx: var Sha1Context; `out`: pointer): uint64 {.importcFunc,
     importc: "br_sha1_state", header: "bearssl_hash.h".}
 
-proc sha1SetState*(ctx: var Sha1Context; stb: pointer; count: uint64) {.importcFunc,
+proc sha1SetState*(ctx: var Sha1Context; stb: ConstPointer; count: uint64) {.importcFunc,
     importc: "br_sha1_set_state", header: "bearssl_hash.h".}
 
 const
@@ -161,7 +166,7 @@ type
 proc sha224Init*(ctx: var Sha224Context) {.importcFunc, importc: "br_sha224_init",
                                        header: "bearssl_hash.h".}
 
-proc sha224Update*(ctx: var Sha224Context; data: pointer; len: csize_t) {.importcFunc,
+proc sha224Update*(ctx: var Sha224Context; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_sha224_update", header: "bearssl_hash.h".}
 
 proc sha224Out*(ctx: var Sha224Context; `out`: pointer) {.importcFunc,
@@ -170,7 +175,7 @@ proc sha224Out*(ctx: var Sha224Context; `out`: pointer) {.importcFunc,
 proc sha224State*(ctx: var Sha224Context; `out`: pointer): uint64 {.importcFunc,
     importc: "br_sha224_state", header: "bearssl_hash.h".}
 
-proc sha224SetState*(ctx: var Sha224Context; stb: pointer; count: uint64) {.importcFunc,
+proc sha224SetState*(ctx: var Sha224Context; stb: ConstPointer; count: uint64) {.importcFunc,
     importc: "br_sha224_set_state", header: "bearssl_hash.h".}
 
 const
@@ -225,7 +230,7 @@ type
 proc sha384Init*(ctx: var Sha384Context) {.importcFunc, importc: "br_sha384_init",
                                        header: "bearssl_hash.h".}
 
-proc sha384Update*(ctx: var Sha384Context; data: pointer; len: csize_t) {.importcFunc,
+proc sha384Update*(ctx: var Sha384Context; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_sha384_update", header: "bearssl_hash.h".}
 
 proc sha384Out*(ctx: var Sha384Context; `out`: pointer) {.importcFunc,
@@ -234,7 +239,7 @@ proc sha384Out*(ctx: var Sha384Context; `out`: pointer) {.importcFunc,
 proc sha384State*(ctx: var Sha384Context; `out`: pointer): uint64 {.importcFunc,
     importc: "br_sha384_state", header: "bearssl_hash.h".}
 
-proc sha384SetState*(ctx: var Sha384Context; stb: pointer; count: uint64) {.importcFunc,
+proc sha384SetState*(ctx: var Sha384Context; stb: ConstPointer; count: uint64) {.importcFunc,
     importc: "br_sha384_set_state", header: "bearssl_hash.h".}
 
 const
@@ -284,7 +289,7 @@ type
 proc md5sha1Init*(ctx: var Md5sha1Context) {.importcFunc, importc: "br_md5sha1_init",
     header: "bearssl_hash.h".}
 
-proc md5sha1Update*(ctx: var Md5sha1Context; data: pointer; len: csize_t) {.importcFunc,
+proc md5sha1Update*(ctx: var Md5sha1Context; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_md5sha1_update", header: "bearssl_hash.h".}
 
 proc md5sha1Out*(ctx: var Md5sha1Context; `out`: pointer) {.importcFunc,
@@ -293,8 +298,8 @@ proc md5sha1Out*(ctx: var Md5sha1Context; `out`: pointer) {.importcFunc,
 proc md5sha1State*(ctx: var Md5sha1Context; `out`: pointer): uint64 {.importcFunc,
     importc: "br_md5sha1_state", header: "bearssl_hash.h".}
 
-proc md5sha1SetState*(ctx: var Md5sha1Context; stb: pointer; count: uint64) {.importcFunc,
-    importc: "br_md5sha1_set_state", header: "bearssl_hash.h".}
+proc md5sha1SetState*(ctx: var Md5sha1Context; stb: ConstPointer; count: uint64) {.
+    importcFunc, importc: "br_md5sha1_set_state", header: "bearssl_hash.h".}
 
 type
   HashCompatContext* {.importc: "br_hash_compat_context", header: "bearssl_hash.h",
@@ -336,8 +341,8 @@ proc multihashGetimpl*(ctx: var MultihashContext; id: cint): ptr HashClass {.inl
 proc multihashInit*(ctx: var MultihashContext) {.importcFunc, importc: "br_multihash_init",
     header: "bearssl_hash.h".}
 
-proc multihashUpdate*(ctx: var MultihashContext; data: pointer; len: csize_t) {.importcFunc,
-    importc: "br_multihash_update", header: "bearssl_hash.h".}
+proc multihashUpdate*(ctx: var MultihashContext; data: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_multihash_update", header: "bearssl_hash.h".}
 
 proc multihashOut*(ctx: var MultihashContext; id: cint; dst: pointer): csize_t {.importcFunc,
     importc: "br_multihash_out", header: "bearssl_hash.h".}
@@ -349,11 +354,11 @@ type
 proc ghashCtmul*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_ctmul", header: "bearssl_hash.h".}
 
-proc ghashCtmul32*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
-    importc: "br_ghash_ctmul32", header: "bearssl_hash.h".}
+proc ghashCtmul32*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_ghash_ctmul32", header: "bearssl_hash.h".}
 
-proc ghashCtmul64*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
-    importc: "br_ghash_ctmul64", header: "bearssl_hash.h".}
+proc ghashCtmul64*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.
+    importcFunc, importc: "br_ghash_ctmul64", header: "bearssl_hash.h".}
 
 proc ghashPclmul*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_ghash_pclmul", header: "bearssl_hash.h".}

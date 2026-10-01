@@ -8,13 +8,10 @@ import ./[csources, bearssl_block, bearssl_pem, bearssl_x509]
 type
   X509NoanchorContext* {.importc: "x509_noanchor_context", header: "brssl_cpp.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr X509Class
-    inner* {.importc: "inner".}: ptr ptr X509Class
+    inner* {.importc: "inner".}: X509ClassPointerConst
 
 proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: X509ClassPointerConst) {.importcFunc,
     importc: "x509_noanchor_init", header: "brssl_cpp.h".}
 
-proc x509NoanchorInit*(xwc: var X509NoanchorContext; inner: ptr ptr X509Class) =
-  x509NoanchorInit(xwc, X509ClassPointerConst(inner))
-
-proc initNoAnchor*(xwc: var X509NoanchorContext, inner: ptr ptr X509Class) {.
+proc initNoAnchor*(xwc: var X509NoanchorContext, inner: X509ClassPointerConst) {.
      importcFunc, importc: "x509_noanchor_init", header: "brssl_cpp.h", deprecated: "x509NoanchorInit".}
