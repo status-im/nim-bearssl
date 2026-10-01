@@ -15,22 +15,22 @@ type
   TlsPrfSeedChunk* {.importc: "br_tls_prf_seed_chunk", header: "bearssl_prf.h",
                     bycopy.} = object
     data* {.importc: "data".}: pointer
-    len* {.importc: "len".}: uint
+    len* {.importc: "len".}: csize_t
 
 
 
 proc tls10Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
-              label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.importcFunc,
+              label: cstring; seedNum: csize_t; seed: ptr TlsPrfSeedChunk) {.importcFunc,
     importc: "br_tls10_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha256Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
-                    label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.
+                    label: cstring; seedNum: csize_t; seed: ptr TlsPrfSeedChunk) {.
     importcFunc, importc: "br_tls12_sha256_prf", header: "bearssl_prf.h".}
 
 proc tls12Sha384Prf*(dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
-                    label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.
+                    label: cstring; seedNum: csize_t; seed: ptr TlsPrfSeedChunk) {.
     importcFunc, importc: "br_tls12_sha384_prf", header: "bearssl_prf.h".}
 
 type
   TlsPrfImpl* {.importc: "br_tls_prf_impl".} = proc (dst: pointer; len: csize_t; secret: pointer; secretlen: csize_t;
-                   label: cstring; seedNum: uint; seed: ptr TlsPrfSeedChunk) {.importcFunc.}
+                   label: cstring; seedNum: csize_t; seed: ptr TlsPrfSeedChunk) {.importcFunc.}

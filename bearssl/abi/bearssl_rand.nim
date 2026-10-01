@@ -12,7 +12,7 @@ const
 
 type
   PrngClass* {.importc: "br_prng_class", header: "bearssl_rand.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     init* {.importc: "init".}: proc (ctx: ptr ptr PrngClass; params: ConstPointer;
                                  seed: ConstPointer; seedlen: csize_t) {.importcFunc.}
     generate* {.importc: "generate".}: proc (ctx: ptr ptr PrngClass; `out`: pointer;

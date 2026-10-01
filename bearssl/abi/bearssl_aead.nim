@@ -12,7 +12,7 @@ const
 
 type
   AeadClass* {.importc: "br_aead_class", header: "bearssl_aead.h", bycopy.} = object
-    tagSize* {.importc: "tag_size".}: uint
+    tagSize* {.importc: "tag_size".}: csize_t
     reset* {.importc: "reset".}: proc (cc: ptr ptr AeadClass; iv: ConstPointer; len: csize_t) {.
         importcFunc.}
     aadInject* {.importc: "aad_inject".}: proc (cc: ptr ptr AeadClass; data: ConstPointer;
@@ -87,7 +87,7 @@ type
     ctr* {.importc: "ctr".}: array[16, byte]
     cbcmac* {.importc: "cbcmac".}: array[16, byte]
     buf* {.importc: "buf".}: array[16, byte]
-    `ptr`* {.importc: "ptr".}: uint
+    `ptr`* {.importc: "ptr".}: csize_t
 
 
 
@@ -147,8 +147,8 @@ type
     cbcmac* {.importc: "cbcmac".}: array[16, byte]
     tagmask* {.importc: "tagmask".}: array[16, byte]
     buf* {.importc: "buf".}: array[16, byte]
-    `ptr`* {.importc: "ptr".}: uint
-    tagLen* {.importc: "tag_len".}: uint
+    `ptr`* {.importc: "ptr".}: csize_t
+    tagLen* {.importc: "tag_len".}: csize_t
 
 
 
@@ -168,7 +168,7 @@ proc ccmFlip*(ctx: var CcmContext) {.importcFunc, importc: "br_ccm_flip",
 proc ccmRun*(ctx: var CcmContext; encrypt: cint; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_ccm_run", header: "bearssl_aead.h".}
 
-proc ccmGetTag*(ctx: var CcmContext; tag: pointer): uint {.importcFunc,
+proc ccmGetTag*(ctx: var CcmContext; tag: pointer): csize_t {.importcFunc,
     importc: "br_ccm_get_tag", header: "bearssl_aead.h".}
 
 proc ccmCheckTag*(ctx: var CcmContext; tag: ConstPointer): uint32 {.importcFunc,

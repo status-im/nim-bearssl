@@ -25,7 +25,7 @@ type
   ConstPtrPtrHashClass* {.importc: "const br_hash_class**", header: "bearssl_hash.h", bycopy.} = pointer
 
   HashClass* {.importc: "br_hash_class", header: "bearssl_hash.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     desc* {.importc: "desc".}: uint32
     init* {.importc: "init".}: proc (ctx: ConstPtrPtrHashClass) {.importcFunc.}
     update* {.importc: "update".}: proc (ctx: ConstPtrPtrHashClass; data: pointer;
@@ -339,7 +339,7 @@ proc multihashInit*(ctx: var MultihashContext) {.importcFunc, importc: "br_multi
 proc multihashUpdate*(ctx: var MultihashContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_multihash_update", header: "bearssl_hash.h".}
 
-proc multihashOut*(ctx: var MultihashContext; id: cint; dst: pointer): uint {.importcFunc,
+proc multihashOut*(ctx: var MultihashContext; id: cint; dst: pointer): csize_t {.importcFunc,
     importc: "br_multihash_out", header: "bearssl_hash.h".}
 
 type

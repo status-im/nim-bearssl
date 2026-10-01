@@ -60,7 +60,7 @@ const
 type
   BlockCbcencClass* {.importc: "br_block_cbcenc_class", header: "bearssl_block.h",
                      bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcencClass; key: ConstPointer;
@@ -73,7 +73,7 @@ type
 type
   BlockCbcdecClass* {.importc: "br_block_cbcdec_class", header: "bearssl_block.h",
                      bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCbcdecClass; key: ConstPointer;
@@ -85,7 +85,7 @@ type
 
 type
   BlockCtrClass* {.importc: "br_block_ctr_class", header: "bearssl_block.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrClass; key: ConstPointer;
@@ -98,7 +98,7 @@ type
 type
   BlockCtrcbcClass* {.importc: "br_block_ctrcbc_class", header: "bearssl_block.h",
                      bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ptr ptr BlockCtrcbcClass; key: ConstPointer;

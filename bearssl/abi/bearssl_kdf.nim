@@ -18,8 +18,8 @@ type
   HkdfContext* {.importc: "br_hkdf_context", header: "bearssl_kdf.h", bycopy.} = object
     u* {.importc: "u".}: INNER_C_UNION_bearssl_kdf_1
     buf* {.importc: "buf".}: array[64, byte]
-    `ptr`* {.importc: "ptr".}: uint
-    digLen* {.importc: "dig_len".}: uint
+    `ptr`* {.importc: "ptr".}: csize_t
+    digLen* {.importc: "dig_len".}: csize_t
     chunkNum* {.importc: "chunk_num".}: cuint
 
 
@@ -39,14 +39,14 @@ proc hkdfFlip*(hc: var HkdfContext) {.importcFunc, importc: "br_hkdf_flip",
                                   header: "bearssl_kdf.h".}
 
 proc hkdfProduce*(hc: var HkdfContext; info: pointer; infolen: csize_t; `out`: pointer;
-                 outlen: csize_t): uint {.importcFunc, importc: "br_hkdf_produce",
+                 outlen: csize_t): csize_t {.importcFunc, importc: "br_hkdf_produce",
     header: "bearssl_kdf.h".}
 
 type
   ShakeContext* {.importc: "br_shake_context", header: "bearssl_kdf.h", bycopy.} = object
     dbuf* {.importc: "dbuf".}: array[200, byte]
-    dptr* {.importc: "dptr".}: uint
-    rate* {.importc: "rate".}: uint
+    dptr* {.importc: "dptr".}: csize_t
+    rate* {.importc: "rate".}: csize_t
     a* {.importc: "A".}: array[25, uint64]
 
 

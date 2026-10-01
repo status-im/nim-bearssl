@@ -29,14 +29,14 @@ type
   HmacContext* {.importc: "br_hmac_context", header: "bearssl_hmac.h", bycopy.} = object
     dig* {.importc: "dig".}: HashCompatContext
     kso* {.importc: "kso".}: array[64, byte]
-    outLen* {.importc: "out_len".}: uint
+    outLen* {.importc: "out_len".}: csize_t
 
 
 
 proc hmacInit*(ctx: var HmacContext; kc: var HmacKeyContext; outlen: csize_t) {.importcFunc,
     importc: "br_hmac_init", header: "bearssl_hmac.h".}
 
-proc hmacSize*(ctx: var HmacContext): uint {.inline.} =
+proc hmacSize*(ctx: var HmacContext): csize_t {.inline.} =
   return ctx.outLen
 
 
@@ -47,9 +47,9 @@ proc hmacGetDigest*(hc: var HmacContext): ptr HashClass {.inline.} =
 proc hmacUpdate*(ctx: var HmacContext; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_hmac_update", header: "bearssl_hmac.h".}
 
-proc hmacOut*(ctx: var HmacContext; `out`: pointer): uint {.importcFunc,
+proc hmacOut*(ctx: var HmacContext; `out`: pointer): csize_t {.importcFunc,
     importc: "br_hmac_out", header: "bearssl_hmac.h".}
 
 proc hmacOutCT*(ctx: var HmacContext; data: pointer; len: csize_t; minlen: csize_t;
-               maxlen: csize_t; `out`: pointer): uint {.importcFunc,
+               maxlen: csize_t; `out`: pointer): csize_t {.importcFunc,
     importc: "br_hmac_outCT", header: "bearssl_hmac.h".}

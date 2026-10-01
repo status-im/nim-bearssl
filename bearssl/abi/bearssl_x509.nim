@@ -156,7 +156,7 @@ type
 type
   X500Name* {.importc: "br_x500_name", header: "bearssl_x509.h", bycopy.} = object
     data* {.importc: "data".}: ptr byte
-    len* {.importc: "len".}: uint
+    len* {.importc: "len".}: csize_t
 
 
 
@@ -191,7 +191,7 @@ const
 
 type
   X509Class* {.importc: "br_x509_class", header: "bearssl_x509.h", bycopy.} = object
-    contextSize* {.importc: "context_size".}: uint
+    contextSize* {.importc: "context_size".}: csize_t
     startChain* {.importc: "start_chain".}: proc (ctx: X509ClassPointerConst;
         serverName: ConstCstring) {.importcFunc.}
     startCert* {.importc: "start_cert".}: proc (ctx: X509ClassPointerConst; length: uint32) {.
@@ -252,7 +252,7 @@ type
   NameElement* {.importc: "br_name_element", header: "bearssl_x509.h", bycopy.} = object
     oid* {.importc: "oid".}: ptr byte
     buf* {.importc: "buf".}: cstring
-    len* {.importc: "len".}: uint
+    len* {.importc: "len".}: csize_t
     status* {.importc: "status".}: cint
 
 
@@ -286,7 +286,7 @@ type
     certLength* {.importc: "cert_length".}: uint32
     numCerts* {.importc: "num_certs".}: uint32
     hbuf* {.importc: "hbuf".}: ptr byte
-    hlen* {.importc: "hlen".}: uint
+    hlen* {.importc: "hlen".}: csize_t
     pad* {.importc: "pad".}: array[256, byte]
     eePkeyData* {.importc: "ee_pkey_data".}: array[X509_BUFSIZE_KEY, byte]
     pkeyData* {.importc: "pkey_data".}: array[X509_BUFSIZE_KEY, byte]
@@ -297,7 +297,7 @@ type
     certSigLen* {.importc: "cert_sig_len".}: uint16
     minRsaSize* {.importc: "min_rsa_size".}: int16
     trustAnchors* {.importc: "trust_anchors".}: ptr X509TrustAnchor
-    trustAnchorsNum* {.importc: "trust_anchors_num".}: uint
+    trustAnchorsNum* {.importc: "trust_anchors_num".}: csize_t
     doMhash* {.importc: "do_mhash".}: byte
     mhash* {.importc: "mhash".}: MultihashContext
     tbsHash* {.importc: "tbs_hash".}: array[64, byte]
@@ -308,7 +308,7 @@ type
     nextDnHash* {.importc: "next_dn_hash".}: array[64, byte]
     savedDnHash* {.importc: "saved_dn_hash".}: array[64, byte]
     nameElts* {.importc: "name_elts".}: ptr NameElement
-    numNameElts* {.importc: "num_name_elts".}: uint
+    numNameElts* {.importc: "num_name_elts".}: csize_t
     itimeCtx* {.importc: "itime_ctx".}: pointer
     itime* {.importc: "itime".}: X509TimeCheck
     irsa* {.importc: "irsa".}: RsaPkcs1Vrfy
@@ -319,7 +319,7 @@ type
 var x509MinimalVtable* {.importc: "br_x509_minimal_vtable", header: "bearssl_x509.h".}: X509Class
 
 proc x509MinimalInit*(ctx: var X509MinimalContext; dnHashImpl: ptr HashClass;
-                     trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: uint) {.
+                     trustAnchors: ptr X509TrustAnchor; trustAnchorsNum: csize_t) {.
     importcFunc, importc: "br_x509_minimal_init", header: "bearssl_x509.h".}
 
 proc x509MinimalSetHash*(ctx: var X509MinimalContext; id: cint; impl: ptr HashClass) {.
@@ -339,7 +339,7 @@ proc x509MinimalSetEcdsa*(ctx: var X509MinimalContext; iec: ptr EcImpl;
 
 proc x509MinimalInitFull*(ctx: var X509MinimalContext;
                          trustAnchors: ptr X509TrustAnchor;
-                         trustAnchorsNum: uint) {.importcFunc,
+                         trustAnchorsNum: csize_t) {.importcFunc,
     importc: "br_x509_minimal_init_full", header: "bearssl_x509.h".}
 
 proc x509MinimalSetTime*(ctx: var X509MinimalContext; days: uint32; seconds: uint32) {.
@@ -360,7 +360,7 @@ proc x509MinimalSetMinrsa*(ctx: var X509MinimalContext; byteLength: cint) {.inli
 
 
 proc x509MinimalSetNameElements*(ctx: var X509MinimalContext; elts: ptr NameElement;
-                                numElts: uint) {.inline.} =
+                                numElts: csize_t) {.inline.} =
   ctx.nameElts = elts
   ctx.numNameElts = numElts
 
@@ -391,7 +391,7 @@ type
     appendDn* {.importc: "append_dn".}: proc (ctx: pointer; buf: pointer; len: csize_t) {.
         importcFunc.}
     hbuf* {.importc: "hbuf".}: ptr byte
-    hlen* {.importc: "hlen".}: uint
+    hlen* {.importc: "hlen".}: csize_t
     pkeyData* {.importc: "pkey_data".}: array[X509_BUFSIZE_KEY, byte]
     signerKeyType* {.importc: "signer_key_type".}: byte
     signerHashId* {.importc: "signer_hash_id".}: byte
@@ -439,7 +439,7 @@ proc x509DecoderGetSignerHashId*(ctx: var X509DecoderContext): cint {.inline.} =
 type
   X509Certificate* {.importc: "br_x509_certificate", header: "bearssl_x509.h", bycopy.} = object
     data* {.importc: "data".}: ptr byte
-    dataLen* {.importc: "data_len".}: uint
+    dataLen* {.importc: "data_len".}: csize_t
 
 
 
@@ -463,7 +463,7 @@ type
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr byte
-    hlen* {.importc: "hlen".}: uint
+    hlen* {.importc: "hlen".}: csize_t
     pad* {.importc: "pad".}: array[256, byte]
     keyType* {.importc: "key_type".}: byte
     keyData* {.importc: "key_data".}: array[3 * X509_BUFSIZE_SIG, byte]
@@ -506,17 +506,17 @@ proc skeyDecoderGetEc*(ctx: var SkeyDecoderContext): ptr EcPrivateKey {.inline.}
 
 
 proc encodeRsaRawDer*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                     d: pointer; dlen: csize_t): uint {.importcFunc,
+                     d: pointer; dlen: csize_t): csize_t {.importcFunc,
     importc: "br_encode_rsa_raw_der", header: "bearssl_x509.h".}
 
 proc encodeRsaPkcs8Der*(dest: pointer; sk: ptr RsaPrivateKey; pk: ptr RsaPublicKey;
-                       d: pointer; dlen: csize_t): uint {.importcFunc,
+                       d: pointer; dlen: csize_t): csize_t {.importcFunc,
     importc: "br_encode_rsa_pkcs8_der", header: "bearssl_x509.h".}
 
-proc encodeEcRawDer*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): uint {.
+proc encodeEcRawDer*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): csize_t {.
     importcFunc, importc: "br_encode_ec_raw_der", header: "bearssl_x509.h".}
 
-proc encodeEcPkcs8Der*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): uint {.
+proc encodeEcPkcs8Der*(dest: pointer; sk: ptr EcPrivateKey; pk: ptr EcPublicKey): csize_t {.
     importcFunc, importc: "br_encode_ec_pkcs8_der", header: "bearssl_x509.h".}
 
 const
