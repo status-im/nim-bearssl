@@ -2,6 +2,8 @@
 
 import ../bearssl
 
+{.used.}
+
 discard getConfig()
 
 # TODO doesn't work from C++ due to `const`:ness issues
