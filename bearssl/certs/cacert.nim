@@ -20,9 +20,9 @@
 import ../abi/csources
 from ../abi/bearssl_x509 import X509TrustAnchor
 
-{.compile: bearPath & "/../certs/cacert.c".}
+{.compile: bearPath & "../certs/cacert.c".}
 
-const MozillaTrustAnchorsCount* = 119  # TAs_NUM
+const MozillaTrustAnchorsCount* = 121  # TAs_NUM
 
 var MozillaTrustAnchors* {.importc: "TAs".}: array[
   MozillaTrustAnchorsCount, X509TrustAnchor]

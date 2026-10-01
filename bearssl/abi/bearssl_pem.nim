@@ -1,4 +1,5 @@
-import ./csources
+import ./[consttypes, csources]
+export consttypes
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -8,7 +9,6 @@ const
 
 {.compile: bearCodecPath & "pemdec.c".}
 {.compile: bearCodecPath & "pemenc.c".}
-{.compile: currentSourceDir() & "/pem_compat.c".}
 
 type
   INNER_C_STRUCT_bearssl_pem_1* {.importc: "br_pem_decoder_context::no_name",
@@ -17,7 +17,7 @@ type
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ptr byte
 
-  PemDecoderContext* {.importc: "br_pem_decoder_context", header: "bearssl_pem.h",
+  RawPemDecoderContext* {.importc: "br_pem_decoder_context", header: "bearssl_pem.h",
                       bycopy.} = object
     cpu* {.importc: "cpu".}: INNER_C_STRUCT_bearssl_pem_1
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
@@ -25,7 +25,8 @@ type
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr byte
     hlen* {.importc: "hlen".}: uint
-    dest* {.importc: "dest".}: proc (destCtx: pointer; src: pointer; len: csize_t) {.importcFunc.}
+    dest* {.importc: "dest".}: proc (
+      destCtx: pointer; src: ConstPointer; len: csize_t) {.importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
@@ -34,23 +35,14 @@ type
 
 
 
-proc pemDecoderInit*(ctx: var PemDecoderContext) {.importcFunc,
+proc pemDecoderInit*(ctx: var RawPemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: var PemDecoderContext; data: pointer; len: csize_t): uint {.
+proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: pointer; len: csize_t): uint {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
-proc pemDecoderSetdest*(ctx: var PemDecoderContext; dest: proc (destCtx: pointer;
-    src: pointer; len: csize_t) {.importcFunc.}; destCtx: pointer) {.importcFunc,
-    importc: "nimbearssl_pem_decoder_setdest".}
-  ## `src` deliberately stays `pointer` here instead of `ConstPointer` to keep
-  ## source compatibility with existing callers such as nim-chronos v4.2.2, whose
-  ## callback uses a plain `pointer`. The C field `dest` is const-qualified, so
-  ## the const conversion is done with an explicit C cast inside the shim in
-  ## `pem_compat.c`, which GCC 14+ accepts.
 
-
-proc pemDecoderEvent*(ctx: var PemDecoderContext): cint {.importcFunc,
+proc pemDecoderEvent*(ctx: var RawPemDecoderContext): cint {.importcFunc,
     importc: "br_pem_decoder_event", header: "bearssl_pem.h".}
 
 const
@@ -65,7 +57,7 @@ const
   PEM_ERROR* = 3
 
 
-proc pemDecoderName*(ctx: var PemDecoderContext): cstring {.inline.} =
+proc pemDecoderName*(ctx: var RawPemDecoderContext): cstring {.inline.} =
   return cast[cstring](addr ctx.name)
 
 

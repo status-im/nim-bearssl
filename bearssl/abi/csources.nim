@@ -1,5 +1,5 @@
 ## Nim-BearSSL
-## Copyright (c) 2018-2022 Status Research & Development GmbH
+## Copyright (c) 2018-2026 Status Research & Development GmbH
 ## Licensed under either of
 ##  * Apache License, version 2.0, ([LICENSE-APACHE](LICENSE-APACHE))
 ##  * MIT license ([LICENSE-MIT](LICENSE-MIT))
@@ -26,9 +26,50 @@ export os
 # purpose - wrappers do the same
 
 static: doAssert sizeof(csize_t) == sizeof(int)
+
+const bearssl = currentSourcePath.rsplit({DirSep, AltSep}, 2)[0] & "/"
+when defined(`any`) or defined(standalone) or (NimMajor, NimMinor) < (2, 0):
+  const patched = bearssl
+else:
+  import std/[compilesettings, hashes, macros]
+
+  const patched = block:
+    var nimcache = querySetting(nimcacheDir)
+    if not nimcache.isAbsolute:  # e.g., `--nimcache:build/$projectName`
+      # https://github.com/nim-lang/Nim/issues/26296
+      let probe = nimcache & "/bearssl_probe"
+      createDir(nimcache)
+      writeFile(probe, "")
+      if fileExists(probe):  # `nim check`, `nimsuggest` etc don't write
+        let n = newEmptyNode()
+        n.setLineInfo(probe, 1, 1)  # Resolved against the compiler's cwd
+        nimcache = n.lineInfoObj.filename.parentDir
+    if not nimcache.isAbsolute:  # Unknown cwd
+      bearssl
+    else:
+      var h = hash(staticRead(bearssl & "csources.patch"))
+      for dir in ["abi", "certs"]:
+        for kind, path in walkDir(bearssl & dir):
+          if path.endsWith(".c"):
+            h = h !& hash(staticRead(path))
+      let dest = nimcache & "/bearssl_" & toHex(!$h)
+      if dirExists(dest):
+        dest & "/"
+      else:
+        let (output, exitCode) = gorgeEx(
+          quoteShell(getCurrentCompilerExe()) &
+          " e --hints:off --warnings:off" &
+          " --skipUserCfg --skipParentCfg --skipProjCfg " &
+          quoteShell(bearssl & "abi/csources_patch.nims") & " " &
+          quoteShell(bearssl) & " " & quoteShell(dest))
+        doAssert exitCode == 0, output
+        if output.len == 0:  # `nim check`, `nimsuggest` etc don't run tools
+          bearssl
+        else:
+          dest & "/"
+
 const
-  bearPath* = currentSourcePath.rsplit({DirSep, AltSep}, 1)[0] & "/../" &
-             "csources" & "/"
+  bearPath* = patched & "csources/"
   bearIncPath* = bearPath & "inc/"
   bearSrcPath* = bearPath & "src/"
   bearToolsPath* = bearPath & "tools/"
@@ -50,4 +91,4 @@ else:
 template currentSourceDir*(): string =
   # TODO https://github.com/nim-lang/Nim/issues/19558
   # parentDir breaks cross compilation  e.g. from linux to windows
-  currentSourcePath.rsplit({DirSep, AltSep}, 1)[0]
+  (patched & "abi/").rsplit({DirSep, AltSep}, 1)[0]
