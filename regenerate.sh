@@ -56,7 +56,6 @@ sed -i \
   -e "s/int64T/int64/g" \
   -e "s/cuchar/byte/g" \
   -e "s/cdecl/importcFunc/g" \
-  -e "s/csize_t/uint/g" \
   gen/*.nim
 
 # The functions taking a "Context" don't allow `nil` being passed to them - use
@@ -69,5 +68,5 @@ sed -i \
   -e 's/cc: ptr \(.*\)Context/cc: var \1Context/g' \
   -e 's/kc: ptr \(.*\)Context/kc: var \1Context/g' \
   -e 's/xwc: ptr \(.*\)Context/xwc: var \1Context/g' \
-  -e 's/len: ptr uint/len: var uint/g' \
+  -e 's/len: ptr csize_t/len: var csize_t/g' \
   gen/*.nim

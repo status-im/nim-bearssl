@@ -31,7 +31,7 @@ In general, the mappings follow the conventions of the original BearSSL library 
 * the `br_` prefix has been dropped throughout
 * functions taking a `XxxContext*` use `var` and not `ptr`
 * `byte` replaces `unsigned char*` - this type is predominantly used for byte buffers
-* `uint` used instead of `csize_t` - these are the same type in Nim, but spelled more conveniently
+* `csize_t` is used for `size_t` - it converts implicitly to and from `uint` in Nim, but does not necessarily map to the same C type
   * Canonical nim code will have to be careful when converting existing `int` lengths, looking out for out-of-range values
 
 In addition to the raw `C`-like api, convenience functions are added where applicable - these follow a similar set of conventions:

@@ -24,21 +24,21 @@ type
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
     hbuf* {.importc: "hbuf".}: ptr byte
-    hlen* {.importc: "hlen".}: uint
+    hlen* {.importc: "hlen".}: csize_t
     dest* {.importc: "dest".}: proc (
       destCtx: pointer; src: ConstPointer; len: csize_t) {.importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
     buf* {.importc: "buf".}: array[255, byte]
-    `ptr`* {.importc: "ptr".}: uint
+    `ptr`* {.importc: "ptr".}: csize_t
 
 
 
 proc pemDecoderInit*(ctx: var RawPemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: pointer; len: csize_t): uint {.
+proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: pointer; len: csize_t): csize_t {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 
@@ -61,7 +61,7 @@ proc pemDecoderName*(ctx: var RawPemDecoderContext): cstring {.inline.} =
   return cast[cstring](addr ctx.name)
 
 
-proc pemEncode*(dest: pointer; data: pointer; len: csize_t; banner: cstring; flags: cuint): uint {.
+proc pemEncode*(dest: pointer; data: pointer; len: csize_t; banner: cstring; flags: cuint): csize_t {.
     importcFunc, importc: "br_pem_encode", header: "bearssl_pem.h".}
 
 const
