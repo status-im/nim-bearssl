@@ -1,4 +1,4 @@
 import
-  ./abi/bearssl_prf
+  ./abi/[bearssl_prf, consttypes]
 
-export bearssl_prf
+export bearssl_prf, consttypes
