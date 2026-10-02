@@ -45,6 +45,11 @@ const
 {.compile: bearEcPath & "ec_secp521r1.c".}
 
 
+type
+  ConstPtrEcImpl* {.importc: "const br_ec_impl *", header: "bearssl_ec.h", bycopy.} = pointer
+  ConstPtrEcPrivateKey* {.importc: "const br_ec_private_key *", header: "bearssl_ec.h", bycopy.} = pointer
+  ConstPtrEcPublicKey* {.importc: "const br_ec_public_key *", header: "bearssl_ec.h", bycopy.} = pointer
+
 const
   EC_sect163k1* = 1
 
@@ -186,15 +191,17 @@ type
     supportedCurves* {.importc: "supported_curves".}: uint32
     generator* {.importc: "generator".}: proc (curve: cint; len: var csize_t): ConstPtrByte {.
         importcFunc.}
-    order* {.importc: "order".}: proc (curve: cint; len: var csize_t): ConstPtrByte {.importcFunc.}
+    order* {.importc: "order".}: proc (curve: cint; len: var csize_t): ConstPtrByte {.
+        importcFunc.}
     xoff* {.importc: "xoff".}: proc (curve: cint; len: var csize_t): csize_t {.importcFunc.}
     mul* {.importc: "mul".}: proc (g: ptr byte; glen: csize_t; x: ConstPtrByte;
                                xlen: csize_t; curve: cint): uint32 {.importcFunc.}
     mulgen* {.importc: "mulgen".}: proc (r: ptr byte; x: ConstPtrByte; xlen: csize_t;
                                      curve: cint): csize_t {.importcFunc.}
     muladd* {.importc: "muladd".}: proc (a: ptr byte; b: ConstPtrByte; len: csize_t;
-                                     x: ConstPtrByte; xlen: csize_t; y: ConstPtrByte;
-                                     ylen: csize_t; curve: cint): uint32 {.importcFunc.}
+                                     x: ConstPtrByte; xlen: csize_t;
+                                     y: ConstPtrByte; ylen: csize_t; curve: cint): uint32 {.
+        importcFunc.}
 
 
 var ecPrimeI31* {.importc: "br_ec_prime_i31", header: "bearssl_ec.h".}: EcImpl
@@ -263,45 +270,47 @@ proc ecdsaAsn1ToRaw*(sig: pointer; siglen: csize_t): csize_t {.importcFunc,
     importc: "br_ecdsa_asn1_to_raw", header: "bearssl_ec.h".}
 
 type
-  EcdsaSign* {.importc: "br_ecdsa_sign".} = proc (impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                  sk: ptr EcPrivateKey; sig: pointer): csize_t {.importcFunc.}
+  EcdsaSign* {.importc: "br_ecdsa_sign".} = proc (impl: ConstPtrEcImpl; hf: ConstPtrHashClass; hashValue: ConstPointer;
+                  sk: ConstPtrEcPrivateKey; sig: pointer): csize_t {.importcFunc.}
 
 
 type
-  EcdsaVrfy* {.importc: "br_ecdsa_vrfy".} = proc (impl: ptr EcImpl; hash: pointer; hashlen: csize_t;
-                  pk: ptr EcPublicKey; sig: pointer; siglen: csize_t): uint32 {.importcFunc.}
+  EcdsaVrfy* {.importc: "br_ecdsa_vrfy".} = proc (impl: ConstPtrEcImpl; hash: ConstPointer; hashlen: csize_t;
+                  pk: ConstPtrEcPublicKey; sig: ConstPointer; siglen: csize_t): uint32 {.importcFunc.}
 
 
-proc ecdsaI31SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                      sk: ptr EcPrivateKey; sig: pointer): csize_t {.importcFunc,
+proc ecdsaI31SignAsn1*(impl: ConstPtrEcImpl; hf: ConstPtrHashClass;
+                      hashValue: ConstPointer; sk: ConstPtrEcPrivateKey;
+                      sig: pointer): csize_t {.importcFunc,
     importc: "br_ecdsa_i31_sign_asn1", header: "bearssl_ec.h".}
 
-proc ecdsaI31SignRaw*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                     sk: ptr EcPrivateKey; sig: pointer): csize_t {.importcFunc,
-    importc: "br_ecdsa_i31_sign_raw", header: "bearssl_ec.h".}
+proc ecdsaI31SignRaw*(impl: ConstPtrEcImpl; hf: ConstPtrHashClass;
+                     hashValue: ConstPointer; sk: ConstPtrEcPrivateKey; sig: pointer): csize_t {.
+    importcFunc, importc: "br_ecdsa_i31_sign_raw", header: "bearssl_ec.h".}
 
-proc ecdsaI31VrfyAsn1*(impl: ptr EcImpl; hash: pointer; hashlen: csize_t;
-                      pk: ptr EcPublicKey; sig: pointer; siglen: csize_t): uint32 {.
+proc ecdsaI31VrfyAsn1*(impl: ConstPtrEcImpl; hash: ConstPointer; hashlen: csize_t;
+                      pk: ConstPtrEcPublicKey; sig: ConstPointer; siglen: csize_t): uint32 {.
     importcFunc, importc: "br_ecdsa_i31_vrfy_asn1", header: "bearssl_ec.h".}
 
-proc ecdsaI31VrfyRaw*(impl: ptr EcImpl; hash: pointer; hashlen: csize_t;
-                     pk: ptr EcPublicKey; sig: pointer; siglen: csize_t): uint32 {.
+proc ecdsaI31VrfyRaw*(impl: ConstPtrEcImpl; hash: ConstPointer; hashlen: csize_t;
+                     pk: ConstPtrEcPublicKey; sig: ConstPointer; siglen: csize_t): uint32 {.
     importcFunc, importc: "br_ecdsa_i31_vrfy_raw", header: "bearssl_ec.h".}
 
-proc ecdsaI15SignAsn1*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                      sk: ptr EcPrivateKey; sig: pointer): csize_t {.importcFunc,
+proc ecdsaI15SignAsn1*(impl: ConstPtrEcImpl; hf: ConstPtrHashClass;
+                      hashValue: ConstPointer; sk: ConstPtrEcPrivateKey;
+                      sig: pointer): csize_t {.importcFunc,
     importc: "br_ecdsa_i15_sign_asn1", header: "bearssl_ec.h".}
 
-proc ecdsaI15SignRaw*(impl: ptr EcImpl; hf: ptr HashClass; hashValue: pointer;
-                     sk: ptr EcPrivateKey; sig: pointer): csize_t {.importcFunc,
-    importc: "br_ecdsa_i15_sign_raw", header: "bearssl_ec.h".}
+proc ecdsaI15SignRaw*(impl: ConstPtrEcImpl; hf: ConstPtrHashClass;
+                     hashValue: ConstPointer; sk: ConstPtrEcPrivateKey; sig: pointer): csize_t {.
+    importcFunc, importc: "br_ecdsa_i15_sign_raw", header: "bearssl_ec.h".}
 
-proc ecdsaI15VrfyAsn1*(impl: ptr EcImpl; hash: pointer; hashlen: csize_t;
-                      pk: ptr EcPublicKey; sig: pointer; siglen: csize_t): uint32 {.
+proc ecdsaI15VrfyAsn1*(impl: ConstPtrEcImpl; hash: ConstPointer; hashlen: csize_t;
+                      pk: ConstPtrEcPublicKey; sig: ConstPointer; siglen: csize_t): uint32 {.
     importcFunc, importc: "br_ecdsa_i15_vrfy_asn1", header: "bearssl_ec.h".}
 
-proc ecdsaI15VrfyRaw*(impl: ptr EcImpl; hash: pointer; hashlen: csize_t;
-                     pk: ptr EcPublicKey; sig: pointer; siglen: csize_t): uint32 {.
+proc ecdsaI15VrfyRaw*(impl: ConstPtrEcImpl; hash: ConstPointer; hashlen: csize_t;
+                     pk: ConstPtrEcPublicKey; sig: ConstPointer; siglen: csize_t): uint32 {.
     importcFunc, importc: "br_ecdsa_i15_vrfy_raw", header: "bearssl_ec.h".}
 
 proc ecdsaSignAsn1GetDefault*(): EcdsaSign {.importcFunc,
@@ -327,10 +336,6 @@ const
 proc ecKeygen*(rngCtx: PrngClassPointerConst; impl: ptr EcImpl; sk: ptr EcPrivateKey;
               kbuf: pointer; curve: cint): csize_t {.importcFunc, importc: "br_ec_keygen",
     header: "bearssl_ec.h".}
-
-proc ecKeygen*(rngCtx: ptr ptr PrngClass; impl: ptr EcImpl; sk: ptr EcPrivateKey;
-              kbuf: pointer; curve: cint): csize_t =
-  ecKeygen(PrngClassPointerConst(rngCtx), impl, sk, kbuf, curve)
 
 proc ecComputePub*(impl: ptr EcImpl; pk: ptr EcPublicKey; kbuf: pointer;
                   sk: ptr EcPrivateKey): csize_t {.importcFunc,

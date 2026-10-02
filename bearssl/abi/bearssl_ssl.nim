@@ -16,6 +16,27 @@ const
 {.compile: bearSslPath & "ssl_hs_server.c".}
 {.compile: bearSslPath & "ssl_scert_single_rsa.c".}
 
+type
+  ConstPtrConstPtrSslrecInClass* {.importc: "const br_sslrec_in_class *const *", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrConstPtrSslrecOutClass* {.importc: "const br_sslrec_out_class *const *", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslClientCertificateClass* {.importc: "const br_ssl_client_certificate_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslServerPolicyClass* {.importc: "const br_ssl_server_policy_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  SslSessionCacheClassPointerConst* {.importc: "const br_ssl_session_cache_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecInCbcClass* {.importc: "const br_sslrec_in_cbc_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecInCcmClass* {.importc: "const br_sslrec_in_ccm_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecInChapolClass* {.importc: "const br_sslrec_in_chapol_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecInClass* {.importc: "const br_sslrec_in_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecInGcmClass* {.importc: "const br_sslrec_in_gcm_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecOutCbcClass* {.importc: "const br_sslrec_out_cbc_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecOutCcmClass* {.importc: "const br_sslrec_out_ccm_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecOutChapolClass* {.importc: "const br_sslrec_out_chapol_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecOutClass* {.importc: "const br_sslrec_out_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrPtrSslrecOutGcmClass* {.importc: "const br_sslrec_out_gcm_class**", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrSslClientContext* {.importc: "const br_ssl_client_context *", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrSslServerContext* {.importc: "const br_ssl_server_context *", header: "bearssl_ssl.h", bycopy.} = pointer
+  ConstPtrSslSessionParameters* {.importc: "const br_ssl_session_parameters *", header: "bearssl_ssl.h", bycopy.} = pointer
+  ProtocolNamesPointerConst* {.importc: "const char **", header: "bearssl_ssl.h", bycopy.} = pointer
+
 const
   SSL_BUFSIZE_INPUT* = (16384 + 325)
 
@@ -177,20 +198,22 @@ const
 type
   SslrecInClass* {.importc: "br_sslrec_in_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
-    checkLength* {.importc: "check_length".}: proc (ctx: ptr ptr SslrecInClass;
+    checkLength* {.importc: "check_length".}: proc (ctx: ConstPtrConstPtrSslrecInClass;
         recordlen: csize_t): cint {.importcFunc.}
-    decrypt* {.importc: "decrypt".}: proc (ctx: ptr ptr SslrecInClass; recordType: cint;
-                                       version: cuint; payload: pointer;
-                                       len: var csize_t): ptr byte {.importcFunc.}
+    decrypt* {.importc: "decrypt".}: proc (ctx: ConstPtrPtrSslrecInClass;
+                                       recordType: cint; version: cuint;
+                                       payload: pointer; len: var csize_t): ptr byte {.
+        importcFunc.}
 
 
 
 type
   SslrecOutClass* {.importc: "br_sslrec_out_class", header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
-    maxPlaintext* {.importc: "max_plaintext".}: proc (ctx: ptr ptr SslrecOutClass;
-        start: ptr csize_t; `end`: ptr csize_t) {.importcFunc.}
-    encrypt* {.importc: "encrypt".}: proc (ctx: ptr ptr SslrecOutClass;
+    maxPlaintext* {.importc: "max_plaintext".}: proc (
+        ctx: ConstPtrConstPtrSslrecOutClass; start: ptr csize_t; `end`: ptr csize_t) {.
+        importcFunc.}
+    encrypt* {.importc: "encrypt".}: proc (ctx: ConstPtrPtrSslrecOutClass;
                                        recordType: cint; version: cuint;
                                        plaintext: pointer; len: var csize_t): ptr byte {.
         importcFunc.}
@@ -211,11 +234,11 @@ type
   SslrecInCbcClass* {.importc: "br_sslrec_in_cbc_class", header: "bearssl_ssl.h",
                      bycopy.} = object
     inner* {.importc: "inner".}: SslrecInClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInCbcClass;
-                                 bcImpl: ptr BlockCbcdecClass; bcKey: pointer;
-                                 bcKeylen: csize_t; digImpl: ptr HashClass;
-                                 macKey: pointer; macKeylen: csize_t;
-                                 macOutlen: csize_t; iv: pointer) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecInCbcClass;
+                                 bcImpl: ConstPtrBlockCbcdecClass; bcKey: ConstPointer;
+                                 bcKeylen: csize_t; digImpl: ConstPtrHashClass;
+                                 macKey: ConstPointer; macKeylen: csize_t;
+                                 macOutlen: csize_t; iv: ConstPointer) {.importcFunc.}
 
 
 
@@ -223,11 +246,11 @@ type
   SslrecOutCbcClass* {.importc: "br_sslrec_out_cbc_class",
                       header: "bearssl_ssl.h", bycopy.} = object
     inner* {.importc: "inner".}: SslrecOutClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutCbcClass;
-                                 bcImpl: ptr BlockCbcencClass; bcKey: pointer;
-                                 bcKeylen: csize_t; digImpl: ptr HashClass;
-                                 macKey: pointer; macKeylen: csize_t;
-                                 macOutlen: csize_t; iv: pointer) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecOutCbcClass;
+                                 bcImpl: ConstPtrBlockCbcencClass; bcKey: ConstPointer;
+                                 bcKeylen: csize_t; digImpl: ConstPtrHashClass;
+                                 macKey: ConstPointer; macKeylen: csize_t;
+                                 macOutlen: csize_t; iv: ConstPointer) {.importcFunc.}
 
 
 
@@ -279,9 +302,9 @@ type
   SslrecInGcmClass* {.importc: "br_sslrec_in_gcm_class", header: "bearssl_ssl.h",
                      bycopy.} = object
     inner* {.importc: "inner".}: SslrecInClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInGcmClass;
-                                 bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keylen: csize_t; ghImpl: Ghash; iv: pointer) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecInGcmClass;
+                                 bcImpl: ConstPtrBlockCtrClass; key: ConstPointer;
+                                 keylen: csize_t; ghImpl: Ghash; iv: ConstPointer) {.importcFunc.}
 
 
 
@@ -289,16 +312,16 @@ type
   SslrecOutGcmClass* {.importc: "br_sslrec_out_gcm_class",
                       header: "bearssl_ssl.h", bycopy.} = object
     inner* {.importc: "inner".}: SslrecOutClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutGcmClass;
-                                 bcImpl: ptr BlockCtrClass; key: pointer;
-                                 keylen: csize_t; ghImpl: Ghash; iv: pointer) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecOutGcmClass;
+                                 bcImpl: ConstPtrBlockCtrClass; key: ConstPointer;
+                                 keylen: csize_t; ghImpl: Ghash; iv: ConstPointer) {.importcFunc.}
 
 
 
 type
   INNER_C_UNION_bearssl_ssl_6* {.importc: "br_sslrec_gcm_context::no_name",
                                 header: "bearssl_ssl.h", bycopy, union.} = object
-    gen* {.importc: "gen".}: pointer
+    gen* {.importc: "gen".}: ConstPointer
     `in`* {.importc: "in".}: ptr SslrecInGcmClass
     `out`* {.importc: "out".}: ptr SslrecOutGcmClass
 
@@ -328,9 +351,9 @@ type
   SslrecInChapolClass* {.importc: "br_sslrec_in_chapol_class",
                         header: "bearssl_ssl.h", bycopy.} = object
     inner* {.importc: "inner".}: SslrecInClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInChapolClass;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecInChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.importcFunc.}
+                                 key: ConstPointer; iv: ConstPointer) {.importcFunc.}
 
 
 
@@ -338,16 +361,16 @@ type
   SslrecOutChapolClass* {.importc: "br_sslrec_out_chapol_class",
                          header: "bearssl_ssl.h", bycopy.} = object
     inner* {.importc: "inner".}: SslrecOutClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutChapolClass;
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecOutChapolClass;
                                  ichacha: Chacha20Run; ipoly: Poly1305Run;
-                                 key: pointer; iv: pointer) {.importcFunc.}
+                                 key: ConstPointer; iv: ConstPointer) {.importcFunc.}
 
 
 
 type
   INNER_C_UNION_bearssl_ssl_9* {.importc: "br_sslrec_chapol_context::no_name",
                                 header: "bearssl_ssl.h", bycopy, union.} = object
-    gen* {.importc: "gen".}: pointer
+    gen* {.importc: "gen".}: ConstPointer
     `in`* {.importc: "in".}: ptr SslrecInChapolClass
     `out`* {.importc: "out".}: ptr SslrecOutChapolClass
 
@@ -372,9 +395,9 @@ type
   SslrecInCcmClass* {.importc: "br_sslrec_in_ccm_class", header: "bearssl_ssl.h",
                      bycopy.} = object
     inner* {.importc: "inner".}: SslrecInClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecInCcmClass;
-                                 bcImpl: ptr BlockCtrcbcClass; key: pointer;
-                                 keylen: csize_t; iv: pointer; taglen: csize_t) {.
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecInCcmClass;
+                                 bcImpl: ConstPtrBlockCtrcbcClass; key: ConstPointer;
+                                 keylen: csize_t; iv: ConstPointer; taglen: csize_t) {.
         importcFunc.}
 
 
@@ -383,9 +406,9 @@ type
   SslrecOutCcmClass* {.importc: "br_sslrec_out_ccm_class",
                       header: "bearssl_ssl.h", bycopy.} = object
     inner* {.importc: "inner".}: SslrecOutClass
-    init* {.importc: "init".}: proc (ctx: ptr ptr SslrecOutCcmClass;
-                                 bcImpl: ptr BlockCtrcbcClass; key: pointer;
-                                 keylen: csize_t; iv: pointer; taglen: csize_t) {.
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrSslrecOutCcmClass;
+                                 bcImpl: ConstPtrBlockCtrcbcClass; key: ConstPointer;
+                                 keylen: csize_t; iv: ConstPointer; taglen: csize_t) {.
         importcFunc.}
 
 
@@ -393,7 +416,7 @@ type
 type
   INNER_C_UNION_bearssl_ssl_12* {.importc: "br_sslrec_ccm_context::no_name",
                                  header: "bearssl_ssl.h", bycopy, union.} = object
-    gen* {.importc: "gen".}: pointer
+    gen* {.importc: "gen".}: ConstPointer
     `in`* {.importc: "in".}: ptr SslrecInCcmClass
     `out`* {.importc: "out".}: ptr SslrecOutCcmClass
 
@@ -455,14 +478,7 @@ type
                                   header: "bearssl_ssl.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr byte
-
-  ProtocolNamesPointerConst* {.importc: "const char **", header: "bearssl_ssl.h",
-                              bycopy.} = pointer
-  ConstPtrSslClientContext* {.importc: "const br_ssl_client_context *",
-                             header: "bearssl_ssl.h", bycopy.} = pointer
-  ConstPtrSslServerContext* {.importc: "const br_ssl_server_context *",
-                             header: "bearssl_ssl.h", bycopy.} = pointer
+    ip* {.importc: "ip".}: ConstPtrByte
 
   SslEngineContext* {.importc: "br_ssl_engine_context", header: "bearssl_ssl.h",
                      bycopy.} = object
@@ -524,7 +540,7 @@ type
     x509ctx* {.importc: "x509ctx".}: X509ClassPointerConst
     chain* {.importc: "chain".}: ptr X509Certificate
     chainLen* {.importc: "chain_len".}: csize_t
-    certCur* {.importc: "cert_cur".}: ptr byte
+    certCur* {.importc: "cert_cur".}: ConstPtrByte
     certLen* {.importc: "cert_len".}: csize_t
     protocolNames* {.importc: "protocol_names".}: ProtocolNamesPointerConst
     protocolNamesNum* {.importc: "protocol_names_num".}: uint16
@@ -593,19 +609,12 @@ proc sslEngineSetX509*(cc: var SslEngineContext;
                        x509ctx: X509ClassPointerConst) =
   cc.x509ctx = x509ctx
 
-proc sslEngineSetX509*(cc: var SslEngineContext; x509ctx: ptr ptr X509Class) =
-  cc.x509ctx = X509ClassPointerConst(x509ctx)
-
 proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: ProtocolNamesPointerConst;
                                 num: csize_t) =
   ctx.protocolNames = names
   ctx.protocolNamesNum = uint16 num
 
-proc sslEngineSetProtocolNames*(ctx: var SslEngineContext; names: cstringArray; num: csize_t) =
-  ctx.protocolNames = ProtocolNamesPointerConst(names)
-  ctx.protocolNamesNum = uint16 num
-
-proc sslEngineGetSelectedProtocol*(ctx: var SslEngineContext): cstring {.inline.} =
+proc sslEngineGetSelectedProtocol*(ctx: var SslEngineContext): ConstCstring {.inline.} =
   var k: cuint
   k = ctx.selectedProtocol
   return if (k == 0 or k == 0xFFFF): nil else: cast[cstringArray](ctx.protocolNames)[k - 1]
@@ -743,10 +752,11 @@ proc sslEngineSetBuffersBidi*(cc: var SslEngineContext; ibuf: pointer;
                              ibuflen: csize_t; obuf: pointer; obuflen: csize_t) {.
     importcFunc, importc: "br_ssl_engine_set_buffers_bidi", header: "bearssl_ssl.h".}
 
-proc sslEngineInjectEntropy*(cc: var SslEngineContext; data: pointer; len: csize_t) {.
-    importcFunc, importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
+proc sslEngineInjectEntropy*(cc: var SslEngineContext; data: ConstPointer;
+                            len: csize_t) {.importcFunc,
+    importc: "br_ssl_engine_inject_entropy", header: "bearssl_ssl.h".}
 
-proc sslEngineGetServerName*(cc: var SslEngineContext): cstring {.inline.} =
+proc sslEngineGetServerName*(cc: var SslEngineContext): ConstCstring {.inline.} =
   return cast[cstring](addr cc.serverName)
 
 
@@ -826,8 +836,8 @@ proc sslEngineClose*(cc: var SslEngineContext) {.importcFunc,
 proc sslEngineRenegotiate*(cc: var SslEngineContext): cint {.importcFunc,
     importc: "br_ssl_engine_renegotiate", header: "bearssl_ssl.h".}
 
-proc sslKeyExport*(cc: var SslEngineContext; dst: pointer; len: csize_t; label: cstring;
-                  context: pointer; contextlen: csize_t): cint {.importcFunc,
+proc sslKeyExport*(cc: var SslEngineContext; dst: pointer; len: csize_t; label: ConstCstring;
+                  context: ConstPointer; contextlen: csize_t): cint {.importcFunc,
     importc: "br_ssl_key_export", header: "bearssl_ssl.h".}
 
 type
@@ -857,22 +867,24 @@ type
                               header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
     startNameList* {.importc: "start_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.importcFunc.}
+        pctx: ConstPtrPtrSslClientCertificateClass) {.importcFunc.}
     startName* {.importc: "start_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; len: csize_t) {.importcFunc.}
+        pctx: ConstPtrPtrSslClientCertificateClass; len: csize_t) {.importcFunc.}
     appendName* {.importc: "append_name".}: proc (
-        pctx: ptr ptr SslClientCertificateClass; data: ConstPtrByte; len: csize_t) {.importcFunc.}
-    endName* {.importc: "end_name".}: proc (pctx: ptr ptr SslClientCertificateClass) {.
+        pctx: ConstPtrPtrSslClientCertificateClass; data: ConstPtrByte; len: csize_t) {.
+        importcFunc.}
+    endName* {.importc: "end_name".}: proc (pctx: ConstPtrPtrSslClientCertificateClass) {.
         importcFunc.}
     endNameList* {.importc: "end_name_list".}: proc (
-        pctx: ptr ptr SslClientCertificateClass) {.importcFunc.}
-    choose* {.importc: "choose".}: proc (pctx: ptr ptr SslClientCertificateClass;
-                                     cc: ConstPtrSslClientContext; authTypes: uint32;
+        pctx: ConstPtrPtrSslClientCertificateClass) {.importcFunc.}
+    choose* {.importc: "choose".}: proc (pctx: ConstPtrPtrSslClientCertificateClass;
+                                     cc: ConstPtrSslClientContext;
+                                     authTypes: uint32;
                                      choices: ptr SslClientCertificate) {.importcFunc.}
-    doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslClientCertificateClass;
+    doKeyx* {.importc: "do_keyx".}: proc (pctx: ConstPtrPtrSslClientCertificateClass;
                                       data: ptr byte; len: var csize_t): uint32 {.
         importcFunc.}
-    doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslClientCertificateClass;
+    doSign* {.importc: "do_sign".}: proc (pctx: ConstPtrPtrSslClientCertificateClass;
                                       hashId: cint; hvlen: csize_t;
                                       data: ptr byte; len: csize_t): csize_t {.importcFunc.}
 
@@ -915,7 +927,7 @@ type
     minClienthelloLen* {.importc: "min_clienthello_len".}: uint16
     hashes* {.importc: "hashes".}: uint32
     serverCurve* {.importc: "server_curve".}: cint
-    clientAuthVtable* {.importc: "client_auth_vtable".}: ptr ptr SslClientCertificateClass
+    clientAuthVtable* {.importc: "client_auth_vtable".}: ConstPtrPtrSslClientCertificateClass
     authType* {.importc: "auth_type".}: byte
     hashId* {.importc: "hash_id".}: byte
     clientAuth* {.importc: "client_auth".}: INNER_C_UNION_bearssl_ssl_20
@@ -938,7 +950,7 @@ proc sslClientZero*(cc: var SslClientContext) {.importcFunc, importc: "br_ssl_cl
     header: "bearssl_ssl.h".}
 
 proc sslClientSetClientCertificate*(cc: var SslClientContext;
-                                   pctx: ptr ptr SslClientCertificateClass) {.
+                                   pctx: ConstPtrPtrSslClientCertificateClass) {.
     inline.} =
   cc.clientAuthVtable = pctx
 
@@ -954,7 +966,7 @@ proc sslClientSetMinClienthelloLen*(cc: var SslClientContext; len: uint16) {.inl
   cc.minClienthelloLen = len
 
 
-proc sslClientReset*(cc: var SslClientContext; serverName: cstring;
+proc sslClientReset*(cc: var SslClientContext; serverName: ConstCstring;
                     resumeSession: cint): cint {.importcFunc,
     importc: "br_ssl_client_reset", header: "bearssl_ssl.h".}
 
@@ -1010,13 +1022,13 @@ type
   SslServerPolicyClass* {.importc: "br_ssl_server_policy_class",
                          header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
-    choose* {.importc: "choose".}: proc (pctx: ptr ptr SslServerPolicyClass;
+    choose* {.importc: "choose".}: proc (pctx: ConstPtrPtrSslServerPolicyClass;
                                      cc: ConstPtrSslServerContext;
                                      choices: ptr SslServerChoices): cint {.importcFunc.}
-    doKeyx* {.importc: "do_keyx".}: proc (pctx: ptr ptr SslServerPolicyClass;
+    doKeyx* {.importc: "do_keyx".}: proc (pctx: ConstPtrPtrSslServerPolicyClass;
                                       data: ptr byte; len: var csize_t): uint32 {.
         importcFunc.}
-    doSign* {.importc: "do_sign".}: proc (pctx: ptr ptr SslServerPolicyClass;
+    doSign* {.importc: "do_sign".}: proc (pctx: ConstPtrPtrSslServerPolicyClass;
                                       algoId: cuint; data: ptr byte;
                                       hvlen: csize_t; len: csize_t): csize_t {.importcFunc.}
 
@@ -1053,15 +1065,13 @@ type
   SslSessionCacheClass* {.importc: "br_ssl_session_cache_class",
                          header: "bearssl_ssl.h", bycopy.} = object
     contextSize* {.importc: "context_size".}: csize_t
-    save* {.importc: "save".}: proc (ctx: ptr ptr SslSessionCacheClass;
+    save* {.importc: "save".}: proc (ctx: SslSessionCacheClassPointerConst;
                                  serverCtx: ptr SslServerContext;
-                                 params: ptr SslSessionParameters) {.importcFunc.}
-    load* {.importc: "load".}: proc (ctx: ptr ptr SslSessionCacheClass;
+                                 params: ConstPtrSslSessionParameters) {.importcFunc.}
+    load* {.importc: "load".}: proc (ctx: SslSessionCacheClassPointerConst;
                                  serverCtx: ptr SslServerContext;
                                  params: ptr SslSessionParameters): cint {.importcFunc.}
 
-
-  SslSessionCacheClassPointerConst* {.importc: "const br_ssl_session_cache_class**", header: "bearssl_ssl.h", bycopy.} = pointer
 
 
   SslSessionCacheLru* {.importc: "br_ssl_session_cache_lru",
@@ -1095,7 +1105,7 @@ type
     clientSuitesNum* {.importc: "client_suites_num".}: byte
     hashes* {.importc: "hashes".}: uint32
     curves* {.importc: "curves".}: uint32
-    policyVtable* {.importc: "policy_vtable".}: ptr ptr SslServerPolicyClass
+    policyVtable* {.importc: "policy_vtable".}: ConstPtrPtrSslServerPolicyClass
     signHashId* {.importc: "sign_hash_id".}: uint16
     chainHandler* {.importc: "chain_handler".}: INNER_C_UNION_bearssl_ssl_21
     ecdheKey* {.importc: "ecdhe_key".}: array[70, byte]
@@ -1104,7 +1114,7 @@ type
     tas* {.importc: "tas".}: ptr X509TrustAnchor
     numTas* {.importc: "num_tas".}: csize_t
     curDnIndex* {.importc: "cur_dn_index".}: csize_t
-    curDn* {.importc: "cur_dn".}: ptr byte
+    curDn* {.importc: "cur_dn".}: ConstPtrByte
     curDnLen* {.importc: "cur_dn_len".}: csize_t
     hashCV* {.importc: "hash_CV".}: array[64, byte]
     hashCV_len* {.importc: "hash_CV_len".}: csize_t
@@ -1114,7 +1124,7 @@ proc sslSessionCacheLruInit*(cc: var SslSessionCacheLru; store: ptr byte;
                             storeLen: int) {.importcFunc,
     importc: "br_ssl_session_cache_lru_init", header: "bearssl_ssl.h".}
 
-proc sslSessionCacheLruForget*(cc: var SslSessionCacheLru; id: ptr byte) {.importcFunc,
+proc sslSessionCacheLruForget*(cc: var SslSessionCacheLru; id: ConstPtrByte) {.importcFunc,
     importc: "br_ssl_session_cache_lru_forget", header: "bearssl_ssl.h".}
 
 
@@ -1176,7 +1186,7 @@ proc sslServerZero*(cc: var SslServerContext) {.importcFunc, importc: "br_ssl_se
     header: "bearssl_ssl.h".}
 
 proc sslServerSetPolicy*(cc: var SslServerContext;
-                        pctx: ptr ptr SslServerPolicyClass) {.inline.} =
+                        pctx: ConstPtrPtrSslServerPolicyClass) {.inline.} =
   cc.policyVtable = pctx
 
 
@@ -1220,8 +1230,8 @@ type
     lowRead* {.importc: "low_read".}: proc (readContext: pointer; data: ptr byte;
                                         len: csize_t): cint {.importcFunc.}
     readContext* {.importc: "read_context".}: pointer
-    lowWrite* {.importc: "low_write".}: proc (writeContext: pointer; data: ptr byte;
-        len: csize_t): cint {.importcFunc.}
+    lowWrite* {.importc: "low_write".}: proc (writeContext: pointer;
+        data: ConstPtrByte; len: csize_t): cint {.importcFunc.}
     writeContext* {.importc: "write_context".}: pointer
 
 
@@ -1229,7 +1239,7 @@ type
 proc sslioInit*(ctx: var SslioContext; engine: ptr SslEngineContext; lowRead: proc (
     readContext: pointer; data: ptr byte; len: csize_t): cint {.importcFunc.};
                readContext: pointer; lowWrite: proc (writeContext: pointer;
-    data: ptr byte; len: csize_t): cint {.importcFunc.}; writeContext: pointer) {.importcFunc,
+    data: ConstPtrByte; len: csize_t): cint {.importcFunc.}; writeContext: pointer) {.importcFunc,
     importc: "br_sslio_init", header: "bearssl_ssl.h".}
 
 proc sslioRead*(cc: var SslioContext; dst: pointer; len: csize_t): cint {.importcFunc,
@@ -1238,10 +1248,10 @@ proc sslioRead*(cc: var SslioContext; dst: pointer; len: csize_t): cint {.import
 proc sslioReadAll*(cc: var SslioContext; dst: pointer; len: csize_t): cint {.importcFunc,
     importc: "br_sslio_read_all", header: "bearssl_ssl.h".}
 
-proc sslioWrite*(cc: var SslioContext; src: pointer; len: csize_t): cint {.importcFunc,
+proc sslioWrite*(cc: var SslioContext; src: ConstPointer; len: csize_t): cint {.importcFunc,
     importc: "br_sslio_write", header: "bearssl_ssl.h".}
 
-proc sslioWriteAll*(cc: var SslioContext; src: pointer; len: csize_t): cint {.importcFunc,
+proc sslioWriteAll*(cc: var SslioContext; src: ConstPointer; len: csize_t): cint {.importcFunc,
     importc: "br_sslio_write_all", header: "bearssl_ssl.h".}
 
 proc sslioFlush*(cc: var SslioContext): cint {.importcFunc, importc: "br_sslio_flush",

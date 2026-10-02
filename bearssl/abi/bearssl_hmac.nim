@@ -1,4 +1,4 @@
-import ./[bearssl_hash, csources, inner]
+import ./[bearssl_hash, consttypes, csources, inner]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
@@ -17,7 +17,7 @@ type
 
 
 
-proc hmacKeyInit*(kc: var HmacKeyContext; digestVtable: ptr HashClass; key: pointer;
+proc hmacKeyInit*(kc: var HmacKeyContext; digestVtable: ptr HashClass; key: ConstPointer;
                  keylen: csize_t) {.importcFunc, importc: "br_hmac_key_init",
                                   header: "bearssl_hmac.h".}
 
@@ -44,12 +44,12 @@ proc hmacGetDigest*(hc: var HmacContext): ptr HashClass {.inline.} =
   return hc.dig.vtable
 
 
-proc hmacUpdate*(ctx: var HmacContext; data: pointer; len: csize_t) {.importcFunc,
+proc hmacUpdate*(ctx: var HmacContext; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_hmac_update", header: "bearssl_hmac.h".}
 
 proc hmacOut*(ctx: var HmacContext; `out`: pointer): csize_t {.importcFunc,
     importc: "br_hmac_out", header: "bearssl_hmac.h".}
 
-proc hmacOutCT*(ctx: var HmacContext; data: pointer; len: csize_t; minlen: csize_t;
+proc hmacOutCT*(ctx: var HmacContext; data: ConstPointer; len: csize_t; minlen: csize_t;
                maxlen: csize_t; `out`: pointer): csize_t {.importcFunc,
     importc: "br_hmac_outCT", header: "bearssl_hmac.h".}

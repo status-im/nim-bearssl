@@ -1,4 +1,4 @@
-import ./[csources]
+import ./[consttypes, csources]
 
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.pragma: headerFunc, importcFunc, header: "bearssl.h".}
@@ -11,7 +11,7 @@ const
 
 type
   ConfigOption* {.importc: "br_config_option", header: "bearssl.h", bycopy.} = object
-    name* {.importc: "name".}: cstring
+    name* {.importc: "name".}: ConstCstring
     value* {.importc: "value".}: clong
 
 # TODO: missing `extern "C"` in bearssl.h means this function cannot

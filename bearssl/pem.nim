@@ -34,12 +34,30 @@ func destWrapper(destCtx: pointer, src: ConstPointer, len: csize_t) {.cdecl.} =
   let ctx = cast[PemDecoderContext](destCtx)
   ctx.dest(ctx.destCtx, cast[pointer](src), len)
 
-func setdest*(ctx: var PemDecoderContext; dest: PemDestProc; destCtx: pointer) =
-  doAssert ctx != nil, "PemDecoderContext not initialized"
-  ctx[].dest = dest
-  ctx[].destCtx = destCtx
-  ctx[].raw.dest = if dest != nil: destWrapper else: nil
-  ctx[].raw.destCtx = cast[pointer](ctx)
+when (NimMajor, NimMinor, NimPatch) >= (2, 2, 12):
+  func setdest*(ctx: var PemDecoderContext; dest: PemDestProc; destCtx: pointer) =
+    doAssert ctx != nil, "PemDecoderContext not initialized"
+    ctx[].dest = dest
+    ctx[].destCtx = destCtx
+    ctx[].raw.dest = if dest != nil: destWrapper else: nil
+    ctx[].raw.destCtx = cast[pointer](ctx)
+else:
+  # https://github.com/nim-lang/Nim/issues/25931
+  # `dest` is passed on as `pointer`, not `PemDestProc`: structurally identical
+  # callbacks (e.g. the X509 decoder `appendDn` and hash `update`) share one C
+  # `typedef`, and a `ConstPointer` alias renders that typedef `const` in some
+  # translation units (compilation-order dependent), breaking non-const
+  # downstream callbacks (e.g. nim-chronos's PEM `itemAppend`) under
+  # `-Werror=incompatible[-function]-pointer-types`.
+  func setdestImpl(ctx: var PemDecoderContext; dest, destCtx: pointer) =
+    doAssert ctx != nil, "PemDecoderContext not initialized"
+    ctx[].dest = cast[PemDestProc](dest)
+    ctx[].destCtx = destCtx
+    ctx[].raw.dest = if dest != nil: destWrapper else: nil
+    ctx[].raw.destCtx = cast[pointer](ctx)
+
+  template setdest*(ctx: var PemDecoderContext; dest: PemDestProc; destCtx: pointer) =
+    setdestImpl(ctx, cast[pointer](dest), destCtx)
 
 func lastEvent*(ctx: var PemDecoderContext): cint =
   doAssert ctx != nil, "PemDecoderContext not initialized"

@@ -11,21 +11,25 @@ const
 {.compile: bearAeadPath & "gcm.c".}
 
 type
+  ConstPtrPtrAeadClass* {.importc: "const br_aead_class**", header: "bearssl_aead.h", bycopy.} = pointer
+
+type
   AeadClass* {.importc: "br_aead_class", header: "bearssl_aead.h", bycopy.} = object
     tagSize* {.importc: "tag_size".}: csize_t
-    reset* {.importc: "reset".}: proc (cc: ptr ptr AeadClass; iv: ConstPointer; len: csize_t) {.
+    reset* {.importc: "reset".}: proc (cc: ConstPtrPtrAeadClass; iv: ConstPointer;
+                                   len: csize_t) {.importcFunc.}
+    aadInject* {.importc: "aad_inject".}: proc (cc: ConstPtrPtrAeadClass;
+        data: ConstPointer; len: csize_t) {.importcFunc.}
+    flip* {.importc: "flip".}: proc (cc: ConstPtrPtrAeadClass) {.importcFunc.}
+    run* {.importc: "run".}: proc (cc: ConstPtrPtrAeadClass; encrypt: cint;
+                               data: pointer; len: csize_t) {.importcFunc.}
+    getTag* {.importc: "get_tag".}: proc (cc: ConstPtrPtrAeadClass; tag: pointer) {.
         importcFunc.}
-    aadInject* {.importc: "aad_inject".}: proc (cc: ptr ptr AeadClass; data: ConstPointer;
-        len: csize_t) {.importcFunc.}
-    flip* {.importc: "flip".}: proc (cc: ptr ptr AeadClass) {.importcFunc.}
-    run* {.importc: "run".}: proc (cc: ptr ptr AeadClass; encrypt: cint; data: pointer;
-                               len: csize_t) {.importcFunc.}
-    getTag* {.importc: "get_tag".}: proc (cc: ptr ptr AeadClass; tag: pointer) {.importcFunc.}
-    checkTag* {.importc: "check_tag".}: proc (cc: ptr ptr AeadClass; tag: ConstPointer): uint32 {.
-        importcFunc.}
-    getTagTrunc* {.importc: "get_tag_trunc".}: proc (cc: ptr ptr AeadClass;
+    checkTag* {.importc: "check_tag".}: proc (cc: ConstPtrPtrAeadClass;
+        tag: ConstPointer): uint32 {.importcFunc.}
+    getTagTrunc* {.importc: "get_tag_trunc".}: proc (cc: ConstPtrPtrAeadClass;
         tag: pointer; len: csize_t) {.importcFunc.}
-    checkTagTrunc* {.importc: "check_tag_trunc".}: proc (cc: ptr ptr AeadClass;
+    checkTagTrunc* {.importc: "check_tag_trunc".}: proc (cc: ConstPtrPtrAeadClass;
         tag: ConstPointer; len: csize_t): uint32 {.importcFunc.}
 
 
@@ -33,7 +37,7 @@ type
 type
   GcmContext* {.importc: "br_gcm_context", header: "bearssl_aead.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr AeadClass
-    bctx* {.importc: "bctx".}: ptr ptr BlockCtrClass
+    bctx* {.importc: "bctx".}: ConstPtrPtrBlockCtrClass
     gh* {.importc: "gh".}: Ghash
     h* {.importc: "h".}: array[16, byte]
     j01* {.importc: "j0_1".}: array[12, byte]
@@ -46,7 +50,7 @@ type
 
 
 
-proc gcmInit*(ctx: var GcmContext; bctx: ptr ptr BlockCtrClass; gh: Ghash) {.importcFunc,
+proc gcmInit*(ctx: var GcmContext; bctx: ConstPtrPtrBlockCtrClass; gh: Ghash) {.importcFunc,
     importc: "br_gcm_init", header: "bearssl_aead.h".}
 
 proc gcmReset*(ctx: var GcmContext; iv: ConstPointer; len: csize_t) {.importcFunc,
@@ -70,8 +74,8 @@ proc gcmCheckTag*(ctx: var GcmContext; tag: ConstPointer): uint32 {.importcFunc,
 proc gcmGetTagTrunc*(ctx: var GcmContext; tag: pointer; len: csize_t) {.importcFunc,
     importc: "br_gcm_get_tag_trunc", header: "bearssl_aead.h".}
 
-proc gcmCheckTagTrunc*(ctx: var GcmContext; tag: ConstPointer; len: csize_t): uint32 {.importcFunc,
-    importc: "br_gcm_check_tag_trunc", header: "bearssl_aead.h".}
+proc gcmCheckTagTrunc*(ctx: var GcmContext; tag: ConstPointer; len: csize_t): uint32 {.
+    importcFunc, importc: "br_gcm_check_tag_trunc", header: "bearssl_aead.h".}
 
 var gcmVtable* {.importc: "br_gcm_vtable", header: "bearssl_aead.h".}: AeadClass
 
@@ -79,7 +83,7 @@ var gcmVtable* {.importc: "br_gcm_vtable", header: "bearssl_aead.h".}: AeadClass
 type
   EaxContext* {.importc: "br_eax_context", header: "bearssl_aead.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr AeadClass
-    bctx* {.importc: "bctx".}: ptr ptr BlockCtrcbcClass
+    bctx* {.importc: "bctx".}: ConstPtrPtrBlockCtrcbcClass
     l2* {.importc: "L2".}: array[16, byte]
     l4* {.importc: "L4".}: array[16, byte]
     nonce* {.importc: "nonce".}: array[16, byte]
@@ -97,7 +101,7 @@ type
 
 
 
-proc eaxInit*(ctx: var EaxContext; bctx: ptr ptr BlockCtrcbcClass) {.importcFunc,
+proc eaxInit*(ctx: var EaxContext; bctx: ConstPtrPtrBlockCtrcbcClass) {.importcFunc,
     importc: "br_eax_init", header: "bearssl_aead.h".}
 
 proc eaxCapture*(ctx: var EaxContext; st: ptr EaxState) {.importcFunc,
@@ -106,11 +110,13 @@ proc eaxCapture*(ctx: var EaxContext; st: ptr EaxState) {.importcFunc,
 proc eaxReset*(ctx: var EaxContext; nonce: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_eax_reset", header: "bearssl_aead.h".}
 
-proc eaxResetPreAad*(ctx: var EaxContext; st: ptr EaxState; nonce: ConstPointer; len: csize_t) {.
-    importcFunc, importc: "br_eax_reset_pre_aad", header: "bearssl_aead.h".}
+proc eaxResetPreAad*(ctx: var EaxContext; st: ptr EaxState; nonce: ConstPointer;
+                    len: csize_t) {.importcFunc, importc: "br_eax_reset_pre_aad",
+                                  header: "bearssl_aead.h".}
 
-proc eaxResetPostAad*(ctx: var EaxContext; st: ptr EaxState; nonce: ConstPointer; len: csize_t) {.
-    importcFunc, importc: "br_eax_reset_post_aad", header: "bearssl_aead.h".}
+proc eaxResetPostAad*(ctx: var EaxContext; st: ptr EaxState; nonce: ConstPointer;
+                     len: csize_t) {.importcFunc, importc: "br_eax_reset_post_aad",
+                                   header: "bearssl_aead.h".}
 
 proc eaxAadInject*(ctx: var EaxContext; data: ConstPointer; len: csize_t) {.importcFunc,
     importc: "br_eax_aad_inject", header: "bearssl_aead.h".}
@@ -134,15 +140,15 @@ proc eaxCheckTag*(ctx: var EaxContext; tag: ConstPointer): uint32 {.importcFunc,
 proc eaxGetTagTrunc*(ctx: var EaxContext; tag: pointer; len: csize_t) {.importcFunc,
     importc: "br_eax_get_tag_trunc", header: "bearssl_aead.h".}
 
-proc eaxCheckTagTrunc*(ctx: var EaxContext; tag: ConstPointer; len: csize_t): uint32 {.importcFunc,
-    importc: "br_eax_check_tag_trunc", header: "bearssl_aead.h".}
+proc eaxCheckTagTrunc*(ctx: var EaxContext; tag: ConstPointer; len: csize_t): uint32 {.
+    importcFunc, importc: "br_eax_check_tag_trunc", header: "bearssl_aead.h".}
 
 var eaxVtable* {.importc: "br_eax_vtable", header: "bearssl_aead.h".}: AeadClass
 
 
 type
   CcmContext* {.importc: "br_ccm_context", header: "bearssl_aead.h", bycopy.} = object
-    bctx* {.importc: "bctx".}: ptr ptr BlockCtrcbcClass
+    bctx* {.importc: "bctx".}: ConstPtrPtrBlockCtrcbcClass
     ctr* {.importc: "ctr".}: array[16, byte]
     cbcmac* {.importc: "cbcmac".}: array[16, byte]
     tagmask* {.importc: "tagmask".}: array[16, byte]
@@ -152,7 +158,7 @@ type
 
 
 
-proc ccmInit*(ctx: var CcmContext; bctx: ptr ptr BlockCtrcbcClass) {.importcFunc,
+proc ccmInit*(ctx: var CcmContext; bctx: ConstPtrPtrBlockCtrcbcClass) {.importcFunc,
     importc: "br_ccm_init", header: "bearssl_aead.h".}
 
 proc ccmReset*(ctx: var CcmContext; nonce: ConstPointer; noncelen: csize_t; aadlen: uint64;

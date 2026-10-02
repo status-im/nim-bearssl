@@ -15,7 +15,7 @@ type
                                  header: "bearssl_pem.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
-    ip* {.importc: "ip".}: ptr byte
+    ip* {.importc: "ip".}: ConstPtrByte
 
   RawPemDecoderContext* {.importc: "br_pem_decoder_context", header: "bearssl_pem.h",
                       bycopy.} = object
@@ -23,10 +23,10 @@ type
     dpStack* {.importc: "dp_stack".}: array[32, uint32]
     rpStack* {.importc: "rp_stack".}: array[32, uint32]
     err* {.importc: "err".}: cint
-    hbuf* {.importc: "hbuf".}: ptr byte
+    hbuf* {.importc: "hbuf".}: ConstPtrByte
     hlen* {.importc: "hlen".}: csize_t
-    dest* {.importc: "dest".}: proc (
-      destCtx: pointer; src: ConstPointer; len: csize_t) {.importcFunc.}
+    dest* {.importc: "dest".}: proc (destCtx: pointer; src: ConstPointer; len: csize_t) {.
+        importcFunc.}
     destCtx* {.importc: "dest_ctx".}: pointer
     event* {.importc: "event".}: byte
     name* {.importc: "name".}: array[128, char]
@@ -38,7 +38,7 @@ type
 proc pemDecoderInit*(ctx: var RawPemDecoderContext) {.importcFunc,
     importc: "br_pem_decoder_init", header: "bearssl_pem.h".}
 
-proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: pointer; len: csize_t): csize_t {.
+proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: ConstPointer; len: csize_t): csize_t {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
 
@@ -57,12 +57,13 @@ const
   PEM_ERROR* = 3
 
 
-proc pemDecoderName*(ctx: var RawPemDecoderContext): cstring {.inline.} =
+proc pemDecoderName*(ctx: var RawPemDecoderContext): ConstCstring {.inline.} =
   return cast[cstring](addr ctx.name)
 
 
-proc pemEncode*(dest: pointer; data: pointer; len: csize_t; banner: cstring; flags: cuint): csize_t {.
-    importcFunc, importc: "br_pem_encode", header: "bearssl_pem.h".}
+proc pemEncode*(dest: pointer; data: ConstPointer; len: csize_t; banner: ConstCstring;
+               flags: cuint): csize_t {.importcFunc, importc: "br_pem_encode",
+                                     header: "bearssl_pem.h".}
 
 const
   PEM_LINE64* = 0x0001
