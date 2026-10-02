@@ -3,12 +3,9 @@ import ./[bearssl_block, bearssl_hash, consttypes, csources]
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearAeadPath = bearSrcPath & "aead/"
-
-{.compile: bearAeadPath & "ccm.c".}
-{.compile: bearAeadPath & "eax.c".}
-{.compile: bearAeadPath & "gcm.c".}
+{.compile: bearSrcPath & "aead/ccm.c".}
+{.compile: bearSrcPath & "aead/eax.c".}
+{.compile: bearSrcPath & "aead/gcm.c".}
 
 type
   ConstPtrPtrAeadClass* {.importc: "const br_aead_class**", header: "bearssl_aead.h", bycopy.} = pointer
@@ -124,9 +121,8 @@ proc eaxAadInject*(ctx: var EaxContext; data: ConstPointer; len: csize_t) {.impo
 proc eaxFlip*(ctx: var EaxContext) {.importcFunc, importc: "br_eax_flip",
                                  header: "bearssl_aead.h".}
 
-proc eaxGetAadMac*(ctx: var EaxContext; st: ptr EaxState) {.inline.} =
-  copyMem(unsafeAddr st.st[1], unsafeAddr ctx.head, sizeof(ctx.head))
-
+proc eaxGetAadMac*(ctx: var EaxContext; st: ptr EaxState) {.importcFunc,
+    importc: "br_eax_get_aad_mac", header: "bearssl_aead.h".}
 
 proc eaxRun*(ctx: var EaxContext; encrypt: cint; data: pointer; len: csize_t) {.importcFunc,
     importc: "br_eax_run", header: "bearssl_aead.h".}
@@ -161,8 +157,8 @@ type
 proc ccmInit*(ctx: var CcmContext; bctx: ConstPtrPtrBlockCtrcbcClass) {.importcFunc,
     importc: "br_ccm_init", header: "bearssl_aead.h".}
 
-proc ccmReset*(ctx: var CcmContext; nonce: ConstPointer; noncelen: csize_t; aadlen: uint64;
-              datalen: uint64; taglen: csize_t): cint {.importcFunc,
+proc ccmReset*(ctx: var CcmContext; nonce: ConstPointer; nonceLen: csize_t;
+              aadLen: uint64; dataLen: uint64; tagLen: csize_t): cint {.importcFunc,
     importc: "br_ccm_reset", header: "bearssl_aead.h".}
 
 proc ccmAadInject*(ctx: var CcmContext; data: ConstPointer; len: csize_t) {.importcFunc,

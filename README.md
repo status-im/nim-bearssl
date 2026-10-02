@@ -52,7 +52,7 @@ nimble install bearssl
 
 ## Developer notes
 
-When updating the library, `c2nim` is used via `regenerate.sh` to update the RAW ABI files. Manual editing is then needed to make a few adjustments to the mapping, after which the files can be generated.
+When updating the library, `regenerate.sh` uses `c2nim` to regenerate the RAW ABI files in `bearssl/abi/`. Adjustments to the mapping are made in `regenerate.sh`, not in the generated files.
 
 When adding new convenience functions, these should be added to `bearssl/` instead of the generated files.
 

@@ -17,7 +17,7 @@ export os
 # modules make sure to import these dependencies so that the correct C source
 # files get compiled transitively.
 #
-# Most of the header-like content was generated with c2nim, then hand-edited.
+# The header-like content is generated with c2nim by `regenerate.sh`.
 #
 # For historical reasons, some functions and types are exposed with a "Br"
 # prefix - these have been marked deprecated.
