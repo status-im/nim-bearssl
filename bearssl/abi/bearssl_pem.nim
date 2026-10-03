@@ -4,15 +4,12 @@ export consttypes
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearCodecPath = bearSrcPath & "codec/"
-
-{.compile: bearCodecPath & "pemdec.c".}
-{.compile: bearCodecPath & "pemenc.c".}
+{.compile: bearSrcPath & "codec/pemdec.c".}
+{.compile: bearSrcPath & "codec/pemenc.c".}
 
 type
   INNER_C_STRUCT_bearssl_pem_1* {.importc: "br_pem_decoder_context::no_name",
-                                 header: "bearssl_pem.h", bycopy.} = object
+                                   header: "bearssl_pem.h", bycopy.} = object
     dp* {.importc: "dp".}: ptr uint32
     rp* {.importc: "rp".}: ptr uint32
     ip* {.importc: "ip".}: ConstPtrByte
@@ -41,7 +38,6 @@ proc pemDecoderInit*(ctx: var RawPemDecoderContext) {.importcFunc,
 proc pemDecoderPush*(ctx: var RawPemDecoderContext; data: ConstPointer; len: csize_t): csize_t {.
     importcFunc, importc: "br_pem_decoder_push", header: "bearssl_pem.h".}
 
-
 proc pemDecoderEvent*(ctx: var RawPemDecoderContext): cint {.importcFunc,
     importc: "br_pem_decoder_event", header: "bearssl_pem.h".}
 
@@ -57,9 +53,8 @@ const
   PEM_ERROR* = 3
 
 
-proc pemDecoderName*(ctx: var RawPemDecoderContext): ConstCstring {.inline.} =
-  return cast[cstring](addr ctx.name)
-
+proc pemDecoderName*(ctx: var RawPemDecoderContext): ConstCstring {.importcFunc,
+    importc: "br_pem_decoder_name", header: "bearssl_pem.h".}
 
 proc pemEncode*(dest: pointer; data: ConstPointer; len: csize_t; banner: ConstCstring;
                flags: cuint): csize_t {.importcFunc, importc: "br_pem_encode",

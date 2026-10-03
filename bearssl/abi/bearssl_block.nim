@@ -3,59 +3,56 @@ import ./[consttypes, csources, intx]
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearSymcPath = bearSrcPath & "symcipher/"
-
-{.compile: bearSymcPath & "aes_big_cbcdec.c".}
-{.compile: bearSymcPath & "aes_big_cbcenc.c".}
-{.compile: bearSymcPath & "aes_big_ctr.c".}
-{.compile: bearSymcPath & "aes_big_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_big_dec.c".}
-{.compile: bearSymcPath & "aes_big_enc.c".}
-{.compile: bearSymcPath & "aes_common.c".}
-{.compile: bearSymcPath & "aes_ct.c".}
-{.compile: bearSymcPath & "aes_ct64.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct64_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct64_ctr.c".}
-{.compile: bearSymcPath & "aes_ct64_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct64_dec.c".}
-{.compile: bearSymcPath & "aes_ct64_enc.c".}
-{.compile: bearSymcPath & "aes_ct_cbcdec.c".}
-{.compile: bearSymcPath & "aes_ct_cbcenc.c".}
-{.compile: bearSymcPath & "aes_ct_ctr.c".}
-{.compile: bearSymcPath & "aes_ct_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_ct_dec.c".}
-{.compile: bearSymcPath & "aes_ct_enc.c".}
-{.compile: bearSymcPath & "aes_pwr8.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcdec.c".}
-{.compile: bearSymcPath & "aes_pwr8_cbcenc.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctr.c".}
-{.compile: bearSymcPath & "aes_pwr8_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_cbcdec.c".}
-{.compile: bearSymcPath & "aes_small_cbcenc.c".}
-{.compile: bearSymcPath & "aes_small_ctr.c".}
-{.compile: bearSymcPath & "aes_small_ctrcbc.c".}
-{.compile: bearSymcPath & "aes_small_dec.c".}
-{.compile: bearSymcPath & "aes_small_enc.c".}
-{.compile: bearSymcPath & "aes_x86ni.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcdec.c".}
-{.compile: bearSymcPath & "aes_x86ni_cbcenc.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctr.c".}
-{.compile: bearSymcPath & "aes_x86ni_ctrcbc.c".}
-{.compile: bearSymcPath & "chacha20_ct.c".}
-{.compile: bearSymcPath & "chacha20_sse2.c".}
-{.compile: bearSymcPath & "des_ct.c".}
-{.compile: bearSymcPath & "des_ct_cbcdec.c".}
-{.compile: bearSymcPath & "des_ct_cbcenc.c".}
-{.compile: bearSymcPath & "des_support.c".}
-{.compile: bearSymcPath & "des_tab.c".}
-{.compile: bearSymcPath & "des_tab_cbcdec.c".}
-{.compile: bearSymcPath & "des_tab_cbcenc.c".}
-{.compile: bearSymcPath & "poly1305_ctmul.c".}
-{.compile: bearSymcPath & "poly1305_ctmul32.c".}
-{.compile: bearSymcPath & "poly1305_ctmulq.c".}
-{.compile: bearSymcPath & "poly1305_i15.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_dec.c".}
+{.compile: bearSrcPath & "symcipher/aes_big_enc.c".}
+{.compile: bearSrcPath & "symcipher/aes_common.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_dec.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct64_enc.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_dec.c".}
+{.compile: bearSrcPath & "symcipher/aes_ct_enc.c".}
+{.compile: bearSrcPath & "symcipher/aes_pwr8.c".}
+{.compile: bearSrcPath & "symcipher/aes_pwr8_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_pwr8_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_pwr8_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_pwr8_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_dec.c".}
+{.compile: bearSrcPath & "symcipher/aes_small_enc.c".}
+{.compile: bearSrcPath & "symcipher/aes_x86ni.c".}
+{.compile: bearSrcPath & "symcipher/aes_x86ni_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/aes_x86ni_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/aes_x86ni_ctr.c".}
+{.compile: bearSrcPath & "symcipher/aes_x86ni_ctrcbc.c".}
+{.compile: bearSrcPath & "symcipher/chacha20_ct.c".}
+{.compile: bearSrcPath & "symcipher/chacha20_sse2.c".}
+{.compile: bearSrcPath & "symcipher/des_ct.c".}
+{.compile: bearSrcPath & "symcipher/des_ct_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/des_ct_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/des_support.c".}
+{.compile: bearSrcPath & "symcipher/des_tab.c".}
+{.compile: bearSrcPath & "symcipher/des_tab_cbcdec.c".}
+{.compile: bearSrcPath & "symcipher/des_tab_cbcenc.c".}
+{.compile: bearSrcPath & "symcipher/poly1305_ctmul.c".}
+{.compile: bearSrcPath & "symcipher/poly1305_ctmul32.c".}
+{.compile: bearSrcPath & "symcipher/poly1305_ctmulq.c".}
+{.compile: bearSrcPath & "symcipher/poly1305_i15.c".}
 
 type
   ConstPtrBlockCbcdecClass* {.importc: "const br_block_cbcdec_class *", header: "bearssl_block.h", bycopy.} = pointer
@@ -77,8 +74,8 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcencClass; key: ConstPointer;
-                                 keylen: csize_t) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcencClass;
+                                 key: ConstPointer; keyLen: csize_t) {.importcFunc.}
     run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCbcencClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
 
@@ -90,8 +87,8 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcdecClass; key: ConstPointer;
-                                 keylen: csize_t) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCbcdecClass;
+                                 key: ConstPointer; keyLen: csize_t) {.importcFunc.}
     run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCbcdecClass; iv: pointer;
                                data: pointer; len: csize_t) {.importcFunc.}
 
@@ -103,7 +100,7 @@ type
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
     init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCtrClass; key: ConstPointer;
-                                 keylen: csize_t) {.importcFunc.}
+                                 keyLen: csize_t) {.importcFunc.}
     run* {.importc: "run".}: proc (ctx: ConstPtrConstPtrBlockCtrClass;
                                iv: ConstPointer; cc: uint32; data: pointer;
                                len: csize_t): uint32 {.importcFunc.}
@@ -116,8 +113,8 @@ type
     contextSize* {.importc: "context_size".}: csize_t
     blockSize* {.importc: "block_size".}: cuint
     logBlockSize* {.importc: "log_block_size".}: cuint
-    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCtrcbcClass; key: ConstPointer;
-                                 keylen: csize_t) {.importcFunc.}
+    init* {.importc: "init".}: proc (ctx: ConstPtrPtrBlockCtrcbcClass;
+                                 key: ConstPointer; keyLen: csize_t) {.importcFunc.}
     encrypt* {.importc: "encrypt".}: proc (ctx: ConstPtrConstPtrBlockCtrcbcClass;
                                        ctr: pointer; cbcmac: pointer; data: pointer;
                                        len: csize_t) {.importcFunc.}
@@ -168,6 +165,7 @@ type
     vtable* {.importc: "vtable".}: ptr BlockCtrcbcClass
     skey* {.importc: "skey".}: array[60, uint32]
     numRounds* {.importc: "num_rounds".}: cuint
+
 
 
 var aesBigCbcencVtable* {.importc: "br_aes_big_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
@@ -261,6 +259,7 @@ type
     numRounds* {.importc: "num_rounds".}: cuint
 
 
+
 var aesSmallCbcencVtable* {.importc: "br_aes_small_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
 
 
@@ -351,6 +350,7 @@ type
     numRounds* {.importc: "num_rounds".}: cuint
 
 
+
 var aesCtCbcencVtable* {.importc: "br_aes_ct_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
 
 
@@ -439,6 +439,7 @@ type
     numRounds* {.importc: "num_rounds".}: cuint
 
 
+
 var aesCt64CbcencVtable* {.importc: "br_aes_ct64_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
 
 
@@ -497,7 +498,7 @@ const
 
 type
   INNER_C_UNION_bearssl_block_1* {.importc: "br_aes_x86ni_cbcenc_keys::no_name",
-                                  header: "bearssl_block.h", bycopy, union.} = object
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesX86niCbcencKeys* {.importc: "br_aes_x86ni_cbcenc_keys",
@@ -509,41 +510,42 @@ type
 
 
 type
-  INNER_C_UNION_bearssl_block_3* {.importc: "br_aes_x86ni_cbcdec_keys::no_name",
-                                  header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_2* {.importc: "br_aes_x86ni_cbcdec_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesX86niCbcdecKeys* {.importc: "br_aes_x86ni_cbcdec_keys",
                        header: "bearssl_block.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_2
+    numRounds* {.importc: "num_rounds".}: cuint
+
+
+
+type
+  INNER_C_UNION_bearssl_block_3* {.importc: "br_aes_x86ni_ctr_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
+    skni* {.importc: "skni".}: array[16 * 15, byte]
+
+  AesX86niCtrKeys* {.importc: "br_aes_x86ni_ctr_keys", header: "bearssl_block.h",
+                    bycopy.} = object
+    vtable* {.importc: "vtable".}: ptr BlockCtrClass
     skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_3
     numRounds* {.importc: "num_rounds".}: cuint
 
 
 
 type
-  INNER_C_UNION_bearssl_block_5* {.importc: "br_aes_x86ni_ctr_keys::no_name",
-                                  header: "bearssl_block.h", bycopy, union.} = object
-    skni* {.importc: "skni".}: array[16 * 15, byte]
-
-  AesX86niCtrKeys* {.importc: "br_aes_x86ni_ctr_keys", header: "bearssl_block.h",
-                    bycopy.} = object
-    vtable* {.importc: "vtable".}: ptr BlockCtrClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_5
-    numRounds* {.importc: "num_rounds".}: cuint
-
-
-
-type
-  INNER_C_UNION_bearssl_block_7* {.importc: "br_aes_x86ni_ctrcbc_keys::no_name",
-                                  header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_4* {.importc: "br_aes_x86ni_ctrcbc_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesX86niCtrcbcKeys* {.importc: "br_aes_x86ni_ctrcbc_keys",
                        header: "bearssl_block.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrcbcClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_7
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_4
     numRounds* {.importc: "num_rounds".}: cuint
+
 
 
 var aesX86niCbcencVtable* {.importc: "br_aes_x86ni_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
@@ -615,54 +617,55 @@ const
 
 
 type
-  INNER_C_UNION_bearssl_block_9* {.importc: "br_aes_pwr8_cbcenc_keys::no_name",
-                                  header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_5* {.importc: "br_aes_pwr8_cbcenc_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesPwr8CbcencKeys* {.importc: "br_aes_pwr8_cbcenc_keys",
                       header: "bearssl_block.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcencClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_9
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_5
     numRounds* {.importc: "num_rounds".}: cuint
 
 
 
 type
-  INNER_C_UNION_bearssl_block_11* {.importc: "br_aes_pwr8_cbcdec_keys::no_name",
-                                   header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_6* {.importc: "br_aes_pwr8_cbcdec_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesPwr8CbcdecKeys* {.importc: "br_aes_pwr8_cbcdec_keys",
                       header: "bearssl_block.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCbcdecClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_11
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_6
     numRounds* {.importc: "num_rounds".}: cuint
 
 
 
 type
-  INNER_C_UNION_bearssl_block_13* {.importc: "br_aes_pwr8_ctr_keys::no_name",
-                                   header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_7* {.importc: "br_aes_pwr8_ctr_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesPwr8CtrKeys* {.importc: "br_aes_pwr8_ctr_keys", header: "bearssl_block.h",
                    bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_13
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_7
     numRounds* {.importc: "num_rounds".}: cuint
 
 
 
 type
-  INNER_C_UNION_bearssl_block_15* {.importc: "br_aes_pwr8_ctrcbc_keys::no_name",
-                                   header: "bearssl_block.h", bycopy, union.} = object
+  INNER_C_UNION_bearssl_block_8* {.importc: "br_aes_pwr8_ctrcbc_keys::no_name",
+                                     header: "bearssl_block.h", bycopy, union.} = object
     skni* {.importc: "skni".}: array[16 * 15, byte]
 
   AesPwr8CtrcbcKeys* {.importc: "br_aes_pwr8_ctrcbc_keys",
                       header: "bearssl_block.h", bycopy.} = object
     vtable* {.importc: "vtable".}: ptr BlockCtrcbcClass
-    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_15
+    skey* {.importc: "skey".}: INNER_C_UNION_bearssl_block_8
     numRounds* {.importc: "num_rounds".}: cuint
+
 
 
 var aesPwr8CbcencVtable* {.importc: "br_aes_pwr8_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
@@ -802,6 +805,7 @@ type
     numRounds* {.importc: "num_rounds".}: cuint
 
 
+
 var desTabCbcencVtable* {.importc: "br_des_tab_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
 
 
@@ -843,6 +847,7 @@ type
     numRounds* {.importc: "num_rounds".}: cuint
 
 
+
 var desCtCbcencVtable* {.importc: "br_des_ct_cbcenc_vtable", header: "bearssl_block.h".}: BlockCbcencClass
 
 
@@ -880,8 +885,8 @@ type
 
 
 type
-  Chacha20Run* {.importc: "br_chacha20_run".} = proc (key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer; len: csize_t): uint32 {.
-      importcFunc.}
+  Chacha20Run* {.importc: "br_chacha20_run", header: "bearssl_block.h".} = proc (key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer;
+                    len: csize_t): uint32 {.importcFunc.}
 
 
 proc chacha20CtRun*(key: ConstPointer; iv: ConstPointer; cc: uint32; data: pointer;
@@ -896,28 +901,28 @@ proc chacha20Sse2Get*(): Chacha20Run {.importcFunc, importc: "br_chacha20_sse2_g
                                     header: "bearssl_block.h".}
 
 type
-  Poly1305Run* {.importc: "br_poly1305_run".} = proc (key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
-                    aad: ConstPointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
-                    encrypt: cint) {.importcFunc.}
+  Poly1305Run* {.importc: "br_poly1305_run", header: "bearssl_block.h".} = proc (key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
+                    aad: ConstPointer; aadLen: csize_t; tag: pointer;
+                    ichacha: Chacha20Run; encrypt: cint) {.importcFunc.}
 
 
-proc poly1305CtmulRun*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
-                      aad: ConstPointer; aadlen: csize_t; tag: pointer;
+proc poly1305CtmulRun*(key: ConstPointer; iv: ConstPointer; data: pointer;
+                      len: csize_t; aad: ConstPointer; aadLen: csize_t; tag: pointer;
                       ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmul_run", header: "bearssl_block.h".}
 
-proc poly1305Ctmul32Run*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
-                        aad: ConstPointer; aadlen: csize_t; tag: pointer;
-                        ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
+proc poly1305Ctmul32Run*(key: ConstPointer; iv: ConstPointer; data: pointer;
+                        len: csize_t; aad: ConstPointer; aadLen: csize_t;
+                        tag: pointer; ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmul32_run", header: "bearssl_block.h".}
 
 proc poly1305I15Run*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
-                    aad: ConstPointer; aadlen: csize_t; tag: pointer; ichacha: Chacha20Run;
-                    encrypt: cint) {.importcFunc, importc: "br_poly1305_i15_run",
-                                   header: "bearssl_block.h".}
+                    aad: ConstPointer; aadLen: csize_t; tag: pointer;
+                    ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
+    importc: "br_poly1305_i15_run", header: "bearssl_block.h".}
 
-proc poly1305CtmulqRun*(key: ConstPointer; iv: ConstPointer; data: pointer; len: csize_t;
-                       aad: ConstPointer; aadlen: csize_t; tag: pointer;
+proc poly1305CtmulqRun*(key: ConstPointer; iv: ConstPointer; data: pointer;
+                       len: csize_t; aad: ConstPointer; aadLen: csize_t; tag: pointer;
                        ichacha: Chacha20Run; encrypt: cint) {.importcFunc,
     importc: "br_poly1305_ctmulq_run", header: "bearssl_block.h".}
 

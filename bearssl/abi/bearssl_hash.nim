@@ -3,23 +3,20 @@ import ./[consttypes, csources, inner]
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearHashPath = bearSrcPath & "hash/"
-
-{.compile: bearHashPath & "dig_oid.c".}
-{.compile: bearHashPath & "dig_size.c".}
-{.compile: bearHashPath & "ghash_ctmul.c".}
-{.compile: bearHashPath & "ghash_ctmul32.c".}
-{.compile: bearHashPath & "ghash_ctmul64.c".}
-{.compile: bearHashPath & "ghash_pclmul.c".}
-{.compile: bearHashPath & "ghash_pwr8.c".}
-{.compile: bearHashPath & "md5.c".}
-{.compile: bearHashPath & "md5sha1.c".}
-{.compile: bearHashPath & "mgf1.c".}
-{.compile: bearHashPath & "multihash.c".}
-{.compile: bearHashPath & "sha1.c".}
-{.compile: bearHashPath & "sha2big.c".}
-{.compile: bearHashPath & "sha2small.c".}
+{.compile: bearSrcPath & "hash/dig_oid.c".}
+{.compile: bearSrcPath & "hash/dig_size.c".}
+{.compile: bearSrcPath & "hash/ghash_ctmul.c".}
+{.compile: bearSrcPath & "hash/ghash_ctmul32.c".}
+{.compile: bearSrcPath & "hash/ghash_ctmul64.c".}
+{.compile: bearSrcPath & "hash/ghash_pclmul.c".}
+{.compile: bearSrcPath & "hash/ghash_pwr8.c".}
+{.compile: bearSrcPath & "hash/md5.c".}
+{.compile: bearSrcPath & "hash/md5sha1.c".}
+{.compile: bearSrcPath & "hash/mgf1.c".}
+{.compile: bearSrcPath & "hash/multihash.c".}
+{.compile: bearSrcPath & "hash/sha1.c".}
+{.compile: bearSrcPath & "hash/sha2big.c".}
+{.compile: bearSrcPath & "hash/sha2small.c".}
 
 type
   ConstPtrConstPtrHashClass* {.importc: "const br_hash_class *const *", header: "bearssl_hash.h", bycopy.} = pointer
@@ -41,36 +38,38 @@ type
         stb: ConstPointer; count: uint64) {.importcFunc.}
 
 
-template hashdesc_Id*(id: untyped): untyped =
-  ((uint32)(id) shl hashdesc_Id_Off)
-
 const
   HASHDESC_ID_OFF* = 0
   HASHDESC_ID_MASK* = 0xFF
 
-template hashdesc_Out*(size: untyped): untyped =
-  ((uint32)(size) shl hashdesc_Out_Off)
+template hashdesc_Id*(id: untyped): untyped =
+  ((uint32)(id) shl HASHDESC_ID_OFF)
 
 const
   HASHDESC_OUT_OFF* = 8
   HASHDESC_OUT_MASK* = 0x7F
 
-template hashdesc_State*(size: untyped): untyped =
-  ((uint32)(size) shl hashdesc_State_Off)
+template hashdesc_Out*(size: untyped): untyped =
+  ((uint32)(size) shl HASHDESC_OUT_OFF)
 
 const
   HASHDESC_STATE_OFF* = 15
   HASHDESC_STATE_MASK* = 0xFF
 
-template hashdesc_Lblen*(ls: untyped): untyped =
-  ((uint32)(ls) shl hashdesc_Lblen_Off)
+template hashdesc_State*(size: untyped): untyped =
+  ((uint32)(size) shl HASHDESC_STATE_OFF)
 
 const
   HASHDESC_LBLEN_OFF* = 23
   HASHDESC_LBLEN_MASK* = 0x0F
-  HASHDESC_MD_PADDING* = (1'u32 shl 28)
-  HASHDESC_MD_PADDING_128* = (1'u32 shl 29)
-  HASHDESC_MD_PADDING_BE* = (1'u32 shl 30)
+
+template hashdesc_Lblen*(ls: untyped): untyped =
+  ((uint32)(ls) shl HASHDESC_LBLEN_OFF)
+
+const
+  HASHDESC_MD_PADDING* = (cast[uint32](1) shl 28)
+  HASHDESC_MD_PADDING_128* = (cast[uint32](1) shl 29)
+  HASHDESC_MD_PADDING_BE* = (cast[uint32](1) shl 30)
 
 
 const
@@ -194,18 +193,15 @@ type
 
 proc sha256Init*(ctx: var Sha256Context) {.importcFunc, importc: "br_sha256_init",
                                        header: "bearssl_hash.h".}
-
-template sha256Update*(ctx: var Sha256Context; data: pointer; len: csize_t) =
-  sha224Update(ctx, data, len)
+proc sha256Update*(ctx: var Sha256Context; data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_sha256_update", header: "bearssl_hash.h".}
 
 proc sha256Out*(ctx: var Sha256Context; `out`: pointer) {.importcFunc,
     importc: "br_sha256_out", header: "bearssl_hash.h".}
-
-template sha256State*(ctx: var Sha256Context; `out`: pointer): uint64 =
-  sha224State(ctx, `out`)
-
-template sha256SetState*(ctx: var Sha256Context; stb: pointer; count: uint64) =
-  sha224SetState(ctx, stb, count)
+proc sha256State*(ctx: var Sha256Context; `out`: pointer): uint64 {.importcFunc,
+    importc: "br_sha256_state", header: "bearssl_hash.h".}
+proc sha256SetState*(ctx: var Sha256Context; stb: ConstPointer; count: uint64) {.importcFunc,
+    importc: "br_sha256_set_state", header: "bearssl_hash.h".}
 
 const
   sha384ID* = 5
@@ -258,12 +254,15 @@ type
 
 proc sha512Init*(ctx: var Sha512Context) {.importcFunc, importc: "br_sha512_init",
                                        header: "bearssl_hash.h".}
-const
-  sha512Update* = sha384Update
-
+proc sha512Update*(ctx: var Sha512Context; data: ConstPointer; len: csize_t) {.importcFunc,
+    importc: "br_sha512_update", header: "bearssl_hash.h".}
 
 proc sha512Out*(ctx: var Sha512Context; `out`: pointer) {.importcFunc,
     importc: "br_sha512_out", header: "bearssl_hash.h".}
+proc sha512State*(ctx: var Sha512Context; `out`: pointer): uint64 {.importcFunc,
+    importc: "br_sha512_state", header: "bearssl_hash.h".}
+proc sha512SetState*(ctx: var Sha512Context; stb: ConstPointer; count: uint64) {.importcFunc,
+    importc: "br_sha512_set_state", header: "bearssl_hash.h".}
 
 const
   md5sha1ID* = 0
@@ -329,14 +328,11 @@ type
 proc multihashZero*(ctx: var MultihashContext) {.importcFunc, importc: "br_multihash_zero",
     header: "bearssl_hash.h".}
 
-proc multihashSetimpl*(ctx: var MultihashContext; id: cint; impl: ptr HashClass) {.
-    inline.} =
-  ctx.impl[id - 1] = impl
+proc multihashSetimpl*(ctx: var MultihashContext; id: cint; impl: ptr HashClass) {.importcFunc,
+    importc: "br_multihash_setimpl", header: "bearssl_hash.h".}
 
-
-proc multihashGetimpl*(ctx: var MultihashContext; id: cint): ptr HashClass {.inline.} =
-  return ctx.impl[id - 1]
-
+proc multihashGetimpl*(ctx: var MultihashContext; id: cint): ptr HashClass {.importcFunc,
+    importc: "br_multihash_getimpl", header: "bearssl_hash.h".}
 
 proc multihashInit*(ctx: var MultihashContext) {.importcFunc, importc: "br_multihash_init",
     header: "bearssl_hash.h".}
@@ -348,7 +344,7 @@ proc multihashOut*(ctx: var MultihashContext; id: cint; dst: pointer): csize_t {
     importc: "br_multihash_out", header: "bearssl_hash.h".}
 
 type
-  Ghash* {.importc: "br_ghash".} = proc (y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc.}
+  Ghash* {.importc: "br_ghash", header: "bearssl_hash.h".} = proc (y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc.}
 
 
 proc ghashCtmul*(y: pointer; h: ConstPointer; data: ConstPointer; len: csize_t) {.importcFunc,

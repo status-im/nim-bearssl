@@ -3,15 +3,12 @@ import ./[bearssl_hash, bearssl_hmac, consttypes, csources]
 {.pragma: importcFunc, cdecl, gcsafe, noSideEffect, raises: [].}
 {.used.}
 
-const
-  bearKdfPath = bearSrcPath & "kdf/"
-
-{.compile: bearKdfPath & "hkdf.c".}
-{.compile: bearKdfPath & "shake.c".}
+{.compile: bearSrcPath & "kdf/hkdf.c".}
+{.compile: bearSrcPath & "kdf/shake.c".}
 
 type
   INNER_C_UNION_bearssl_kdf_1* {.importc: "br_hkdf_context::no_name",
-                                header: "bearssl_kdf.h", bycopy, union.} = object
+                                  header: "bearssl_kdf.h", bycopy, union.} = object
     hmacCtx* {.importc: "hmac_ctx".}: HmacContext
     prkCtx* {.importc: "prk_ctx".}: HmacKeyContext
 
@@ -25,22 +22,21 @@ type
 
 
 proc hkdfInit*(hc: var HkdfContext; digestVtable: ptr HashClass; salt: ConstPointer;
-              saltlen: csize_t) {.importcFunc, importc: "br_hkdf_init",
+              saltLen: csize_t) {.importcFunc, importc: "br_hkdf_init",
                                 header: "bearssl_kdf.h".}
-
 
 var hkdfNoSalt* {.importc: "br_hkdf_no_salt", header: "bearssl_kdf.h".}: byte
 
 
-proc hkdfInject*(hc: var HkdfContext; ikm: ConstPointer; ikmlen: csize_t) {.importcFunc,
+proc hkdfInject*(hc: var HkdfContext; ikm: ConstPointer; ikmLen: csize_t) {.importcFunc,
     importc: "br_hkdf_inject", header: "bearssl_kdf.h".}
 
 proc hkdfFlip*(hc: var HkdfContext) {.importcFunc, importc: "br_hkdf_flip",
                                   header: "bearssl_kdf.h".}
 
-proc hkdfProduce*(hc: var HkdfContext; info: ConstPointer; infolen: csize_t; `out`: pointer;
-                 outlen: csize_t): csize_t {.importcFunc, importc: "br_hkdf_produce",
-    header: "bearssl_kdf.h".}
+proc hkdfProduce*(hc: var HkdfContext; info: ConstPointer; infoLen: csize_t;
+                 `out`: pointer; outLen: csize_t): csize_t {.importcFunc,
+    importc: "br_hkdf_produce", header: "bearssl_kdf.h".}
 
 type
   ShakeContext* {.importc: "br_shake_context", header: "bearssl_kdf.h", bycopy.} = object
