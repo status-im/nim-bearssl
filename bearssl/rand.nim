@@ -24,7 +24,7 @@ proc init*[S](T: type HmacDrbgContext, seed: openArray[S]): HmacDrbgContext =
     # In theory the multiplication can overflow, but practically we can't
     # allocate that much memory, so it won't
     hmacDrbgInit(
-      result, addr sha256Vtable, unsafeAddr seed[0], uint seed.len * sizeof(S))
+      result, addr sha256Vtable, addr seed[0], uint seed.len * sizeof(S))
 
 proc new*(T: type HmacDrbgContext): ref HmacDrbgContext =
   ## Create a new randomness context intended to be shared between randomness
@@ -79,10 +79,7 @@ template generate*[V](ctx: var HmacDrbgContext, v: var seq[V]) =
 func generateBytes*(ctx: var HmacDrbgContext, n: int): seq[byte] =
   # https://github.com/nim-lang/Nim/issues/19357
   if n > 0:
-    result = when (NimMajor, NimMinor) < (2, 2):
-               newSeqUninitialized[byte](n)
-             else:
-               newSeqUninit[byte](n)
+    result = newSeqUninit[byte](n)
     ctx.generate(result)
 
 func generate*(ctx: var HmacDrbgContext, T: type): T {.noinit.} =
@@ -97,7 +94,7 @@ func update*[S](ctx: var HmacDrbgContext, seed: openArray[S]) =
   if seed.len > 0:
     # In theory the multiplication can overflow, but practically we can't
     # allocate that much memory, so it won't
-    hmacDrbgUpdate(ctx, unsafeAddr seed[0], uint seed.len * sizeof(S))
+    hmacDrbgUpdate(ctx, addr seed[0], uint seed.len * sizeof(S))
 
 # Convenience helpers using bearssl naming
 
