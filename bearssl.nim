@@ -18,4 +18,4 @@ export
   ssl, x509,
   config
 
-when defined(nimHasUsed): {.used.}
+{.used.}

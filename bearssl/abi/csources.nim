@@ -28,7 +28,7 @@ export os
 static: doAssert sizeof(csize_t) == sizeof(int)
 
 const bearssl = currentSourcePath.rsplit({DirSep, AltSep}, 2)[0] & "/"
-when defined(`any`) or defined(standalone) or (NimMajor, NimMinor) < (2, 0):
+when defined(`any`) or defined(standalone):
   const patched = bearssl
 else:
   import std/[compilesettings, hashes, macros]

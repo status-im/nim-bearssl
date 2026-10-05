@@ -1,14 +1,14 @@
 mode = ScriptMode.Verbose
 
 packageName   = "bearssl"
-version       = "0.2.14"
+version       = "0.3.0"
 author        = "Status Research & Development GmbH"
 description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
 skipDirs      = @["tests"]
 
-requires "nim >= 1.6.18",
-         "unittest2 >= 0.2.0"
+requires "nim >= 2.0.6",
+         "unittest2 >= 0.3.0"
 
 let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
 let lang = getEnv("NIMLANG", "c") # Which backend (c/cpp/js)
@@ -37,11 +37,10 @@ proc run(args, path: string) =
 task test, "Run all tests":
   for args in testArguments:
     run args & " --mm:refc", "tests/test_all"
-    if (NimMajor, NimMinor) > (1, 6):
-      run args & " --mm:orc", "tests/test_all"
+    run args & " --mm:orc", "tests/test_all"
 
 task test_asan, "Run all tests with ASAN":
-  if platform != "x86" and (NimMajor, NimMinor) >= (2, 2):
+  if platform != "x86":
     try:
       exec "echo '#if __clang_major__ < 20\n#error\n#endif' | clang -E - >/dev/null"
     except OSError:

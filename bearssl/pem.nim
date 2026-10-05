@@ -25,7 +25,7 @@ func push*(ctx: var PemDecoderContext, data: openArray[byte|char]): int =
   doAssert ctx != nil, "PemDecoderContext not initialized"
   if data.len > 0:
     let consumed = pemDecoderPush(
-      ctx[].raw, unsafeAddr data[0], uint data.len)
+      ctx[].raw, addr data[0], uint data.len)
     int(consumed)
   else:
     0
@@ -67,7 +67,7 @@ func banner*(ctx: PemDecoderContext): string =
   ## Return the `name` field as a string
   doAssert ctx != nil, "PemDecoderContext not initialized"
   if ctx[].raw.name[ctx[].raw.name.high] == char(0):
-    $(cast[cstring](unsafeAddr ctx[].raw.name))
+    $(cast[cstring](addr ctx[].raw.name))
   else:
     var res = newString(ctx[].raw.name.len)
     for i, c in ctx[].raw.name: res[i] = ctx[].raw.name[i]
@@ -78,5 +78,5 @@ func pemEncode*(
   let bytes = pemEncode(nil, nil, uint data.len, banner, flags)
   result.setLen(int bytes + 1)
   discard pemEncode(
-    addr result[0], unsafeAddr data[0], uint data.len, banner, flags)
+    addr result[0], addr data[0], uint data.len, banner, flags)
   result.setLen(int bytes)
