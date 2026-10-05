@@ -32,3 +32,7 @@ suite "PEM":
     check:
       pem.len > data.len
       called
+
+  test "encode empty":
+    check pemEncode(newSeq[byte](), "TEST") ==
+      "-----BEGIN TEST-----\n-----END TEST-----\n"

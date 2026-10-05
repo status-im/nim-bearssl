@@ -59,6 +59,7 @@ func pemEncode*(
     data: openArray[byte|char], banner: cstring, flags: cuint = 0): string =
   let bytes = pemEncode(nil, nil, uint data.len, banner, flags)
   result.setLen(int bytes + 1)
-  discard pemEncode(
-    addr result[0], addr data[0], uint data.len, banner, flags)
+  var empty: byte
+  let src: pointer = if data.len > 0: addr data[0] else: addr empty
+  discard pemEncode(addr result[0], src, uint data.len, banner, flags)
   result.setLen(int bytes)
