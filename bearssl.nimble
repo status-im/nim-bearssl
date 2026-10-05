@@ -7,7 +7,7 @@ description   = "BearSSL wrapper"
 license       = "MIT or Apache License 2.0"
 skipDirs      = @["tests"]
 
-requires "nim >= 2.0.6",
+requires "nim >= 2.2.12",
          "unittest2 >= 0.3.0"
 
 let nimc = getEnv("NIMC", "nim") # Which nim compiler to use
