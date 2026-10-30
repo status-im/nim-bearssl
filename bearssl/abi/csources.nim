@@ -59,6 +59,7 @@ else:
         let (output, exitCode) = gorgeEx(
           quoteShell(getCurrentCompilerExe()) &
           " e --hints:off --warnings:off" &
+          " --lib:" & quoteShell(querySetting(libPath)) &
           " --skipUserCfg --skipParentCfg --skipProjCfg " &
           quoteShell(bearssl & "abi/csources_patch.nims") & " " &
           quoteShell(bearssl) & " " & quoteShell(dest))
